@@ -1,6 +1,7 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Drawing
 Imports System.IO
+Imports System.Reflection
 Imports System.Web.Mvc
 
 Public Class DailyWorkController
@@ -12,13 +13,15 @@ Public Class DailyWorkController
     Function Index() As ActionResult
 
         'check TimeIn & assign value to model. *ตรวจสอบจาก cookie(User.Identity.Name)
-        Dim usr As String = If(
-                                String.IsNullOrEmpty(User.Identity.Name),
-                                Convert.ToString(Session("Temp_login")),
-                                User.Identity.Name
-                            )
 
-        Dim model As DailyWorkViewModel = repo.GetTodayCheckIn(usr)
+        'Dim usr As String = If(
+        '                        String.IsNullOrEmpty(User.Identity.Name),
+        '                        Convert.ToString(Session("userlogin")),
+        '                        User.Identity.Name
+        '                    )
+
+        Dim usr As String = Convert.ToString(Session("userlogin"))
+        Dim model As DailyWorkViewModel = repo.GetTodayTimIn(usr)
 
         Return View(model)
     End Function
@@ -72,8 +75,8 @@ Public Class DailyWorkController
 
                 FormsAuthentication.SetAuthCookie(Session("salescode"), True) 'เรียกใช้ผ่าน User.Identity.Name 
 
-                'Temp_login markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database 
-                Session("Temp_login") = Session("salescode")
+                'userlogin markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database 
+                Session("userlogin") = Session("salescode")
 
 
                 Return Json(New With {
@@ -93,31 +96,75 @@ Public Class DailyWorkController
 
 
     <HttpPost>
-    Public Function TimeOutSave() As JsonResult
-        '    Dim employeeCode = User.Identity.Name
+    Public Function TimeOutSave(model As TimeOutViewModel) As JsonResult
+        'model As TimeInViewModel ***MVC จะ Bind ให้เอง ถ้าชื่อใน FormData ตรงกับ Property
+        Try
 
-        '    Dim lat = Request.Form("Latitude")
-        '    Dim lng = Request.Form("Longitude")
-        '    Dim file = Request.Files("PhotoFile")
+            If model.OdometerEnd < model.OdometerStart Then
 
-        '    Dim fileName = Guid.NewGuid.ToString() & Path.GetExtension(file.FileName)
-        '    Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
-        '    file.SaveAs(PathFile)
+                Return Json(New With {
+                    .Success = False,
+                    .Message = "เลขไมล์หลังใช้ต้องมากกว่าหรือเท่ากับเลขไมล์เริ่มต้น"
+                })
 
-        '    Dim id = repo.TimeIn(
-        'employeeCode,
-        'lat,
-        'lng,
-        'PathFile)
+            Else
+
+                Dim TimeInDocumentNumber = model.TimeInDocumentNumber
+                Dim odometerEnd = model.OdometerEnd
+                Dim lat = model.Latitude
+                Dim lng = model.Longitude
+
+                Dim file = Request.Files("PhotoFile")
+
+                If file Is Nothing OrElse file.ContentLength = 0 Then
+                    Return Json(New With {
+                        .Success = False,
+                        .Message = "กรุณาถ่ายรูป"
+                    })
+
+                Else
+
+                    ' 1. Insert Database
+                    ' Dim id =  repo.TimeIn(
+                    'employeeCode,
+                    'lat,
+                    'lng,
+                    'PathFile) 
+
+                    Dim id = 123 ' id = 12345
+
+                    ' 2. สร้างชื่อไฟล์
+                    'Dim fileName = Guid.NewGuid().ToString() & ".jpg" 
+                    Dim fileName = "TIMEOUT_" & id.ToString("000000") & Path.GetExtension(file.FileName)
+
+                    ' 3. Save File
+                    Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
+                    file.SaveAs(PathFile)
 
 
-        'Temp_login markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database 
-        Session("Temp_login") = ""
+                    FormsAuthentication.SignOut() 'เคลียร์ค่า
 
-        Return Json(New With {
-            .success = True,
-            .id = 888'id
-        })
+                    'userlogin markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database 
+                    'Session("userlogin") = ""
+                    Session("userlogin") = "TimeOut"
+
+
+                    Return Json(New With {
+                        .Success = True,
+                        .Message = "Success"
+                    })
+
+                End If
+
+            End If
+
+        Catch ex As Exception
+            Return Json(New With {
+                .Success = False,
+                .Message = ex.Message
+            })
+        End Try
+
     End Function
 
 
@@ -131,7 +178,7 @@ Public Class DailyWorkController
     End Function
 
     <HttpPost>
-    Public Function SaveCheckIn() As JsonResult
+    Public Function CheckInSave() As JsonResult
 
 
         Dim employeeCode = User.Identity.Name
@@ -158,7 +205,7 @@ Public Class DailyWorkController
     End Function
 
     <HttpPost>
-    Public Function SaveCheckOut() As JsonResult
+    Public Function CheckOutSave() As JsonResult
 
 
         Dim id = CLng(Request.Form("ID"))

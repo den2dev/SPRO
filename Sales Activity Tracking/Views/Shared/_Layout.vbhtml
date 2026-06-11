@@ -34,13 +34,13 @@
         </h1>
     </div>
 
-    <div class="container body-content">
+    <div class="container body-content small">
          
         @RenderBody() 
 
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Sales Daily Report</p>
+        <footer class="small">
+            <p>&copy; @DateTime.Now.Year - CompanyName</p>
         </footer>
     </div>
 

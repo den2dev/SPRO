@@ -173,6 +173,7 @@
     <Compile Include="Models\ViewModels\CheckOutViewModel.vb" />
     <Compile Include="Models\ViewModels\DailyWorkViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeInViewModel.vb" />
+    <Compile Include="Models\ViewModels\TimeOutViewModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

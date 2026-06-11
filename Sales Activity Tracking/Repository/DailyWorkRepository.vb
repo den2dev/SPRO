@@ -3,7 +3,7 @@ Imports System.Drawing
 Imports Dapper
 
 Public Class DailyWorkRepository
-    Public Function GetTodayCheckIn(SalesmanCode As String) As DailyWorkViewModel
+    Public Function GetTodayTimIn(SalesmanCode As String) As DailyWorkViewModel
 
         Dim model As New DailyWorkViewModel
 
@@ -37,19 +37,78 @@ Public Class DailyWorkRepository
 
             With model
                 .IsTimeIn = True
+
                 .SalesmanName = "นายพนักงาน ขายโซนA"
                 .SalesmanCode = SalesmanCode
-                .TimeInDate = ""
-                .TimeInTime = ""
-                .TimeOutDate = ""
-                .TimeOutTime = ""
-                .VehicleLicensePlate = ""
-                .OdometerStart = ""
+
+
+                .TimeInDate = "11/06/2026"
+                .TimeInTime = "09:05"
+
+                .TimeInDocumentNumber = "26DW1904250001"
+                .VehicleLicensePlate = "9กส 8543 กทม"
+                .OdometerStart = "85043"
+
+                If SalesmanCode = "TimeOut" Then
+                    .TimeOutDate = "11/06/2026"
+                    .TimeOutTime = "18.12"
+                    .OdometerEnd = "85154"
+                Else
+                    .TimeOutDate = ""
+                    .TimeOutTime = ""
+                    .OdometerEnd = ""
+                End If
+
             End With
 
-            model.WorkItems = New List(Of WorkItem)
-            'get list
 
+            'get list
+            model.WorkItems = New List(Of WorkItem) From {
+                    New WorkItem With {
+                        .ActivityCode = "IA1",
+                        .ActivityName = "เอกสารคำขอ",
+                        .ActivityNumber = "26IA1904250001",
+                        .ContactCode = "19900006",
+                        .ContactName = "อโณทัย ชาวไร่",
+                        .TypeContactCode = "F01",
+                        .TypeContactName = "ชาวไร่เดิม",
+                        .CheckInDateTime = "03/05/2026 08:20",
+                        .CheckOutDateTime = "03/05/2026 08:40"
+                    },
+                    New WorkItem With {
+                        .ActivityCode = "IA2",
+                        .ActivityName = "เยี่ยมลูกค้า",
+                        .ActivityNumber = "26IA1904250002",
+                        .ContactCode = "19900015",
+                        .ContactName = "สมชาย ใจดี",
+                        .TypeContactCode = "F02",
+                        .TypeContactName = "ชาวไร่ใหม่",
+                        .CheckInDateTime = "03/05/2026 09:10",
+                        .CheckOutDateTime = "03/05/2026 09:35"
+                    },
+                    New WorkItem With {
+                        .ActivityCode = "IA3",
+                        .ActivityName = "ติดตามผลผลิต",
+                        .ActivityNumber = "26IA1904250003",
+                        .ContactCode = "19900027",
+                        .ContactName = "วิชัย เกษตรกร",
+                        .TypeContactCode = "F01",
+                        .TypeContactName = "ชาวไร่เดิม",
+                        .CheckInDateTime = "03/05/2026 10:00",
+                        .CheckOutDateTime = "03/05/2026 10:45"
+                    },
+                    New WorkItem With {
+                        .ActivityCode = "IA4",
+                        .ActivityName = "สำรวจพื้นที่ปลูก",
+                        .ActivityNumber = "26IA1904250004",
+                        .ContactCode = "19900038",
+                        .ContactName = "กิตติศักดิ์ ชาวไร่",
+                        .TypeContactCode = "F03",
+                        .TypeContactName = "ผู้สนใจปลูกอ้อย",
+                        .CheckInDateTime = "03/05/2026 13:15",
+                        .CheckOutDateTime = "CheckOut"
+                    }
+                }
         End If
 #End Region
 

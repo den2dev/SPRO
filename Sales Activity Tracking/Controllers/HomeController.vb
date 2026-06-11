@@ -9,7 +9,16 @@ Public Class HomeController
         Session("salescode") = "99999"
         Return View()
     End Function
+    Function Logout() As ActionResult
 
+        Session("userlogin") = Nothing
+
+        ' หรือ
+        Session.Remove("userlogin")
+
+        Return RedirectToAction("Index", "Home")
+
+    End Function
 
     Function Test() As ActionResult
         ViewData("Message") = "Test page."

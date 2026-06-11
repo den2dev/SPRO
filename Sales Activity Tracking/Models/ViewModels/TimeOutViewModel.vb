@@ -1,8 +1,10 @@
-﻿Public Class TimeInViewModel
+﻿Public Class TimeOutViewModel
 
-    Public Property VehicleLicensePlate As String
+    Public Property TimeInDocumentNumber As String
 
     Public Property OdometerStart As Integer
+
+    Public Property OdometerEnd As Integer
 
     Public Property OdometerPhoto As String
 
