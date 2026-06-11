@@ -145,7 +145,7 @@ End Code
             </div>
 
             @<div Class="col-4 no-padding">
-                <Button Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                <Button Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="ShowAddClickModal()">
                     Add
                 </Button>
             </div>
@@ -277,6 +277,10 @@ End Code
         object-fit: contain;*/ /* ใช้สัดส่วนเท่าเดิม*/
     /*}*/
 
+    .custom-modal {
+        /* transform: translateY(-200px);*/
+        transform: translateY(0vh);
+    }
 </style>
 
 <div id="timeInModal"
@@ -461,6 +465,44 @@ End Code
     </div>
 </div>
 
+<div id="AddClickModal"
+     class="modal fade"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+
+    <div class="modal-dialog custom-modal">
+        <div class="modal-content">
+
+            <div class="modal-body text-center">
+                <h1>
+                    บันทึกการทำงาน
+                </h1>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row g-0">
+                    <div Class="col-4 no-padding">
+                        <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="location.href='@Url.Action("SelectFarmer")'">
+                            ชาวไร่เดิม
+                        </Button>
+                    </div>
+                    <div Class="col-4 no-padding">
+                        <Button Class="ui-btn btn-confirm ui-icon-plus ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="CloseAddClickModal()">
+                            ชาวไร่ใหม่
+                        </Button>
+                    </div>
+                    <div Class="col-4 no-padding">
+                        <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" data-dismiss="modal" style="height: 60px; padding-top: 25px !important;" onclick="CloseAddClickModal()">
+                            ยกเลิก
+                        </Button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @*Show Popup Messgaebox*@
@@ -494,9 +536,9 @@ End Code
         }
 
         function goTimeInOut() {
-             
+
             /*clear ค่าเดิม*/
-            photoBlob = null; 
+            photoBlob = null;
             $("#previewImage").hide().attr("src", "");
             $("#imagePlaceholder").show();
             $("#Latitude").val("");
@@ -575,6 +617,14 @@ End Code
         function CloseCameraModal() {
             $('#timeInModal').modal('show');
             $('#CameraModal').modal('hide');
+        }
+
+        function ShowAddClickModal() {
+            $('#AddClickModal').modal('show');
+        }
+
+        function CloseAddClickModal() {
+            $('#AddClickModal').modal('hide');
         }
 
 
@@ -738,7 +788,7 @@ End Code
 
         $("#btnSaveTimeOut").click(function () {
 
-              
+
            //if ($("#btnSaveTimeIn").prop("disabled")) {
            //    return;
            //}
@@ -746,7 +796,7 @@ End Code
 
             var odometerStart = Number($("#txtTimeOutOdometerStart").val());
             var odometerEnd = Number($("#txtOdometerEnd").val());
-    
+
 
             if (!odometerEnd) {
                 alert('กรุณาระบุเลขไมล์หลังใช้');
@@ -902,3 +952,55 @@ End Code
 
 
 End Section
+
+
+
+<!-- Bottom Buttons -->
+
+<div style="
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#fff;
+    border-top:1px solid #ddd;
+    z-index:999;">
+
+    <div class="row g-0">
+        <div class="col">
+            <button id="btnBack"
+                    class="ui-btn btn-deny ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                Back
+            </button>
+        </div>
+        <div class="col">
+            <button id="btnDelete"
+                    class="ui-btn btn-danger ui-icon-delete ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                ลบ
+            </button>
+        </div>
+
+        <div class="col">
+            <button id="btnCapture"
+                    class="ui-btn btn-success ui-icon-camera ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                ถ่ายรูป
+            </button>
+        </div>
+
+        <div class="col">
+            <button id="btnSave"
+                    class="ui-btn btn-confirm ui-icon-check ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                บันทึก
+            </button>
+        </div>
+
+        <div class="col">
+            <button id="btnCheckout"
+                    class="ui-btn btn-deny ui-icon-location ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                Check Out
+            </button>
+        </div>
+
+    </div>
+
+</div>

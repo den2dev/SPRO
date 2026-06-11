@@ -5,6 +5,7 @@ Imports Dapper
 Public Class DailyWorkRepository
     Public Function GetTodayTimIn(SalesmanCode As String) As DailyWorkViewModel
 
+        Dim vechicle As New VehicleRepository
         Dim model As New DailyWorkViewModel
 
 #Region "SQL"
@@ -31,7 +32,7 @@ Public Class DailyWorkRepository
         If SalesmanCode = "" Or IsDBNull(SalesmanCode) Then
             With model
                 .IsTimeIn = False
-                .VehicleList = GetVehicleList()
+                .VehicleList = vechicle.GetVehicleList()
             End With
         Else
 
@@ -117,59 +118,6 @@ Public Class DailyWorkRepository
 
     End Function
 
-    Private Function GetVehicleList() As IEnumerable(Of SelectListItem)
-
-        Dim VehicleList As IEnumerable(Of SelectListItem)
-
-#Region "SQL"
-        '    Dim sql As String = "
-        '    SELECT VehicleCode,
-        '           VehicleLicenseNo
-        '    FROM Vehicle
-        '    WHERE IsActive = 1
-        '    ORDER BY VehicleLicenseNo
-        '"
-
-        '    Using cn As SqlConnection = DBConnection.GetConnection()
-
-        '        Using da As New SqlDataAdapter(sql, cn)
-
-        '            Dim dt As New DataTable()
-
-        '            da.Fill(dt)
-
-        '            Return dt
-
-        '        End Using
-
-        '    End Using
-#End Region
-
-
-#Region "Mock"
-        Dim dt As New DataTable()
-
-        dt.Columns.Add("VehiclePlateNo")
-        dt.Columns.Add("OdometerStart")
-
-        dt.Rows.Add("สส 1234 กทม", "39463")
-        dt.Rows.Add("สว 5678 กทม", "40158")
-        dt.Rows.Add("สก 9012 กทม", "10522")
-
-        VehicleList =
-            dt.AsEnumerable().
-            Select(Function(r) New SelectListItem With {
-                .Text = r("VehiclePlateNo").ToString(),
-                .Value = r("OdometerStart").ToString()
-            })
-#End Region
-
-
-        Return VehicleList
-
-    End Function
-
-
 
     Public Function TimeIn(
         model As TimeInViewModel,
@@ -220,7 +168,55 @@ SELECT CAST(SCOPE_IDENTITY() AS BIGINT)
         End Using
 
     End Function
+    Public Function TimeOut(
+        model As TimeInViewModel,
+        photoPath As String) As Long
 
+        Dim sql As String = "
+
+INSERT INTO SalesCheckIn
+(
+    UserID,
+    UserName,
+    WorkDate,
+    CheckInDateTime,
+    VehicleCode,
+    OdometerStart,
+    OdometerPhoto
+)
+VALUES
+(
+    @UserID,
+    @UserName,
+    @WorkDate,
+    GETDATE(),
+    @VehicleCode,
+    @OdometerStart,
+    @OdometerPhoto
+)
+
+SELECT CAST(SCOPE_IDENTITY() AS BIGINT)
+
+"
+
+        Using cn As SqlConnection = DBConnection.GetConnection()
+
+            cn.Open()
+
+            Dim cmd As New SqlCommand(sql, cn)
+
+            'cmd.Parameters.AddWithValue("@UserID", model.SalesmanCode)
+            'cmd.Parameters.AddWithValue("@UserName", model.SalesmanName)
+            'cmd.Parameters.AddWithValue("@WorkDate", model.WorkDate)
+            cmd.Parameters.AddWithValue("@VehicleCode", model.VehicleLicensePlate)
+            cmd.Parameters.AddWithValue("@OdometerStart", model.OdometerStart)
+            cmd.Parameters.AddWithValue("@OdometerPhoto", photoPath)
+
+            Return CLng(cmd.ExecuteScalar())
+
+        End Using
+
+    End Function
     Public Function CheckIn(
         employeeCode As String,
         lat As String,

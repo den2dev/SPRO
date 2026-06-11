@@ -27,7 +27,7 @@ Public Class DailyWorkController
     End Function
 
 
-    '****** พนักงาน
+#Region "TimeIn & TimeOut พนักงาน"
     <HttpPost>
     Function TimeInSave(model As TimeInViewModel, PhotoFile As HttpPostedFileBase) As JsonResult
         'model As TimeInViewModel ***MVC จะ Bind ให้เอง ถ้าชื่อใน FormData ตรงกับ Property
@@ -93,7 +93,6 @@ Public Class DailyWorkController
         End Try
 
     End Function
-
 
     <HttpPost>
     Public Function TimeOutSave(model As TimeOutViewModel) As JsonResult
@@ -166,13 +165,12 @@ Public Class DailyWorkController
         End Try
 
     End Function
+#End Region
 
-
-    '****** ติดต่อลูกค้าแต่ละคน WorkItems
+#Region "CheckIn & CheckOut เยี่ยมลูกค้า"
     Function CheckIn() As ActionResult
         Return View()
     End Function
-
     Function CheckOut() As ActionResult
         Return View()
     End Function
@@ -225,6 +223,36 @@ Public Class DailyWorkController
     })
 
     End Function
+
+#End Region
+
+#Region "Farmer & visit"
+    Public Function SelectFarmer() As ActionResult
+
+        Dim model As New SelectFarmerViewModel
+
+        model.FarmerList = New FarmerRepository().GetFarmerList()
+
+        Return View(model)
+
+    End Function
+
+    Public Function VisitFarmer(farmerCode As String) As ActionResult
+        Dim _repoFarmer As New FarmerRepository
+        Dim _repoQuesn As New QuestionnaireRepository
+
+        Dim model As New VisitFarmerViewModel()
+
+        model.Farmer = _repoFarmer.GetFarmerByCode(farmerCode)
+
+        model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
+
+        Return View(model)
+
+    End Function
+
+#End Region
+
 
 
 End Class

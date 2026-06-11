@@ -168,12 +168,17 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Entities\CheckInLog.vb" />
+    <Compile Include="Models\Entities\Farmer.vb" />
+    <Compile Include="Models\Entities\QuestionModel.vb" />
     <Compile Include="Models\Entities\WorkItem.vb" />
     <Compile Include="Models\ViewModels\CheckInViewModel.vb" />
     <Compile Include="Models\ViewModels\CheckOutViewModel.vb" />
     <Compile Include="Models\ViewModels\DailyWorkViewModel.vb" />
+    <Compile Include="Models\ViewModels\QuestionnaireViewModel.vb" />
+    <Compile Include="Models\ViewModels\SelectFarmerViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeInViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeOutViewModel.vb" />
+    <Compile Include="Models\ViewModels\VisitFarmerViewModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -192,6 +197,9 @@
     <Compile Include="Controllers\HomeController.vb" />
     <Compile Include="Repository\DailyWorkRepository.vb" />
     <Compile Include="Repository\DBConnection.vb.vb" />
+    <Compile Include="Repository\FarmerRepository.vb" />
+    <Compile Include="Repository\QuestionnaireRepository.vb" />
+    <Compile Include="Repository\VehicleRepository.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -483,6 +491,9 @@
     <Content Include="Views\Test\TestDesignDataModel.vbhtml" />
     <Content Include="Views\Test\TestGPS.vbhtml" />
     <Content Include="Views\Test\TestCamera.vbhtml" />
+    <Content Include="Views\DailyWork\SelectFarmer.vbhtml" />
+    <Content Include="Views\Shared\_Questionnaire.vbhtml" />
+    <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
