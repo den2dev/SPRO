@@ -10,13 +10,13 @@ Public Class DailyWorkViewModel
     Public Property OdometerStart As String 'เลขไมล์เริ่มต้น
 
 
-    Public Property IsCheckedIn As Boolean 'มีการเช็ค TimeIn แล้ว?
-    Public Property IsCheckedOut As Boolean 'มีการเช็ค TimeOut แล้ว?
+    Public Property IsTimeIn As Boolean 'มีการเช็ค TimeIn แล้ว?
+    Public Property IsTimeOut As Boolean 'มีการเช็ค TimeOut แล้ว?
 
     Public Property TimeInDate As String 'วันที่ TimeIn 
     Public Property TimeInTime As String 'เวลา TimeIn 
     Public Property TimeOutDate As String 'วันที่ TimeOut
     Public Property TimeOutTime As String 'เวลา TimeIn 
 
-    Public Property DailyWorks As List(Of WorkItem)
+    Public Property WorkItems As List(Of WorkItem)
 End Class

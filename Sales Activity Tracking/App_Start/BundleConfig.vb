@@ -38,7 +38,7 @@ Public Module BundleConfig
             "~/Content/bootstrap.css",
             "~/Content/site.css",
             "~/Content/PDAStyle.css",
-            "~/Content/Common.css"))
+            "~/Content/common.css"))
 
     End Sub
 End Module

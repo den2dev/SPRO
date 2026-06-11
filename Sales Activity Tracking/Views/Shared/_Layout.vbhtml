@@ -25,20 +25,23 @@
                     </ul>
                 </div>
             </div>
-        </nav>*@
+        </nav>
+    *@
 
+    <div class="container p-3 my-0 border">
+        <h1>
+            @ViewData("Title")
+        </h1>
+    </div>
 
     <div class="container body-content">
-
-
-        @RenderBody()
-
-
+         
+        @RenderBody() 
 
         <hr />
         <footer>
-                <p>&copy; @DateTime.Now.Year - Sales Daily Report</p>
-            </footer>
+            <p>&copy; @DateTime.Now.Year - Sales Daily Report</p>
+        </footer>
     </div>
 
 
@@ -47,7 +50,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jquerymobile")
 
-    <script src="~/Scripts/Common.js"></script>
+    <script src="~/Scripts/common.js"></script>
 
     @Scripts.Render("~/bundles/bootstrap")
 

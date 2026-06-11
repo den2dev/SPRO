@@ -163,6 +163,7 @@
     <Compile Include="App_Start\FilterConfig.vb" />
     <Compile Include="App_Start\RouteConfig.vb" />
     <Compile Include="Controllers\DailyWorkController.vb" />
+    <Compile Include="Controllers\TestController.vb" />
     <Compile Include="Global.asax.vb">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -457,7 +458,7 @@
     <Content Include="Content\jquery.mobile.structure-1.4.5.min.css" />
     <Content Include="Content\jquery.mobile.theme-1.4.5.css" />
     <Content Include="Content\jquery.mobile.theme-1.4.5.min.css" />
-    <Content Include="Content\Common.css" />
+    <Content Include="Content\common.css" />
     <Content Include="Content\PDAStyle.css" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -473,16 +474,20 @@
     <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Views\DailyWork\CheckIn.vbhtml" />
     <Content Include="Views\DailyWork\CheckOut.vbhtml" />
-    <Content Include="Views\Home\Test.vbhtml" />
-    <Content Include="Views\Home\TestDesignPage.vbhtml" />
-    <Content Include="Views\DailyWork\TimeIn.vbhtml" />
     <Content Include="Views\DailyWork\Index.vbhtml" />
+    <Content Include="Views\Test\Index.vbhtml" />
+    <Content Include="Views\Test\TestLoading.vbhtml" />
+    <Content Include="Views\Test\TestMessagebox.vbhtml" />
+    <Content Include="Views\Test\TestConnection.vbhtml" />
+    <Content Include="Views\Test\TestDesignDataModel.vbhtml" />
+    <Content Include="Views\Test\TestGPS.vbhtml" />
+    <Content Include="Views\Test\TestCamera.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
-    <Content Include="Scripts\Common.js" />
+    <Content Include="Scripts\common.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
@@ -511,7 +516,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\TimeIn\" />
+    <Folder Include="Uploads\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -3,8 +3,11 @@ Imports System.Drawing
 Imports Dapper
 
 Public Class DailyWorkRepository
-    Public Function GetTodayCheckIn(SalesmanCode As String) As Boolean ' CheckInLog
+    Public Function GetTodayCheckIn(SalesmanCode As String) As DailyWorkViewModel
 
+        Dim model As New DailyWorkViewModel
+
+#Region "SQL"
         'Using cn As SqlConnection = DBConnection.GetConnection()
 
         '    Dim sql As String =
@@ -22,18 +25,44 @@ Public Class DailyWorkRepository
         '        })
 
         'End Using
+#End Region
 
-        If SalesmanCode = "" Then
-            Return False
+#Region "Mock"
+        If SalesmanCode = "" Or IsDBNull(SalesmanCode) Then
+            With model
+                .IsTimeIn = False
+                .VehicleList = GetVehicleList()
+            End With
         Else
-            Return True
-        End If
 
+            With model
+                .IsTimeIn = True
+                .SalesmanName = "นายพนักงาน ขายโซนA"
+                .SalesmanCode = SalesmanCode
+                .TimeInDate = ""
+                .TimeInTime = ""
+                .TimeOutDate = ""
+                .TimeOutTime = ""
+                .VehicleLicensePlate = ""
+                .OdometerStart = ""
+            End With
+
+            model.WorkItems = New List(Of WorkItem)
+            'get list
+
+        End If
+#End Region
+
+
+        Return model
 
     End Function
 
-    Public Function GetVehicleList() As IEnumerable(Of SelectListItem)
+    Private Function GetVehicleList() As IEnumerable(Of SelectListItem)
 
+        Dim VehicleList As IEnumerable(Of SelectListItem)
+
+#Region "SQL"
         '    Dim sql As String = "
         '    SELECT VehicleCode,
         '           VehicleLicenseNo
@@ -55,8 +84,10 @@ Public Class DailyWorkRepository
         '        End Using
 
         '    End Using
+#End Region
 
 
+#Region "Mock"
         Dim dt As New DataTable()
 
         dt.Columns.Add("VehiclePlateNo")
@@ -66,15 +97,14 @@ Public Class DailyWorkRepository
         dt.Rows.Add("สว 5678 กทม", "40158")
         dt.Rows.Add("สก 9012 กทม", "10522")
 
-
-
-        Dim VehicleList As IEnumerable(Of SelectListItem)
         VehicleList =
             dt.AsEnumerable().
             Select(Function(r) New SelectListItem With {
                 .Text = r("VehiclePlateNo").ToString(),
                 .Value = r("OdometerStart").ToString()
             })
+#End Region
+
 
         Return VehicleList
 
@@ -119,9 +149,9 @@ SELECT CAST(SCOPE_IDENTITY() AS BIGINT)
 
             Dim cmd As New SqlCommand(sql, cn)
 
-            cmd.Parameters.AddWithValue("@UserID", model.SalesmanCode)
-            cmd.Parameters.AddWithValue("@UserName", model.SalesmanName)
-            cmd.Parameters.AddWithValue("@WorkDate", model.WorkDate)
+            'cmd.Parameters.AddWithValue("@UserID", model.SalesmanCode)
+            'cmd.Parameters.AddWithValue("@UserName", model.SalesmanName)
+            'cmd.Parameters.AddWithValue("@WorkDate", model.WorkDate)
             cmd.Parameters.AddWithValue("@VehicleCode", model.VehicleLicensePlate)
             cmd.Parameters.AddWithValue("@OdometerStart", model.OdometerStart)
             cmd.Parameters.AddWithValue("@OdometerPhoto", photoPath)

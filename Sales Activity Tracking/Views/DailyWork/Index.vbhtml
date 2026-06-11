@@ -1,15 +1,17 @@
 ﻿@ModelType DailyWorkViewModel
 @Code
-    ViewData("Title") = "Index"
+    ViewData("Title") = "Daily Report"
     Layout = "~/Views/Shared/_Layout.vbhtml"
 End Code
+
+SessionSaleCode : @Session("salescode")
+<br>
+TempLogin : @Session("Temp_login")
+<br>
 
 <div class="container">
 
     <div class="panel panel-primary">
-        <h1 class="panel-title">
-            @ViewData("Title")
-        </h1>
 
         <div class="panel-body">
 
@@ -45,7 +47,6 @@ End Code
                     @Model.OdometerStart
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -54,9 +55,9 @@ End Code
 
     <div class="row g-0">
 
-        @If Not Model.IsCheckedIn Then
+        @If Not Model.IsTimeIn Then
             @<div Class="col-6 no-padding">
-                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
                     Back
                 </Button>
             </div>
@@ -67,10 +68,10 @@ End Code
                 </Button>
             </div>
 
-        ElseIf Not Model.IsCheckedOut Then
+        ElseIf Not Model.IsTimeOut Then
 
             @<div Class="col-4 no-padding">
-                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
+                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
                     Back
                 </Button>
             </div>
@@ -110,7 +111,7 @@ End Code
 
                 <br />
 
-                <i class="fa fa-spinner fa-spin fa-3x"></i>
+                <div class="loading-spinner"></div>
 
                 <br /><br />
 
@@ -165,7 +166,7 @@ End Code
 
 
 <style>
-    /* Iframe Image */ 
+    /* Iframe Image */
     .image-frame {
         width: 100%;
         height: 250px;
@@ -189,8 +190,15 @@ End Code
     #previewImage {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: cover; /* ใช้สัดส่วนเท่าเดิมแต่ตัดบางส่วนออกให้แสดงเท่ากันกรอบ    */
     }
+
+    /*#previewImage {
+        width: 100%;
+        height: 250px;
+        object-fit: contain;*/ /* ใช้สัดส่วนเท่าเดิม*/
+    /*}*/
+
 </style>
 
 <div id="timeInModal"
@@ -208,31 +216,35 @@ End Code
                 </h1>
             </div>
             <div class="text-center">
-                <label>วันที่เข้าใช้งาน :  xx/xx/xxxx xx:xx</label>
+                <input type="text" id="txtSalesmanCode" value="@Session("Temp_login")" />
+                <label>วันที่เข้าใช้งาน : @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</label>
             </div>
+
             <div class="modal-body">
+                 
+                <label>ทะเบียนรถ</label>  
+                <select id="ddlVehicle" style="width:100% !important;">
 
-                <label>ทะเบียนรถ</label>
+                    <option value="">-- กรุณาเลือกทะเบียนรถ --</option>
 
-                <select id="ddlVehicle">
+                    @If Model.VehicleList IsNot Nothing Then
 
-                    @For Each item In Model.VehicleList
+                        For Each item In Model.VehicleList
 
-                        @<option value="@item.Value">
-                            @item.Text
-                        </option>
+                            @<option value="@item.Value">
+                                @item.Text
+                            </option>
 
-                    Next
+                        Next
+
+                    End If
 
                 </select>
 
-                <br />
-
-                <label>เลขไมล์</label>
-
-                <input type="number"
-                       id="txtOdometer"
-                       class="form-control" />
+                <div>
+                    <label>เลขไมล์</label>
+                    <input type="number" id="txtOdometer" data-role="none" class="formRow--input" style="width:100%" />
+                </div>
 
                 <br />
 
@@ -251,25 +263,24 @@ End Code
                 <div id="imageContainer" class="image-frame">
 
                     <div id="imagePlaceholder" class="image-placeholder">
-                        <button type="button"
-                                id="btnOpenCamera"
-                                onclick="ShowCameraModal()">
-                            รูปไมล์รถก่อนใช้งาน
-                        </button>
+                        <a href="#" style="text-decoration:none;"
+                           id="btnOpenCamera"
+                           onclick="ShowCameraModal()">
+                            รูปไมล์รถก่อนใช้งาน &#128247;
+                        </a>
                     </div>
 
                     <img id="previewImage"
-                         style="width: 100%; display: none; margin-top: 10px; " />
+                         style="width: 100%; display: none; margin-top: 0px; " />
                 </div>
 
                 <input type="hidden" id="Latitude" />
                 <input type="hidden" id="Longitude" />
 
-
                 <div class="row">
 
                     <div Class="col-6 no-padding">
-                        <Button id="btnSaveTimeIn" Class="ui-btn btn-confirm" style="height: 60px;">
+                        <Button id="btnSaveTimeIn" Class="ui-btn btn-confirm" style="height: 60px;" disabled>
                             ยืนยัน
                         </Button>
                     </div>
@@ -297,242 +308,294 @@ End Code
      data-bs-keyboard="false">
 
     <div class="modal-dialog">
-
         <div class="modal-content">
-
             <div class="modal-body">
                 <video id="video"
                        autoplay
                        playsinline
-                       style="width:100%;border:1px solid #ccc;">
+                       style="width:100%;height:100%;border:1px solid #ccc;">
                 </video>
                 <canvas id="canvas"
                         style="display:none;">
                 </canvas>
-            </div>
 
-            <div class="modal-footer">
-
-
-                <button class="btn btn-success"
-                        id="btnTakePhoto">
-
-                    Take Photo
-
+                <button id="btnTakePhoto" Class="ui-btn btn-confirm" style="height: 60px;">
+                    ถ่ายรูป
                 </button>
-
-                <button class="btn btn-default"
+                <button Class="ui-btn btn-cancel" style="height: 60px;"
                         data-dismiss="modal" onclick="CloseCameraModal()">
-                    Cancel
+                    ยกเลิก
                 </button>
             </div>
-
         </div>
-
     </div>
-
 </div>
 
+@section Scripts
 
-<script>
+    <script>
+
+        function goBack() {
+                location.href='@Url.Action("Index", "Home")'
+        }
+
+        function goTimeIn() {
+
+            $('#gpsLoadingModal').modal('show');
+
+            navigator.geolocation.getCurrentPosition(
+
+                function (position) {
+
+                    $("#Latitude")
+                        .val(position.coords.latitude);
+
+                    $("#Longitude")
+                        .val(position.coords.longitude);
+
+                    $('#gpsLoadingModal').modal('hide');
+
+                    $('#timeInModal').modal('show');
+
+                },
+
+                function (error) {
+
+                    $('#gpsLoadingModal').modal('hide');
+
+                    $('#gpsErrorModal').modal('show');
+
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        function getLocation() {
+
+            navigator.geolocation.getCurrentPosition(
+
+                function (position) {
+
+                    $("#Latitude").val(position.coords.latitude);
+                    $("#Longitude").val(position.coords.longitude);
+
+                    $("#lblLat").text(position.coords.latitude);
+                    $("#lblLng").text(position.coords.longitude);
+
+                },
+
+                function () {
+
+                    alert("กรุณาเปิด GPS ก่อน");
+
+                }
+
+            );
+
+        }
+
+        function CloseTimeInModal() {
+            $('#timeInModal').modal('hide');
+        }
+        function ShowCameraModal() {
+            StartCamera();
+            $('#timeInModal').modal('hide');
+            $('#CameraModal').modal('show');
+        }
+        function CloseCameraModal() {
+            $('#timeInModal').modal('show');
+            $('#CameraModal').modal('hide');
+        }
 
 
-    function goTimeIn() {
+        let photoBlob = null;
 
-        $('#gpsLoadingModal').modal('show');
+        async function StartCamera() {
 
-        navigator.geolocation.getCurrentPosition(
+            const stream =
+                await navigator.mediaDevices.getUserMedia({
 
-            function (position) {
+                    video: {
+                        facingMode: "environment"
+                    }
 
-                $("#Latitude")
-                    .val(position.coords.latitude);
+                });
 
-                $("#Longitude")
-                    .val(position.coords.longitude);
+            document
+                .getElementById("video")
+                .srcObject = stream;
 
-                $('#gpsLoadingModal').modal('hide');
+        }
 
+        $("#btnTakePhoto").click(function () {
+
+            let video = document.getElementById("video");
+            let canvas = document.getElementById("canvas");
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0);
+            canvas.toBlob(function (blob) {
+
+                photoBlob = blob;
+
+                $("#previewImage")
+                    .show()
+                    .attr(
+                        "src",
+                        URL.createObjectURL(blob));
+
+                $("#imagePlaceholder").hide();
+                $('#CameraModal').modal('hide');
                 $('#timeInModal').modal('show');
 
-            },
+            }, "image/jpeg", 0.9);
 
-            function (error) {
+        });
 
-                $('#gpsLoadingModal').modal('hide');
+        $("#btnRetake").click(function () {
 
-                $('#gpsErrorModal').modal('show');
+            photoBlob = null;
 
-            },
+            $("#previewImage")
+                .hide()
+                .attr("src", "");
 
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            }
-        );
-    }
+            $("#imagePlaceholder").show();
 
-    function getLocation() {
+            ValidateTimeIn();
 
-        navigator.geolocation.getCurrentPosition(
+        });
 
-            function (position) {
+        $("#btnSaveTimeIn").click(function () {
 
-                $("#Latitude").val(position.coords.latitude);
-                $("#Longitude").val(position.coords.longitude);
+            //if ($("#btnSaveTimeIn").prop("disabled")) {
+            //    return;
+            //}
 
-                $("#lblLat").text(position.coords.latitude);
-                $("#lblLng").text(position.coords.longitude);
-
-            },
-
-            function () {
-
-                alert("กรุณาเปิด GPS ก่อน");
-
+            if (!$("#ddlVehicle").val()) {
+                ShowMessage("กรุณาเลือกทะเบียนรถ");
+                return;
             }
 
-        );
+            if (!$("#txtOdometer").val()) {
+                ShowMessage("กรุณาระบุเลขไมล์");
+                return;
+            }
 
-    }
-
-    function CloseTimeInModal() {
-        $('#timeInModal').modal('hide');
-    }
-    function ShowCameraModal() {
-        StartCamera();
-        $('#timeInModal').modal('hide');
-        $('#CameraModal').modal('show');
-    }
-    function CloseCameraModal() {
-        $('#timeInModal').modal('show');
-        $('#CameraModal').modal('hide');
-    }
+            if (!$("#previewImage").attr("src")) {
+                ShowMessage("กรุณาถ่ายรูปไมล์รถ");
+                return;
+            }
 
 
-    let photoBlob = null;
+            var formData = new FormData();
 
-    async function StartCamera() {
+            formData.append(
+                "SalesmanCode",
+                $("#txtSalesmanCode").val());
 
-        const stream =
-            await navigator.mediaDevices.getUserMedia({
+            formData.append(
+                "VehicleLicensePlate",
+                $("#ddlVehicle").val());
 
-                video: {
-                    facingMode: "environment"
+            formData.append(
+                "OdometerStart",
+                $("#txtOdometer").val());
+
+            formData.append(
+                "Latitude",
+                $("#Latitude").val());
+
+            formData.append(
+                "Longitude",
+                $("#Longitude").val());
+
+            formData.append(
+                "PhotoFile",
+                photoBlob,
+                "TimeIn.jpg");
+
+            $.ajax({
+
+                url: '@Url.Action("TimeInSave", "DailyWork")',
+
+                type: 'POST',
+
+                data: formData,
+
+                processData: false,
+
+                contentType: false,
+
+                success: function (res) {
+
+                    if (res.Success) {
+
+                      /*  alert("Time In Completed");*/
+
+                        $('#timeInModal')
+                            .modal('hide');
+
+                        location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
+
+                    }
+                    else {
+
+                        alert(res.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    alert("Save Error");
+
                 }
 
             });
 
-        document
-            .getElementById("video")
-            .srcObject = stream;
+        });
 
-    }
-
-    $("#btnTakePhoto").click(function () {
-
-        let video =
-            document.getElementById("video");
-
-        let canvas =
-            document.getElementById("canvas");
-
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        let ctx =
-            canvas.getContext("2d");
-
-        ctx.drawImage(video, 0, 0);
-
-        canvas.toBlob(function (blob) {
-
-            photoBlob = blob;
-
-            $("#previewImage")
-                .show()
-                .attr(
-                    "src",
-                    URL.createObjectURL(blob));
-
-        }, "image/jpeg", 0.9);
-
-    });
-
-    $("#btnRetake").click(function () {
-
-        photoBlob = null;
-
-        $("#previewImage")
-            .attr("src", "");
-
-    });
+    </script>
 
 
-    $("#btnSaveTimeIn").click(function () {
+    @*Validate*@
+    <script>
+        function ValidateTimeIn() {
 
-    var formData = new FormData();
+            var vehicle = $("#ddlVehicle").val();
+            var odometer = $("#txtOdometer").val();
+            var hasImage = $("#previewImage").attr("src");
 
-    formData.append(
-        "VehicleCode",
-        $("#ddlVehicle").val());
+            var isValid =
+                vehicle &&
+                odometer &&
+                odometer > 0 &&
+                hasImage;
 
-    formData.append(
-        "OdometerStart",
-        $("#txtOdometer").val());
-
-    formData.append(
-        "Latitude",
-        $("#Latitude").val());
-
-    formData.append(
-        "Longitude",
-        $("#Longitude").val());
-
-    formData.append(
-        "PhotoFile",
-        $("#filePhoto")[0].files[0]);
-
-    $.ajax({
-
-        url: '@Url.Action("TimeInSave","DailyWork")',
-
-        type: 'POST',
-
-        data: formData,
-
-        processData: false,
-
-        contentType: false,
-
-        success: function (res) {
-
-            if (res.Success) {
-
-                alert("Time In Completed");
-
-                $('#timeInModal')
-                    .modal('hide');
-
-                location.reload();
-
-            }
-            else {
-
-                alert(res.Message);
-
-            }
-
-        },
-
-        error: function () {
-
-            alert("Save Error");
+            $("#btnSaveTimeIn").prop("disabled", !isValid);
 
         }
 
-    });
+        $("#ddlVehicle").change(function () {
 
-});
-</script>
+            ValidateTimeIn();
+
+        });
+        $("#txtOdometer").on("input", function () {
+
+            ValidateTimeIn();
+
+        });
+    </script>
+
+End Section
