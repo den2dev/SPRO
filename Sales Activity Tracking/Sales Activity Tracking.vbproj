@@ -174,6 +174,7 @@
     <Compile Include="Models\ViewModels\CheckInViewModel.vb" />
     <Compile Include="Models\ViewModels\CheckOutViewModel.vb" />
     <Compile Include="Models\ViewModels\DailyWorkViewModel.vb" />
+    <Compile Include="Models\ViewModels\NewFarmerViewModel.vb" />
     <Compile Include="Models\ViewModels\QuestionnaireViewModel.vb" />
     <Compile Include="Models\ViewModels\SelectFarmerViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeInViewModel.vb" />
@@ -195,6 +196,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Controllers\HomeController.vb" />
+    <Compile Include="Repository\AddressRepository.vb" />
     <Compile Include="Repository\DailyWorkRepository.vb" />
     <Compile Include="Repository\DBConnection.vb.vb" />
     <Compile Include="Repository\FarmerRepository.vb" />
@@ -494,6 +496,7 @@
     <Content Include="Views\DailyWork\SelectFarmer.vbhtml" />
     <Content Include="Views\Shared\_Questionnaire.vbhtml" />
     <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
+    <Content Include="Views\DailyWork\NewFarmer.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

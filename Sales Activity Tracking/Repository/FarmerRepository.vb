@@ -18,8 +18,11 @@
 
     End Function
 
+    'Public Function SearchFarmer(keyword As String) As IEnumerable(Of FarmerModel)
 
-    Public Function GetFarmerByCode(farmercode As String) As Farmer
+    'End Function
+
+    Public Function GetFarmer(farmercode As String) As Farmer
 
 
 #Region "Mock"
@@ -39,7 +42,24 @@
 
     End Function
 
-    'Public Function SearchFarmer(keyword As String) As IEnumerable(Of FarmerModel)
 
-    'End Function
+
+    Public Function CreateFarmer(model As NewFarmerViewModel) As Farmer
+
+#Region "Mock"
+        Return New Farmer With {
+            .FarmerCode = "F26005",
+            .FarmerName = model.FarmerName,
+            .MobileNo = model.MobileNo,
+            .AddressNo = model.AddressNo,
+            .Moo = model.Moo,
+            .SubDistrict = model.SubDistrictCode,
+            .District = model.DistrictCode,
+            .Province = model.ProvinceCode,
+            .ContractNo = ""
+        }
+#End Region
+
+    End Function
+
 End Class

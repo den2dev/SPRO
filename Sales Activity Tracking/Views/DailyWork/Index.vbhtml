@@ -54,9 +54,10 @@ End Code
         </div>
 
     </div>
+
     <div class="row g-0">
         <div id="mainWorkItems"
-             style="height:400px;overflow-y:auto;border:1px solid #ddd;padding:10px;">
+             style="background-color: white;height:400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
 
             @If Model.WorkItems IsNot Nothing AndAlso Model.WorkItems.Any() Then
 
@@ -110,9 +111,9 @@ End Code
 
                 @<div style="height:100%;display:flex;align-items:center;justify-content:center;">
                     @If Not Model.IsTimeIn Then
-                        @<span>กรุณาลงเวลาก่อน</span>
+                        @<span class="small">กรุณาบันทึกลงเวลา Time In!</span>
                     Else
-                        @<span>ไม่พบข้อมูล</span>
+                        @<span class="small">ไม่พบข้อมูล!</span>
                     End If
                 </div>
 
@@ -228,7 +229,7 @@ End Code
             <div class="modal-footer">
 
                 <button class="btn btn-danger"
-                        data-dismiss="modal">
+                        data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
 
                     ปิด
 
@@ -318,45 +319,64 @@ End Code
             <div class="modal-body container-sm">
 
                 @If Not Model.IsTimeIn Then
-                    @<div class="row small">
-                        <label>ทะเบียนรถ</label>
-                        <select id="ddlVehicle" style="width:100% !important;">
 
-                            <option value=""> --กรุณาเลือกทะเบียนรถ - -</option>
+                    @<div class="container" style="padding-bottom:5px;padding-top:5px;">
+                        <div class="row">ทะเบียนรถ</div>
+                        <div class="row">
+                            <select id="ddlVehicle" data-role="none"
+                                    style="border: 1px solid #ddd; background-color: white; width: 100%!important;; height: 40px">
 
-                            @If Model.VehicleList IsNot Nothing Then
-                                For Each item In Model.VehicleList
-                                    @<option value="@item.Value">
-                                        @item.Text
-                                    </option>
-                                Next
-                            End If
+                                <option value=""> --กรุณาเลือกทะเบียนรถ - -</option>
 
-                        </select>
+                                @If Model.VehicleList IsNot Nothing Then
+                                    For Each item In Model.VehicleList
+                                        @<option style="width:100% !important;" value="@item.Value">
+                                            @item.Text
+                                        </option>
+                                    Next
+                                End If
+
+                            </select>
+                        </div>
                     </div>
 
-                    @<div class="row small">
-                        <label>เลขไมล์เริ่มต้น</label>
-                        <input type="number" id="txtOdometerStart" data-role="none" Class="formRow--input" style="width:100%" />
+                    @<div class="container" style="padding-bottom:5px;padding-top:5px;">
+                        <div class="row">เลขไมล์เริ่มต้น</div>
+                        <div class="row">
+                            <input type="number" data-role="none"
+                                   id="txtOdometerStart" style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
+                                   placeholder="กรอกเลขไมล์เริ่มต้น" />
+                        </div>
                     </div>
 
                 ElseIf Not Model.IsTimeOut Then
 
-                    @<div class="row small">
-                        <label>ทะเบียนรถ</label>
-                        <input type="text" value="@Model.VehicleLicensePlate" data-role="none" Class="formRow--input" style="width:100%" disabled />
+                    @<div class="container" style="padding-bottom:5px;padding-top:5px;">
+                        <div class="row">ทะเบียนรถ</div>
+                        <div class="row">
+                            <input type="text" data-role="none"
+                                   style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
+                                   value="@Model.VehicleLicensePlate" disabled />
+                        </div>
                     </div>
 
-                    @<div class="row small">
-                        <label>เลขไมล์เริ่มต้น</label>
-                        <input type="number" id="txtTimeOutOdometerStart" value=@Model.OdometerStart data-role="none" Class="formRow--input" style="width:100%" disabled />
-                    </div>
+                    @<div class="container" style="padding-bottom:5px;padding-top:5px;">
+                        <div class="row">เลขไมล์เริ่มต้น</div>
+                        <div class="row">
+                            <input type="number"  id="txtTimeOutOdometerStart" data-role="none"
+                                   style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
+                                   value="@Model.OdometerStart" disabled/>
+                        </div>
+                    </div>  
 
-                    @<div class="row small">
-                        <label>เลขไมล์หลังใช้</label>
-                        <input type="number" id="txtOdometerEnd" data-role="none" Class="formRow--input" style="width:100%" />
+                    @<div class="container" style="padding-bottom:5px;padding-top:5px;">
+                        <div class="row">เลขไมล์หลังใช้</div>
+                        <div class="row">
+                            <input type="number" data-role="none"
+                                   id="txtOdometerEnd" style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
+                                   placeholder="กรอกเลขไมล์หลังใช้" />
+                        </div>
                     </div>
-
                 End if
 
 
@@ -962,45 +982,62 @@ End Section
     bottom:0;
     left:0;
     width:100%;
+    padding-left:14px;
+    padding-right:14px;
     background:#fff;
     border-top:1px solid #ddd;
     z-index:999;">
+    <div class="container">
+        <div class="row g-0">
 
-    <div class="row g-0">
-        <div class="col">
-            <button id="btnBack"
-                    class="ui-btn btn-deny ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                Back
-            </button>
-        </div>
-        <div class="col">
-            <button id="btnDelete"
-                    class="ui-btn btn-danger ui-icon-delete ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                ลบ
-            </button>
-        </div>
+            @If Not Model.IsTimeIn Then
+                @<div Class="col no-padding">
+                    <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
+                        Back
+                    </Button>
+                </div>
 
-        <div class="col">
-            <button id="btnCapture"
-                    class="ui-btn btn-success ui-icon-camera ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                ถ่ายรูป
-            </button>
-        </div>
+                @<div Class="col no-padding">
+                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeInOut()">
+                        Time In
+                    </Button>
+                </div>
 
-        <div class="col">
-            <button id="btnSave"
-                    class="ui-btn btn-confirm ui-icon-check ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                บันทึก
-            </button>
-        </div>
+            ElseIf Not Model.IsTimeOut Then
 
-        <div class="col">
-            <button id="btnCheckout"
-                    class="ui-btn btn-deny ui-icon-location ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                Check Out
-            </button>
-        </div>
+                @<div Class="col no-padding">
+                    <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
+                        Back
+                    </Button>
+                </div>
 
+                @<div Class="col no-padding">
+                    <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="location.href='@Url.Action("SelectFarmer")'">
+                        ข้อมูลชาวไร่
+                    </Button>
+                </div>
+
+                @<div Class="col no-padding">
+                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeInOut()">
+                        Time Out
+                    </Button>
+                </div>
+
+            Else
+
+                'TimeIn&TimeOut ในวันแล้ว
+
+                @<div Class="col no-padding">
+                    <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
+                        Back
+                    </Button>
+                </div>
+
+            End If
+
+        </div>
     </div>
-
 </div>
+
+
+<!-- End Bottom Buttons -->

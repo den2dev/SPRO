@@ -1,72 +1,96 @@
 ﻿@ModelType SelectFarmerViewModel
 @Code
-    ViewData("Title") = "Daily Report"
+    ViewData("Title") = "ระบุชาวไร่"
     Layout = "~/Views/Shared/_Layout.vbhtml"
 End Code
 
-<div class="page-header">
+@*<div class="page-header">
 
-    <div class="row align-items-center">
+        <div class="row align-items-center">
+            <div class="col-8 text-center">
+                <h4 style="margin:0;">
+                    ระบุชาวไร่
+                </h4>
+            </div>
 
-        <div class="col-2 text-start">
-            <a href="javascript:history.back();"
-               class="ui-btn ui-btn-inline ui-icon-back ui-btn-icon-notext">
-                Back
-            </a>
+            <div class="col-2 text-end">
+                <span style="font-size:24px;">
+                    🔔
+                </span>
+            </div>
+
         </div>
 
-        <div class="col-8 text-center">
-            <h4 style="margin:0;">
-                ระบุชาวไร่
-            </h4>
-        </div>
+    </div>*@
 
-        <div class="col-2 text-end">
-            <span style="font-size:24px;">
-                🔔
-            </span>
+
+<span style="
+    position:fixed;
+    top:12px;
+    right:10px;
+    font-size:24px;
+    z-index:10;
+    cursor:pointer;">
+    🔔
+</span>
+ 
+
+<div class="container" style="padding-bottom:5px;padding-top:5px;">
+    <div class="row">
+        <input type="text" data-role="none"
+               id="txtSearch" style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
+               placeholder="ค้นหารหัส, ชื่อ หรือเบอร์โทร" />
+    </div>
+</div>
+
+
+<style>
+    #mainItems {
+        height: calc(100vh - 220px);
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+</style>
+
+<div class="row g-0">
+
+    <div id="mainItems">
+
+        <div id="farmerList">
+
+            @For Each item In Model.FarmerList
+
+                @<div class="card farmer-item"
+                      onclick="location.href='@Url.Action("VisitFarmer","DailyWork")?farmerCode=@item.FarmerCode'"
+                      data-code="@item.FarmerCode"
+                      data-name="@item.FarmerName"
+                      data-mobile="@item.MobileNo"
+                      style="margin:8px;padding:12px;border:1px solid #ddd;border-radius:10px;cursor:pointer;">
+
+                    <div>
+                        <strong>👨‍🌾 @item.FarmerName</strong>
+                    </div>
+
+                    <div>
+                        รหัส : @item.FarmerCode
+                    </div>
+
+                    <div>
+                        โทร : @item.MobileNo
+                    </div>
+
+                </div>
+
+            Next
+
         </div>
 
     </div>
-
 </div>
 
-<div style="padding:10px;">
 
-    <input type="text"
-           id="txtSearch"
-           placeholder="ค้นหารหัส, ชื่อ หรือเบอร์โทร" />
-
-</div>
-
-<div id="farmerList">
-
-    @For Each item In Model.FarmerList
-
-        @<div class="card farmer-item"
-              onclick="location.href='@Url.Action("VisitFarmer","DailyWork")?farmerCode=@item.FarmerCode'"
-              data-code="@item.FarmerCode"
-              data-name="@item.FarmerName"
-              data-mobile="@item.MobileNo"
-              style="margin:8px;padding:12px;border:1px solid #ddd;border-radius:10px;cursor:pointer;">
-
-            <div>
-                <strong>@item.FarmerName</strong>
-            </div>
-
-            <div>
-                รหัส : @item.FarmerCode
-            </div>
-
-            <div>
-                โทร : @item.MobileNo
-            </div>
-
-        </div>
-
-    Next
-
-</div>
 
 @section Scripts
 
@@ -106,16 +130,29 @@ End Section
     bottom:0;
     left:0;
     width:100%;
+    padding-left:14px;
+    padding-right:14px;
     background:#fff;
     border-top:1px solid #ddd;
     z-index:999;">
+    <div class="container">
+        <div class="row g-0">
 
-    <div class="row g-0">
-        <div class="col">
-            <button id="btnBack"
-                    class="ui-btn btn-deny ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                Back
-            </button>
+            <div Class="col no-padding">
+                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="history.back();">
+                    Back
+                </Button>
+            </div>
+
+            <div Class="col no-padding">
+                <Button Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="location.href='@Url.Action("NewFarmer")'">
+                    Add New
+                </Button>
+            </div>
+
         </div>
     </div>
 </div>
+
+
+<!-- End Bottom Buttons -->

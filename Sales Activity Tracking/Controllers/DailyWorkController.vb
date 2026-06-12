@@ -226,7 +226,10 @@ Public Class DailyWorkController
 
 #End Region
 
+
+
 #Region "Farmer & visit"
+
     Public Function SelectFarmer() As ActionResult
 
         Dim model As New SelectFarmerViewModel
@@ -237,13 +240,18 @@ Public Class DailyWorkController
 
     End Function
 
-    Public Function VisitFarmer(farmerCode As String) As ActionResult
+    Public Function VisitFarmer(farmerCode As String, Optional _farmer As Farmer = Nothing) As ActionResult
         Dim _repoFarmer As New FarmerRepository
         Dim _repoQuesn As New QuestionnaireRepository
 
         Dim model As New VisitFarmerViewModel()
 
-        model.Farmer = _repoFarmer.GetFarmerByCode(farmerCode)
+        If _farmer Is Nothing Then
+            model.Farmer = _repoFarmer.GetFarmer(farmerCode)
+        Else
+            model.Farmer = _farmer
+        End If
+
 
         model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
 
@@ -253,6 +261,59 @@ Public Class DailyWorkController
 
 #End Region
 
+
+
+#Region "Add New Farmer"
+    Public Function NewFarmer() As ActionResult
+        Dim model As New NewFarmerViewModel
+
+        With model
+            .ProvinceList = New AddressRepository().GetProvinceList()
+            .DistrictList = New List(Of SelectListItem)
+            .SubDistrictList = New List(Of SelectListItem)
+        End With
+
+        Return View(model)
+    End Function
+
+    <HttpPost>
+    Public Function NewFarmer(model As NewFarmerViewModel) As ActionResult
+
+        Try
+
+            Dim repo As New FarmerRepository
+
+            Dim _farmer = repo.CreateFarmer(model)
+
+            Return RedirectToAction(
+            "VisitFarmer",
+            New With {
+                .farmerCode = _farmer.FarmerCode,
+                ._farmer = _farmer
+            })
+
+        Catch ex As Exception
+
+            'ModelState.AddModelError("", ex.Message)
+            ViewBag.ErrorMessage = ex.Message
+
+            model.ProvinceList = New AddressRepository().GetProvinceList()
+
+            Return View(model)
+
+        End Try
+
+    End Function
+    Public Function GetDistrictList(provinceCode As String) As JsonResult
+        Dim list = New AddressRepository().GetDistrictList(provinceCode)
+        Return Json(list, JsonRequestBehavior.AllowGet)
+    End Function
+
+    Public Function GetSubDistrictList(districtCode As String) As JsonResult
+        Dim list = New AddressRepository().GetSubDistrictList(districtCode)
+        Return Json(list, JsonRequestBehavior.AllowGet)
+    End Function
+#End Region
 
 
 End Class

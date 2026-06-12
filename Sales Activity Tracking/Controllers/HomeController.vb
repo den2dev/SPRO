@@ -6,7 +6,11 @@ Public Class HomeController
     Private ReadOnly repo As New DailyWorkRepository
 
     Function Index() As ActionResult
+
+        'Dim usr = User.Identity.Name 'เรียกใช้ cookie
+
         Session("salescode") = "99999"
+
         Return View()
     End Function
     Function Logout() As ActionResult
