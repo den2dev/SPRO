@@ -10,8 +10,8 @@ Public Class DailyWorkViewModel
     Public Property VehicleList As IEnumerable(Of SelectListItem) 'get value เมื่อยังมี่มีการ login
 
 
-    Public Property TimeInDocumentNumber As String 'เลขที่รันนิ่ง TimeIn ของวันนั้นๆ 
-    Public Property VehicleLicensePlate As String 'เลขทะเบียน 
+    Public Property DocNumber As String 'เลขที่รันนิ่ง TimeIn ของวันนั้นๆ 
+    Public Property VehicleNo As String 'เลขทะเบียน 
 
     Public Property OdometerStart As String 'เลขไมล์เริ่มต้น 
     Public Property TimeInDate As String 'วันที่ TimeIn 

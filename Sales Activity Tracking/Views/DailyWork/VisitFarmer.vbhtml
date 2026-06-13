@@ -5,48 +5,129 @@
     Layout = "~/Views/Shared/_Layout.vbhtml"
 End Code
 
+<style>
+    #mainItems {
+        height: calc(100vh - 170px);
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+    .custom-input {
+        border: 1px solid #ddd;
+        background-color: white;
+        width: 100%;
+        height: 40px;
+    }
+</style>
 
-<div style="padding-bottom:90px;">
+<div class="row g-0">
 
-    <!-- Farmer Info -->
-    <div class="card"
-         style="margin:10px;padding:12px;border:1px solid #ddd;border-radius:10px;">
+    <div id="mainItems">
 
-        <div>
-            <strong>@Model.Farmer.FarmerCode - @Model.Farmer.FarmerName</strong>
+
+        <!-- Farmer Info -->
+        <div class="card"
+             style="margin:10px;padding:12px;border:1px solid #ddd;border-radius:10px;">
+
+            <div>
+                <strong>@Model.Farmer.FarmerCode - @Model.Farmer.FarmerName</strong>
+            </div>
+
+            <div>
+                เบอร์โทร. @Model.Farmer.MobileNo
+            </div>
+
+            <hr />
+
+
+            <div id="farmerHeader"
+                 style="cursor:pointer;">
+
+                <span id="collapsefarmerdetail" style="font-weight:bold;color:#0d6efd;"> ▼ รายละเอียดชาวไร่</span>
+
+            </div>
+
+            <div id="farmerDetail"
+                 style="display:none;">
+
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">บ้านเลขที่</div>
+                    <div class="row">
+                        <input type="text" data-role="none" class="custom-input" disabled />
+                        @Model.Farmer.AddressNo
+                    </div>
+                </div>
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">หมู่ที่</div>
+                    <div class="row">
+                        <input type="text" data-role="none" class="custom-input" disabled />
+                        @Model.Farmer.Moo
+                    </div>
+                </div>
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">ชื่อหมู่บ้าน</div>
+                    <div class="row">
+                        <input type="text" data-role="none" class="custom-input" disabled />
+                        @Model.Farmer.VillageName
+                    </div>
+                </div>
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">ตำบล</div>
+                    <div class="row">
+                        <input type="text" data-role="none" class="custom-input" disabled />
+                        @Model.Farmer.SubDistrict
+                    </div>
+                </div>
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">อำเภอ</div>
+                    <div class="row">
+                        <input type="text" data-role="none" class="custom-input" disabled />
+                        @Model.Farmer.District
+                    </div>
+                </div>
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">จังหวัด</div>
+                    <div class="row">
+                        <input type="text" data-role="none" class="custom-input" disabled />
+                        @Model.Farmer.Province
+                    </div>
+                </div>
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">เลขที่สัญญาเดิม</div>
+                    <div class="row">
+                        <input type="text" data-role="none" class="custom-input" disabled />
+                        @Model.Farmer.ContractNo
+                    </div>
+                </div>
+
+
+
+
+
+
+
+            </div>
+
         </div>
 
-        <div>
-            เบอร์โทร. @Model.Farmer.MobileNo
-        </div>
-
-        <hr />
+        <!-- Questionnaire -->
+        @*@Html.Partial("_Questionnaire", Model.Questionnaire)*@
 
 
-        <div id="farmerHeader"
-             style="cursor:pointer;">
-
-            <span id="collapsefarmerdetail" style="font-weight:bold;color:#0d6efd;"> ▼ รายละเอียดชาวไร่</span>
-
-        </div>
-
-        <div id="farmerDetail"
-             style="display:none;">
-
-            <div>บ้านเลขที่ : @Model.Farmer.AddressNo</div>
-            <div>หมู่ที่ : @Model.Farmer.Moo</div>
-            <div>ตำบล : @Model.Farmer.SubDistrict</div>
-            <div>อำเภอ : @Model.Farmer.District</div>
-            <div>จังหวัด : @Model.Farmer.Province</div>
-            <div>เลขที่สัญญาเดิม : @Model.Farmer.ContractNo</div>
-
+        <div class="container"> 
+            <div class="row g-0">
+                <div class="col">
+                    <button id="btnQuesn"
+                            class="ui-btn btn-cancel ui-btn-icon-top" style="height: 60px; padding-top: 10px !important;" onclick="history.back();">
+                        <span>📋</span>
+                        <br />แบบสอบถาม
+                    </button>
+                </div>  
+            </div> 
         </div>
 
     </div>
-
-    <!-- Questionnaire -->
-    @Html.Partial("_Questionnaire", Model.Questionnaire)
-
 
 </div>
 
@@ -59,8 +140,8 @@ End Code
     bottom:0;
     left:0;
     width:100%;
-    padding-left:14px;
-    padding-right:14px;
+    padding-left:5px;
+    padding-right:5px;
     background:#fff;
     border-top:1px solid #ddd;
     z-index:999;">

@@ -33,15 +33,12 @@ Public Class DailyWorkController
         'model As TimeInViewModel ***MVC จะ Bind ให้เอง ถ้าชื่อใน FormData ตรงกับ Property
         Try
 
-            'Dim lat = Request.Form("Latitude")
-            'Dim lng = Request.Form("Longitude")
 
-
-
-            Dim vehicleLicensePlate = model.VehicleLicensePlate
+            Dim SalesmanCode = model.SalesmanCode
+            Dim VehicleType = model.VehicleType
+            Dim VehicleNo = model.VehicleNo
             Dim odometerStart = model.OdometerStart
-            Dim lat = model.Latitude
-            Dim lng = model.Longitude
+            Dim GeoLocation = model.GeoLocation
 
             Dim file = Request.Files("PhotoFile")
 
@@ -108,10 +105,10 @@ Public Class DailyWorkController
 
             Else
 
-                Dim TimeInDocumentNumber = model.TimeInDocumentNumber
+                Dim DocNumber = model.DocNumber
                 Dim odometerEnd = model.OdometerEnd
-                Dim lat = model.Latitude
-                Dim lng = model.Longitude
+                Dim GeoLocation = model.GeoLocation
+
 
                 Dim file = Request.Files("PhotoFile")
 

@@ -6,6 +6,7 @@
 
     Public Property AddressNo As String
     Public Property Moo As String
+    Public Property VillageName As String
     Public Property SubDistrict As String
     Public Property District As String
     Public Property Province As String

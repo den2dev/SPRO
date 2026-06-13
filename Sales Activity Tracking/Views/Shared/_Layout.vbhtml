@@ -38,10 +38,6 @@
          
         @RenderBody() 
 
-        <hr />
-        <footer class="small">
-            <p>&copy; @DateTime.Now.Year - CompanyName</p>
-        </footer>
     </div>
 
 

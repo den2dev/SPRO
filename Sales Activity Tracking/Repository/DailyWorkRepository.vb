@@ -46,8 +46,8 @@ Public Class DailyWorkRepository
                 .TimeInDate = "11/06/2026"
                 .TimeInTime = "09:05"
 
-                .TimeInDocumentNumber = "26DW1904250001"
-                .VehicleLicensePlate = "9กส 8543 กทม"
+                .DocNumber = "26DW1904250001"
+                .VehicleNo = "9กส 8543 กทม"
                 .OdometerStart = "85043"
 
                 If SalesmanCode = "TimeOut" Then
@@ -159,7 +159,7 @@ SELECT CAST(SCOPE_IDENTITY() AS BIGINT)
             'cmd.Parameters.AddWithValue("@UserID", model.SalesmanCode)
             'cmd.Parameters.AddWithValue("@UserName", model.SalesmanName)
             'cmd.Parameters.AddWithValue("@WorkDate", model.WorkDate)
-            cmd.Parameters.AddWithValue("@VehicleCode", model.VehicleLicensePlate)
+            cmd.Parameters.AddWithValue("@VehicleCode", model.VehicleNo)
             cmd.Parameters.AddWithValue("@OdometerStart", model.OdometerStart)
             cmd.Parameters.AddWithValue("@OdometerPhoto", photoPath)
 
@@ -208,7 +208,7 @@ SELECT CAST(SCOPE_IDENTITY() AS BIGINT)
             'cmd.Parameters.AddWithValue("@UserID", model.SalesmanCode)
             'cmd.Parameters.AddWithValue("@UserName", model.SalesmanName)
             'cmd.Parameters.AddWithValue("@WorkDate", model.WorkDate)
-            cmd.Parameters.AddWithValue("@VehicleCode", model.VehicleLicensePlate)
+            cmd.Parameters.AddWithValue("@VehicleCode", model.VehicleNo)
             cmd.Parameters.AddWithValue("@OdometerStart", model.OdometerStart)
             cmd.Parameters.AddWithValue("@OdometerPhoto", photoPath)
 

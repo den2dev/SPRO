@@ -4,9 +4,10 @@
     Layout = "~/Views/Shared/_Layout.vbhtml"
 End Code
 
-<div class="container">
+<div>
+    @*class="container888"*@
 
-    <div class="panel panel-primary">
+    <div class="panel panel-primary" style="padding-bottom:5px">
 
         <div class="panel-body">
 
@@ -15,8 +16,11 @@ End Code
                     <input type="text" id="txtSalesmanCode" value="@Session("userlogin")" />
                 </div>
                 <div class="col-6 text-start">
-                    <input type="text" id="txtTimeInDocumentNumber" value=@Model.TimeInDocumentNumber />
+                    <input type="text" id="txtDocumentNumber" value=@Model.DocNumber />
                 </div>
+
+                <input type="text" id="txtgeolocation" />
+
             </div>
 
             <div class="row">
@@ -40,7 +44,7 @@ End Code
                     ทะเบียนรถ :
                 </div>
                 <div class="col-8">
-                    @Model.VehicleLicensePlate
+                    @Model.VehicleNo
                 </div>
             </div>
             <div class="row">
@@ -55,9 +59,18 @@ End Code
 
     </div>
 
+    <style>
+        #mainItems {
+            height: calc(100vh - 248px);
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+
     <div class="row g-0">
-        <div id="mainWorkItems"
-             style="background-color: white;height:400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+        <div id="mainItems">
 
             @If Model.WorkItems IsNot Nothing AndAlso Model.WorkItems.Any() Then
 
@@ -122,7 +135,7 @@ End Code
         </div>
     </div>
 
-    <div class="row g-0">
+    <div class="row g-0" hidden>
 
         @If Not Model.IsTimeIn Then
             @<div Class="col-6 no-padding">
@@ -313,6 +326,7 @@ End Code
                     @<div>วันที่ออกงาน : @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
                 End if
 
+
             </div>
 
 
@@ -321,10 +335,33 @@ End Code
                 @If Not Model.IsTimeIn Then
 
                     @<div class="container" style="padding-bottom:5px;padding-top:5px;">
+                        <div class="row">ประเภทรถ</div>
+                        <div class="row">
+                            <select id="ddlVehicletype" data-role="none"
+                                    style="border: 1px solid #ddd; background-color: white; width: 100%!important; height: 40px">
+
+                                <option value=""> --กรุณาเลือกประเภทรถ - -</option>
+                                <option style="width:100% !important;" value="0">
+                                    รถบริษัท
+                                </option>
+                                <option style="width:100% !important;" value="1">
+                                    รถตนเอง
+                                </option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    @<div id="vehicleSection" class="container" style="padding-bottom: 5px; padding-top: 5px; display: none;">
                         <div class="row">ทะเบียนรถ</div>
                         <div class="row">
+
+                            <input type="text" data-role="none"
+                                   id="txtVehicleno" style="display: none; border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
+                                   placeholder="กรอกทะเบียนรถ" />
+
                             <select id="ddlVehicle" data-role="none"
-                                    style="border: 1px solid #ddd; background-color: white; width: 100%!important;; height: 40px">
+                                    style="display: none; border: 1px solid #ddd; background-color: white; width: 100% !important; height: 40px">
 
                                 <option value=""> --กรุณาเลือกทะเบียนรถ - -</option>
 
@@ -356,18 +393,18 @@ End Code
                         <div class="row">
                             <input type="text" data-role="none"
                                    style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
-                                   value="@Model.VehicleLicensePlate" disabled />
+                                   value="@Model.VehicleNo" disabled />
                         </div>
                     </div>
 
                     @<div class="container" style="padding-bottom:5px;padding-top:5px;">
                         <div class="row">เลขไมล์เริ่มต้น</div>
                         <div class="row">
-                            <input type="number"  id="txtTimeOutOdometerStart" data-role="none"
+                            <input type="number" id="txtTimeOutOdometerStart" data-role="none"
                                    style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
-                                   value="@Model.OdometerStart" disabled/>
+                                   value="@Model.OdometerStart" disabled />
                         </div>
-                    </div>  
+                    </div>
 
                     @<div class="container" style="padding-bottom:5px;padding-top:5px;">
                         <div class="row">เลขไมล์หลังใช้</div>
@@ -414,8 +451,7 @@ End Code
                          style="width: 100%; display: none; margin-top: 0px; " />
                 </div>
 
-                <input type="hidden" id="Latitude" />
-                <input type="hidden" id="Longitude" />
+
 
                 <div class="row">
 
@@ -551,6 +587,32 @@ End Code
 
     <script>
 
+        $(document).ready(function () {
+
+            $("#vehicleSection").hide();
+            $("#txtVehicleno").hide();
+            $("#ddlVehicle").hide();
+
+            $("#ddlVehicletype").change(function () {
+
+                var vehicleType = $(this).val();
+
+                $("#vehicleSection").hide();
+                $("#txtVehicleno").hide();
+                $("#ddlVehicle").hide();
+
+                if (vehicleType === "0") {
+                    $("#vehicleSection").show();
+                    $("#ddlVehicle").show();
+                }
+                else if (vehicleType === "1") {
+                    $("#vehicleSection").show();
+                    $("#txtVehicleno").show();
+                }
+            });
+
+        });
+
         function goBack() {
                 location.href='@Url.Action("Logout", "Home")'
         }
@@ -561,8 +623,7 @@ End Code
             photoBlob = null;
             $("#previewImage").hide().attr("src", "");
             $("#imagePlaceholder").show();
-            $("#Latitude").val("");
-            $("#Longitude").val("");
+            $("#txtgeolocation").val(""); 
             $("#txtOdometerStart,#txtOdometerEnd").val("");
             /*end clear ค่าเดิม*/
 
@@ -571,12 +632,21 @@ End Code
             navigator.geolocation.getCurrentPosition(
 
                 function (position) {
+                     
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
 
-                    $("#Latitude")
-                        .val(position.coords.latitude);
+                    var latDirection = lat >= 0 ? "N" : "S";
+                    var lngDirection = lng >= 0 ? "E" : "W";
 
-                    $("#Longitude")
-                        .val(position.coords.longitude);
+                    var gpsText =
+                        latDirection + Math.abs(lat) +
+                        " " +
+                        lngDirection + Math.abs(lng);
+
+                    $("#txtgeolocation")
+                        .val(gpsText);
+
 
                     $('#gpsLoadingModal').modal('hide');
 
@@ -600,7 +670,7 @@ End Code
             );
         }
 
-        function getLocation() {
+        function getLocation_Test() {
 
             navigator.geolocation.getCurrentPosition(
 
@@ -719,48 +789,57 @@ End Code
             //    return;
             //}
 
-            if (!$("#ddlVehicle").val()) {
-                ShowMessage("กรุณาเลือกทะเบียนรถ");
+            if (!$("#ddlVehicletype").val()) {
+                ShowMessage("กรุณาเลือกประเภทรถ!");
                 return;
             }
 
+            var vehicleType = $("#ddlVehicletype").val();
+
+            if (vehicleType === "0") {
+
+                // รถบริษัท
+                if (!$("#ddlVehicle").val()) {
+                    ShowMessage("กรุณาเลือกทะเบียนรถบริษัท!");
+                    return;
+                }
+
+            }
+            else if (vehicleType === "1") {
+
+                // รถตนเอง
+                if (!$("#txtVehicleno").val().trim()) {
+                    ShowMessage("กรุณากรอกทะเบียนรถ!");
+                    return;
+                }
+
+            }
+
+
             if (!$("#txtOdometerStart").val()) {
-                ShowMessage("กรุณาระบุเลขไมล์");
+                ShowMessage("กรุณาระบุเลขไมล์!");
                 return;
             }
 
             if (!$("#previewImage").attr("src")) {
-                ShowMessage("กรุณาถ่ายรูปไมล์รถ");
+                ShowMessage("กรุณาถ่ายรูปไมล์รถ!");
                 return;
             }
 
 
             var formData = new FormData();
 
-            formData.append(
-                "SalesmanCode",
-                $("#txtSalesmanCode").val());
+            formData.append("SalesmanCode",$("#txtSalesmanCode").val());
 
-            formData.append(
-                "VehicleLicensePlate",
-                $("#ddlVehicle").val());
+            formData.append("VehicleType",vehicleType);
 
-            formData.append(
-                "OdometerStart",
-                $("#txtOdometerStart").val());
+            formData.append("VehicleNo", $("#ddlVehicle").val());
 
-            formData.append(
-                "Latitude",
-                $("#Latitude").val());
+            formData.append("OdometerStart",$("#txtOdometerStart").val());
 
-            formData.append(
-                "Longitude",
-                $("#Longitude").val());
+            formData.append( "GeoLocation", $("#txtgeolocation").val());
 
-            formData.append(
-                "PhotoFile",
-                photoBlob,
-                "TimeIn.jpg");
+            formData.append( "PhotoFile", photoBlob,"TimeIn.jpg");
 
             $.ajax({
 
@@ -819,19 +898,23 @@ End Code
 
 
             if (!odometerEnd) {
-                alert('กรุณาระบุเลขไมล์หลังใช้');
+               /* alert('กรุณาระบุเลขไมล์หลังใช้');*/
                 ShowMessage("กรุณาระบุเลขไมล์หลังใช้");
                 return;
             }
 
+            console.log(odometerStart);
+            console.log(odometerEnd);
+
+
             if (odometerEnd < odometerStart) {
-                alert('เลขไมล์หลังใช้ต้องมากกว่าหรือเท่ากับเลขไมล์เริ่มต้น');
+              /*  alert('เลขไมล์หลังใช้ต้องมากกว่าหรือเท่ากับเลขไมล์เริ่มต้น');*/
                 ShowMessage("เลขไมล์หลังใช้ต้องมากกว่าหรือเท่ากับเลขไมล์เริ่มต้น");
                 return;
             }
 
             if (!$("#previewImage").attr("src")) {
-                alert('กรุณาถ่ายรูปไมล์รถ');
+              /*  alert('กรุณาถ่ายรูปไมล์รถ');*/
                 ShowMessage("กรุณาถ่ายรูปไมล์รถ");
                 return;
             }
@@ -845,8 +928,8 @@ End Code
                $("#txtSalesmanCode").val());
 
            formData.append(
-               "TimeInDocumentNumber",
-               $("#txtTimeInDocumentNumber").val());
+               "DocNumber",
+               $("#txtDocumentNumber").val());
 
 
             formData.append(
@@ -855,13 +938,8 @@ End Code
            formData.append(
                "OdometerEnd", odometerEnd);
 
-            formData.append(
-                "Latitude",
-               $("#Latitude").val());
-
-           formData.append(
-               "Longitude",
-               $("#Longitude").val());
+           formData.append("GeoLocation", $("#txtgeolocation").val());
+ 
 
            formData.append(
                "PhotoFile",
@@ -920,30 +998,63 @@ End Code
     <script>
         function ValidateTimeIn() {
 
-            var vehicle = $("#ddlVehicle").val();
+            var vehicleType = $("#ddlVehicletype").val();
             var odometer = $("#txtOdometerStart").val();
             var hasImage = $("#previewImage").attr("src");
 
+            var isVehicleValid = false;
+
+            if (vehicleType === "0") {
+                // รถบริษัท
+                isVehicleValid = $("#ddlVehicle").val();
+            }
+            else if (vehicleType === "1") {
+                // รถตนเอง
+                isVehicleValid = $.trim($("#txtVehicleno").val()) !== "";
+            }
+
             var isValid =
-                vehicle &&
+                vehicleType &&
+                isVehicleValid &&
                 odometer &&
-                odometer > 0 &&
+                Number(odometer) > 0 &&
                 hasImage;
 
             $("#btnSaveTimeIn").prop("disabled", !isValid);
-
         }
 
-        $("#ddlVehicle").change(function () {
+        //function ValidateTimeIn() {
 
-            ValidateTimeIn();
+        //    var vehicle = $("#ddlVehicle").val();
+        //    var odometer = $("#txtOdometerStart").val();
+        //    var hasImage = $("#previewImage").attr("src");
 
-        });
-        $("#txtOdometerStart").on("input", function () {
+        //    var isValid =
+        //        vehicle &&
+        //        odometer &&
+        //        odometer > 0 &&
+        //        hasImage;
 
-            ValidateTimeIn();
+        //    $("#btnSaveTimeIn").prop("disabled", !isValid);
 
-        });
+        //}
+
+        //$("#ddlVehicle").change(function () {
+
+        //    ValidateTimeIn();
+
+        //});
+        //$("#txtOdometerStart").on("input", function () {
+
+        //    ValidateTimeIn();
+
+        //});
+
+        $("#ddlVehicletype").change(ValidateTimeIn);
+        $("#ddlVehicle").change(ValidateTimeIn);
+        $("#txtVehicleno").on("keyup change", ValidateTimeIn);
+        $("#txtOdometerStart").on("keyup change", ValidateTimeIn);
+
     </script>
 
     @*Validate TimeOut*@
@@ -982,8 +1093,8 @@ End Section
     bottom:0;
     left:0;
     width:100%;
-    padding-left:14px;
-    padding-right:14px;
+    padding-left:5px;
+    padding-right:5px;
     background:#fff;
     border-top:1px solid #ddd;
     z-index:999;">
@@ -993,7 +1104,7 @@ End Section
             @If Not Model.IsTimeIn Then
                 @<div Class="col no-padding">
                     <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                        Back
+                        Home
                     </Button>
                 </div>
 
@@ -1007,7 +1118,7 @@ End Section
 
                 @<div Class="col no-padding">
                     <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                        Back
+                        Home
                     </Button>
                 </div>
 
@@ -1029,7 +1140,7 @@ End Section
 
                 @<div Class="col no-padding">
                     <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                        Back
+                        Home
                     </Button>
                 </div>
 

@@ -4,25 +4,6 @@
     Layout = "~/Views/Shared/_Layout.vbhtml"
 End Code
 
-@*<div class="page-header">
-
-        <div class="row align-items-center">
-            <div class="col-8 text-center">
-                <h4 style="margin:0;">
-                    ระบุชาวไร่
-                </h4>
-            </div>
-
-            <div class="col-2 text-end">
-                <span style="font-size:24px;">
-                    🔔
-                </span>
-            </div>
-
-        </div>
-
-    </div>*@
-
 
 <span style="
     position:fixed;
@@ -35,7 +16,7 @@ End Code
 </span>
  
 
-<div class="container" style="padding-bottom:5px;padding-top:5px;">
+<div class="container" style="padding-bottom:5px;padding-top:0px;">
     <div class="row">
         <input type="text" data-role="none"
                id="txtSearch" style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
@@ -46,7 +27,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 220px);
+        height: calc(100vh - 215px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -130,8 +111,8 @@ End Section
     bottom:0;
     left:0;
     width:100%;
-    padding-left:14px;
-    padding-right:14px;
+    padding-left:5px;
+    padding-right:5px;
     background:#fff;
     border-top:1px solid #ddd;
     z-index:999;">
@@ -146,7 +127,7 @@ End Section
 
             <div Class="col no-padding">
                 <Button Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="location.href='@Url.Action("NewFarmer")'">
-                    Add New
+                    ชาวไร่รายใหม่
                 </Button>
             </div>
 

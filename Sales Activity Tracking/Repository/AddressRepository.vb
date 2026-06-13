@@ -32,10 +32,7 @@ Public Class AddressRepository
 
 
 #Region "Mock"
-
-
-        ProvinceList =
-                        New List(Of SelectListItem) From {
+        ProvinceList = New List(Of SelectListItem) From {
                             New SelectListItem With {.Value = "10", .Text = "กรุงเทพมหานคร"},
                             New SelectListItem With {.Value = "20", .Text = "ชลบุรี"},
                             New SelectListItem With {.Value = "30", .Text = "นครราชสีมา"},
@@ -58,7 +55,6 @@ Public Class AddressRepository
                             New SelectListItem With {.Value = "30", .Text = "นครราชสีมา"},
                             New SelectListItem With {.Value = "38", .Text = "บึงกาฬ"}
                         }
-
 #End Region
 
 
