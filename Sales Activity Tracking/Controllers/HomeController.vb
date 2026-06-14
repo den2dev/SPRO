@@ -9,16 +9,35 @@ Public Class HomeController
 
         'Dim usr = User.Identity.Name 'เรียกใช้ cookie
 
-        Session("salescode") = "99999"
+        'Session("salescode") = "99999"
 
         Return View()
     End Function
+
+    Function Landing(FSMCODE As String) As ActionResult
+
+        'Response.Redirect("/DailyWork/Landing?FSMCODE=" & SalesmanCode)
+        '<a href = "/DailyWork/Landing?FSMCODE=0101" >
+        '    เปิด Daily Work
+        '</a>
+
+        ' Dim fsmCode As String = Request.QueryString("FSMCODE")
+
+        If Not String.IsNullOrEmpty(FSMCODE) Then
+            Session("FSMCODE") = FSMCODE
+            Return RedirectToAction("Index", "DailyWork") 'Redirect("/DailyWork/Index") '
+        Else
+            Return View() 'แจ้งเตือนไม่พบ FSMCODE
+        End If
+
+    End Function
+
     Function Logout() As ActionResult
 
-        Session("userlogin") = Nothing
+        Session("FSMCODE") = Nothing
 
         ' หรือ
-        Session.Remove("userlogin")
+        Session.Remove("FSMCODE")
 
         Return RedirectToAction("Index", "Home")
 

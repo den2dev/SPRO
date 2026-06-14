@@ -201,6 +201,7 @@ End Using
 
                 $("#ddlDistrict").change(function () {
 
+                    var provinceCode = $("#ddlProvince").val();
                     var districtCode = $(this).val();
 
                     // ล้างตำบลเดิม
@@ -215,6 +216,7 @@ End Using
                     $.getJSON(
                         '/DailyWork/GetSubDistrictList',
                         {
+                            provinceCode: provinceCode,
                             districtCode: districtCode
                         },
                         function (data) {

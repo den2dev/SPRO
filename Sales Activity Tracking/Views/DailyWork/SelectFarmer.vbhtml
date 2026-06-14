@@ -44,7 +44,7 @@ End Code
             @For Each item In Model.FarmerList
 
                 @<div class="card farmer-item"
-                      onclick="location.href='@Url.Action("VisitFarmer","DailyWork")?farmerCode=@item.FarmerCode'"
+                      onclick="location.href='@Url.Action("VisitFarmer","DailyWork")?isnewfarmer=@item.IsNewFarmer.ToString&farmerCode=@item.FarmerCode'"
                       data-code="@item.FarmerCode"
                       data-name="@item.FarmerName"
                       data-mobile="@item.MobileNo"
@@ -55,7 +55,12 @@ End Code
                     </div>
 
                     <div>
-                        รหัส : @item.FarmerCode
+                        รหัส : 
+                        @If item.IsNewFarmer Then
+                            @<span>ชาวไร่รายใหม่</span>
+                        Else
+                            @<span>@item.FarmerCode</span>
+                        End If
                     </div>
 
                     <div>

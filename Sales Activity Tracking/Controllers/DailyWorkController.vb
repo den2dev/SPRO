@@ -9,20 +9,18 @@ Public Class DailyWorkController
 
     Private ReadOnly repo As New DailyWorkRepository
 
-    ' GET: DailyWork
+    ' GET: DailyWork 
     Function Index() As ActionResult
 
         'check TimeIn & assign value to model. *ตรวจสอบจาก cookie(User.Identity.Name)
 
         'Dim usr As String = If(
         '                        String.IsNullOrEmpty(User.Identity.Name),
-        '                        Convert.ToString(Session("userlogin")),
+        '                        Convert.ToString(Session("FSMCODE")),
         '                        User.Identity.Name
         '                    )
 
-        Dim usr As String = Convert.ToString(Session("userlogin"))
-        Dim model As DailyWorkViewModel = repo.GetTodayTimIn(usr)
-
+        Dim model As DailyWorkViewModel = repo.GetTodayTimIn(Convert.ToString(Session("FSMCODE")))
         Return View(model)
     End Function
 
@@ -35,10 +33,11 @@ Public Class DailyWorkController
 
 
             Dim SalesmanCode = model.SalesmanCode
+            Dim UseID = model.UserID
+            Dim GeoLocation = model.GeoLocation
             Dim VehicleType = model.VehicleType
             Dim VehicleNo = model.VehicleNo
             Dim odometerStart = model.OdometerStart
-            Dim GeoLocation = model.GeoLocation
 
             Dim file = Request.Files("PhotoFile")
 
@@ -51,34 +50,26 @@ Public Class DailyWorkController
             Else
 
                 ' 1. Insert Database
-                ' Dim id =  repo.TimeIn(
-                'employeeCode,
-                'lat,
-                'lng,
-                'PathFile) 
+                Dim rs = repo.TimeIn(model)
 
-                Dim id = 123 ' id = 12345
+                If rs.IsSuccess = True Then
 
-                ' 2. สร้างชื่อไฟล์
-                'Dim fileName = Guid.NewGuid().ToString() & ".jpg" 
-                Dim fileName = "TIMEIN_" & id.ToString("000000") & Path.GetExtension(file.FileName)
+                    ' 2. สร้างชื่อไฟล์  Dim fileName = Guid.NewGuid().ToString() & ".jpg" id.ToString("000000") 
+                    ' {IA-Numbering}_01_xxx
+                    Dim fileName = rs.DocNumber & "_01_TIMEIN" & Path.GetExtension(file.FileName)
 
-                ' 3. Save File
-                Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
-                file.SaveAs(PathFile)
+                    ' 3. Save File
+                    Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
+                    file.SaveAs(PathFile)
 
+                    FormsAuthentication.SetAuthCookie(Session("FSMCODE"), True) 'เรียกใช้ผ่าน User.Identity.Name 
 
-
-
-                FormsAuthentication.SetAuthCookie(Session("salescode"), True) 'เรียกใช้ผ่าน User.Identity.Name 
-
-                'userlogin markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database 
-                Session("userlogin") = Session("salescode")
+                End If
 
 
                 Return Json(New With {
-                    .Success = True,
-                    .Message = "Success"
+                    .Success = rs.IsSuccess,
+                    .Message = rs.Message
                 })
 
             End If
@@ -96,6 +87,12 @@ Public Class DailyWorkController
         'model As TimeInViewModel ***MVC จะ Bind ให้เอง ถ้าชื่อใน FormData ตรงกับ Property
         Try
 
+            Dim DocNumber = model.DocNumber
+            Dim UserID = model.UserID
+            Dim odometerStr = model.OdometerStart
+            Dim odometerEnd = model.OdometerEnd
+            Dim GeoLocation = model.GeoLocation
+
             If model.OdometerEnd < model.OdometerStart Then
 
                 Return Json(New With {
@@ -104,10 +101,6 @@ Public Class DailyWorkController
                 })
 
             Else
-
-                Dim DocNumber = model.DocNumber
-                Dim odometerEnd = model.OdometerEnd
-                Dim GeoLocation = model.GeoLocation
 
 
                 Dim file = Request.Files("PhotoFile")
@@ -120,34 +113,30 @@ Public Class DailyWorkController
 
                 Else
 
-                    ' 1. Insert Database
-                    ' Dim id =  repo.TimeIn(
-                    'employeeCode,
-                    'lat,
-                    'lng,
-                    'PathFile) 
+                    ' 1. Update Database
+                    Dim rs = repo.TimeOut(model)
+                    If rs.IsSuccess = True Then
 
-                    Dim id = 123 ' id = 12345
+                        ' 2. สร้างชื่อไฟล์  Dim fileName = Guid.NewGuid().ToString() & ".jpg" id.ToString("000000") 
+                        ' {IA-Numbering}_02_xxx
+                        Dim fileName = rs.DocNumber & "_02_TIMEOUT" & Path.GetExtension(file.FileName)
 
-                    ' 2. สร้างชื่อไฟล์
-                    'Dim fileName = Guid.NewGuid().ToString() & ".jpg" 
-                    Dim fileName = "TIMEOUT_" & id.ToString("000000") & Path.GetExtension(file.FileName)
-
-                    ' 3. Save File
-                    Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
-                    file.SaveAs(PathFile)
+                        ' 3. Save File
+                        Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
+                        file.SaveAs(PathFile)
 
 
-                    FormsAuthentication.SignOut() 'เคลียร์ค่า
+                        FormsAuthentication.SignOut() 'เคลียร์ค่า
 
-                    'userlogin markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database 
-                    'Session("userlogin") = ""
-                    Session("userlogin") = "TimeOut"
+                        'userlogin markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database  
+                        Session("FSMCODE") = ""
+
+                    End If
 
 
                     Return Json(New With {
-                        .Success = True,
-                        .Message = "Success"
+                        .Success = rs.IsSuccess,
+                        .Message = rs.Message
                     })
 
                 End If
@@ -173,7 +162,7 @@ Public Class DailyWorkController
     End Function
 
     <HttpPost>
-    Public Function CheckInSave() As JsonResult
+    Public Function CheckInSave(model As CheckInViewModel) As JsonResult
 
 
         Dim employeeCode = User.Identity.Name
@@ -186,11 +175,7 @@ Public Class DailyWorkController
         Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
         file.SaveAs(PathFile)
 
-        Dim id = repo.CheckIn(
-    employeeCode,
-    lat,
-    lng,
-    PathFile)
+        Dim id = repo.CheckIn(model)
 
         Return Json(New With {
             .success = True,
@@ -200,7 +185,7 @@ Public Class DailyWorkController
     End Function
 
     <HttpPost>
-    Public Function CheckOutSave() As JsonResult
+    Public Function CheckOutSave(model As CheckOutViewModel) As JsonResult
 
 
         Dim id = CLng(Request.Form("ID"))
@@ -213,7 +198,7 @@ Public Class DailyWorkController
 
         file.SaveAs(PathFile)
 
-        repo.CheckOut(id, lat, lng, PathFile)
+        repo.CheckOut(model)
 
         Return Json(New With {
         .success = True
@@ -227,30 +212,26 @@ Public Class DailyWorkController
 
 #Region "Farmer & visit"
 
-    Public Function SelectFarmer() As ActionResult
+    Public Function SelectFarmer(FSMCODE As String) As ActionResult
 
         Dim model As New SelectFarmerViewModel
 
-        model.FarmerList = New FarmerRepository().GetFarmerList()
+        model.FarmerList = New FarmerRepository().GetFarmerList(FSMCODE)
 
         Return View(model)
 
     End Function
 
-    Public Function VisitFarmer(farmerCode As String, Optional _farmer As Farmer = Nothing) As ActionResult
+
+    Public Function VisitFarmer(isnewfarmer As Boolean, farmerCode As String) As ActionResult
         Dim _repoFarmer As New FarmerRepository
-        Dim _repoQuesn As New QuestionnaireRepository
+
 
         Dim model As New VisitFarmerViewModel()
+        model.Farmer = _repoFarmer.GetFarmer(isnewfarmer, farmerCode)
 
-        If _farmer Is Nothing Then
-            model.Farmer = _repoFarmer.GetFarmer(farmerCode)
-        Else
-            model.Farmer = _farmer
-        End If
-
-
-        model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
+        'Dim _repoQuesn As New QuestionnaireRepository
+        'model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
 
         Return View(model)
 
@@ -306,10 +287,11 @@ Public Class DailyWorkController
         Return Json(list, JsonRequestBehavior.AllowGet)
     End Function
 
-    Public Function GetSubDistrictList(districtCode As String) As JsonResult
-        Dim list = New AddressRepository().GetSubDistrictList(districtCode)
+    Public Function GetSubDistrictList(provinceCode As String, districtCode As String) As JsonResult
+        Dim list = New AddressRepository().GetSubDistrictList(provinceCode, districtCode)
         Return Json(list, JsonRequestBehavior.AllowGet)
     End Function
+
 #End Region
 
 

@@ -5,18 +5,25 @@
 End Code
 
 <div>
-    @*class="container888"*@
+    @*class="container"*@
 
     <div class="panel panel-primary" style="padding-bottom:5px">
 
         <div class="panel-body">
 
             <div class="row" hidden>
+
                 <div class="col-6 text-start">
-                    <input type="text" id="txtSalesmanCode" value="@Session("userlogin")" />
+                    <input type="text" id="txtUserID" value="@Model.UserID" />
                 </div>
+
                 <div class="col-6 text-start">
-                    <input type="text" id="txtDocumentNumber" value=@Model.DocNumber />
+                    <input type="text" id="txtSalesmanCode" value="@Model.SalesmanCode" />
+                </div>
+                
+
+                <div class="col-6 text-start">
+                    <input type="text" id="txtDocumentNumber" value="@Model.DocNumber" />
                 </div>
 
                 <input type="text" id="txtgeolocation" />
@@ -795,13 +802,15 @@ End Code
             }
 
             var vehicleType = $("#ddlVehicletype").val();
-
+             
             if (vehicleType === "0") {
 
                 // รถบริษัท
                 if (!$("#ddlVehicle").val()) {
                     ShowMessage("กรุณาเลือกทะเบียนรถบริษัท!");
                     return;
+                } else {
+                    var vehicleno = $("#ddlVehicle").val();
                 }
 
             }
@@ -811,7 +820,9 @@ End Code
                 if (!$("#txtVehicleno").val().trim()) {
                     ShowMessage("กรุณากรอกทะเบียนรถ!");
                     return;
-                }
+                } else {
+                    var vehicleno = $("#txtVehicleno").val();
+                } 
 
             }
 
@@ -828,12 +839,14 @@ End Code
 
 
             var formData = new FormData();
+ 
+            formData.append("UserID", $("#txtUserID").val());
 
             formData.append("SalesmanCode",$("#txtSalesmanCode").val());
 
             formData.append("VehicleType",vehicleType);
 
-            formData.append("VehicleNo", $("#ddlVehicle").val());
+            formData.append("VehicleNo", vehicleno);
 
             formData.append("OdometerStart",$("#txtOdometerStart").val());
 
@@ -960,14 +973,14 @@ End Code
 
                success: function (res) {
 
-                   alert("before reload = " + res.Success);
+                  /* alert("before reload = " + res.Success);*/
 
                    if (res.Success) {
 
                        $('#timeInModal')
                            .modal('hide');
 
-                       alert("reload");
+                      /* alert("reload");*/
 
                        location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
 
@@ -1123,7 +1136,8 @@ End Section
                 </div>
 
                 @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="location.href='@Url.Action("SelectFarmer")'">
+                    <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" 
+                            onclick="location.href='@Url.Action("SelectFarmer", New With {.FSMCODE = Model.SalesmanCode}))'">
                         ข้อมูลชาวไร่
                     </Button>
                 </div>

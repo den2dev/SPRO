@@ -4,7 +4,7 @@ Public Class DailyWorkViewModel
     Public Property IsTimeIn As Boolean 'มีการเช็ค TimeIn แล้ว?
     Public Property IsTimeOut As Boolean 'มีการเช็ค TimeOut แล้ว?
 
-
+    Public Property UserID As String
     Public Property SalesmanCode As String
     Public Property SalesmanName As String
     Public Property VehicleList As IEnumerable(Of SelectListItem) 'get value เมื่อยังมี่มีการ login

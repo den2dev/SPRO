@@ -176,6 +176,7 @@
     <Compile Include="Models\ViewModels\DailyWorkViewModel.vb" />
     <Compile Include="Models\ViewModels\NewFarmerViewModel.vb" />
     <Compile Include="Models\ViewModels\QuestionnaireViewModel.vb" />
+    <Compile Include="Models\Entities\ResultMessageModel.vb" />
     <Compile Include="Models\ViewModels\SelectFarmerViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeInViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeOutViewModel.vb" />
@@ -497,6 +498,7 @@
     <Content Include="Views\Shared\_Questionnaire.vbhtml" />
     <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
     <Content Include="Views\DailyWork\NewFarmer.vbhtml" />
+    <Content Include="Views\Home\Landing.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

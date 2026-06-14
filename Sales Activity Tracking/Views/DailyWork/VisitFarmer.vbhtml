@@ -31,7 +31,10 @@ End Code
              style="margin:10px;padding:12px;border:1px solid #ddd;border-radius:10px;">
 
             <div>
-                <strong>@Model.Farmer.FarmerCode - @Model.Farmer.FarmerName</strong>
+                <strong>
+                    @(If(Model.Farmer.IsNewFarmer, "ชาวไร่ใหม่", Model.Farmer.FarmerCode))
+                    - @Model.Farmer.FarmerName
+                </strong>
             </div>
 
             <div>
@@ -54,50 +57,61 @@ End Code
                 <div class="container" style="padding-bottom:5px;padding-top:5px;">
                     <div class="row">บ้านเลขที่</div>
                     <div class="row">
-                        <input type="text" data-role="none" class="custom-input" disabled />
-                        @Model.Farmer.AddressNo
+                        <input type="text" value="@Model.Farmer.AddressNo" 
+                               data-role="none" class="custom-input" disabled />
+                        
                     </div>
                 </div>
                 <div class="container" style="padding-bottom:5px;padding-top:5px;">
                     <div class="row">หมู่ที่</div>
                     <div class="row">
-                        <input type="text" data-role="none" class="custom-input" disabled />
-                        @Model.Farmer.Moo
+                        <input type="text" value="@Model.Farmer.Moo" 
+                               data-role="none" class="custom-input" disabled />
+                        
                     </div>
                 </div>
                 <div class="container" style="padding-bottom:5px;padding-top:5px;">
                     <div class="row">ชื่อหมู่บ้าน</div>
                     <div class="row">
-                        <input type="text" data-role="none" class="custom-input" disabled />
-                        @Model.Farmer.VillageName
+                        <input type="text" 
+                               value="@Model.Farmer.VillageName"  
+                               data-role="none" class="custom-input" disabled /> 
                     </div>
                 </div>
                 <div class="container" style="padding-bottom:5px;padding-top:5px;">
                     <div class="row">ตำบล</div>
                     <div class="row">
-                        <input type="text" data-role="none" class="custom-input" disabled />
-                        @Model.Farmer.SubDistrict
+                        <input type="text" 
+                               value="@Model.Farmer.SubDistrict" 
+                               data-role="none" 
+                               class="custom-input" disabled /> 
                     </div>
                 </div>
                 <div class="container" style="padding-bottom:5px;padding-top:5px;">
                     <div class="row">อำเภอ</div>
                     <div class="row">
-                        <input type="text" data-role="none" class="custom-input" disabled />
-                        @Model.Farmer.District
+                        <input type="text" 
+                               value="@Model.Farmer.District" 
+                               data-role="none" 
+                               class="custom-input" disabled />
                     </div>
                 </div>
                 <div class="container" style="padding-bottom:5px;padding-top:5px;">
                     <div class="row">จังหวัด</div>
                     <div class="row">
-                        <input type="text" data-role="none" class="custom-input" disabled />
-                        @Model.Farmer.Province
+                        <input type="text" 
+                               value="@Model.Farmer.Province" 
+                               data-role="none" 
+                               class="custom-input" disabled />                        
                     </div>
                 </div>
                 <div class="container" style="padding-bottom:5px;padding-top:5px;">
                     <div class="row">เลขที่สัญญาเดิม</div>
                     <div class="row">
-                        <input type="text" data-role="none" class="custom-input" disabled />
-                        @Model.Farmer.ContractNo
+                        <input type="text" 
+                               value="@Model.Farmer.ContractNo" 
+                               data-role="none" 
+                               class="custom-input" disabled />                  
                     </div>
                 </div>
 

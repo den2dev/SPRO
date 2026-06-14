@@ -1,5 +1,6 @@
 ﻿Public Class Farmer
 
+    Public Property IsNewFarmer As Boolean
     Public Property FarmerCode As String
     Public Property FarmerName As String
     Public Property MobileNo As String

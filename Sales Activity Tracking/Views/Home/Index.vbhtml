@@ -5,9 +5,9 @@ End Code
 
 
 <div Class="col-12 no-padding">
-    <Button Class="ui-btn btn-confirm" style="height: 60px;" onclick="location.href='@Url.Action("Index","DailyWork")'">
+    <a Class="ui-btn btn-confirm" style="height: 60px;" href="/Home/Landing?FSMCODE=0101">
         Daily Report
-    </Button>
+    </a>
 </div>
 
 
