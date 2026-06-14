@@ -3,9 +3,10 @@ Imports System.Drawing
 Imports System.IO
 Imports System.Reflection
 Imports System.Web.Mvc
+Imports Sales_Activity_Tracking.Controllers
 
 Public Class DailyWorkController
-    Inherits Controller
+    Inherits BaseController
 
     Private ReadOnly repo As New DailyWorkRepository
 
@@ -20,7 +21,10 @@ Public Class DailyWorkController
         '                        User.Identity.Name
         '                    )
 
-        Dim model As DailyWorkViewModel = repo.GetTodayTimIn(Convert.ToString(Session("FSMCODE")))
+        Dim model As DailyWorkViewModel = repo.GetTodayTimIn(
+                            Convert.ToString(Session("FSMCODE")),
+                            Convert.ToString(Session("FUSERID"))
+                            )
         Return View(model)
     End Function
 
@@ -63,6 +67,8 @@ Public Class DailyWorkController
                     file.SaveAs(PathFile)
 
                     FormsAuthentication.SetAuthCookie(Session("FSMCODE"), True) 'เรียกใช้ผ่าน User.Identity.Name 
+
+                    Session("FUSERID") = model.UserID
 
                 End If
 
@@ -130,6 +136,7 @@ Public Class DailyWorkController
 
                         'userlogin markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database  
                         Session("FSMCODE") = ""
+                        Session("FUSERID") = ""
 
                     End If
 
@@ -154,36 +161,105 @@ Public Class DailyWorkController
 #End Region
 
 #Region "CheckIn & CheckOut เยี่ยมลูกค้า"
-    Function CheckIn() As ActionResult
-        Return View()
-    End Function
-    Function CheckOut() As ActionResult
-        Return View()
-    End Function
 
     <HttpPost>
-    Public Function CheckInSave(model As CheckInViewModel) As JsonResult
+    Public Function NewFarmerCheckInSave(newfarmer As NewFarmerViewModel) As ActionResult
+
+        Try
 
 
-        Dim employeeCode = User.Identity.Name
+            Dim model As New CheckInViewModel
+            With model
+                .SalesmanCode = Session("FSMCODE")
+                .UserID = Session("FUSERID")
+                .IsNewFarmer = True
+                .FarmerCode = ""
+                .FarmerName = newfarmer.FarmerName
+                .MobileNo = newfarmer.MobileNo
+                .AddressNo = newfarmer.AddressNo
+                .Moo = newfarmer.Moo
+                .VillageName = newfarmer.VillageName
+                .SubDistrict = newfarmer.SubDistrictCode
+                .District = newfarmer.DistrictCode
+                .Province = newfarmer.ProvinceCode
+                .GeoLocation = newfarmer.GeoLocation
+            End With
 
-        Dim lat = Request.Form("Latitude")
-        Dim lng = Request.Form("Longitude")
-        Dim file = Request.Files("PhotoFile")
+            Dim rs = repo.CheckIn(model)
 
-        Dim fileName = Guid.NewGuid.ToString() & Path.GetExtension(file.FileName)
-        Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
-        file.SaveAs(PathFile)
+            If rs.IsSuccess = True Then
 
-        Dim id = repo.CheckIn(model)
+                Return View("Index")
 
-        Return Json(New With {
-            .success = True,
-            .id = id
-        })
+            Else
+                Return RedirectToAction("NewFarmer", New With {.ErrorMessage = rs.Message})
+            End If
+        Catch ex As Exception
+
+            'ModelState.AddModelError("", ex.Message)
+            'ViewBag.ErrorMessage = ex.Message
+
+            Return RedirectToAction("NewFarmer", New With {.ErrorMessage = ex.Message})
+
+        End Try
 
     End Function
 
+
+    <HttpPost>
+    Public Function CheckInSave(farmer As Farmer) As ActionResult
+
+        Try
+
+
+            Dim model As New CheckInViewModel
+            With model
+                .SalesmanCode = Session("FSMCODE")
+                .UserID = Session("FUSERID")
+                .IsNewFarmer = False
+                .FarmerCode = farmer.FarmerCode
+                '.FarmerName = farmer.FarmerName
+                '.MobileNo = farmer.MobileNo
+                '.AddressNo = farmer.AddressNo
+                '.Moo = farmer.Moo
+                '.VillageName = farmer.VillageName
+                '.SubDistrict = farmer.SubDistrict
+                '.District = farmer.District
+                '.Province = farmer.Province
+                '.ContractNo = farmer.ContractNo
+            End With
+
+            Dim rs = repo.CheckIn(model)
+
+            If rs.IsSuccess = True Then
+
+                Return View("Index")
+
+            Else
+                Return RedirectToAction(
+                                     "VisitFarmer",
+                                     New With {
+                                         .isnewfarmer = farmer.IsNewFarmer,
+                                         .farmerCode = farmer.FarmerCode,
+                                         ._farmer = farmer
+                                     })
+            End If
+        Catch ex As Exception
+
+            'ModelState.AddModelError("", ex.Message)
+            ViewBag.ErrorMessage = ex.Message
+
+            Return RedirectToAction(
+                                 "VisitFarmer",
+                                 New With {
+                                     .isnewfarmer = farmer.IsNewFarmer,
+                                     .farmerCode = farmer.FarmerCode,
+                                     ._farmer = farmer
+                                 })
+
+        End Try
+
+    End Function
     <HttpPost>
     Public Function CheckOutSave(model As CheckOutViewModel) As JsonResult
 
@@ -223,12 +299,16 @@ Public Class DailyWorkController
     End Function
 
 
-    Public Function VisitFarmer(isnewfarmer As Boolean, farmerCode As String) As ActionResult
+    Public Function VisitFarmer(isnewfarmer As Boolean, farmerCode As String, Optional _farmer As Farmer = Nothing) As ActionResult
         Dim _repoFarmer As New FarmerRepository
 
 
         Dim model As New VisitFarmerViewModel()
-        model.Farmer = _repoFarmer.GetFarmer(isnewfarmer, farmerCode)
+        If _farmer Is Nothing Then
+            model.Farmer = _repoFarmer.GetFarmer(isnewfarmer, farmerCode)
+        Else
+            model.Farmer = _farmer
+        End If
 
         'Dim _repoQuesn As New QuestionnaireRepository
         'model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
@@ -237,51 +317,19 @@ Public Class DailyWorkController
 
     End Function
 
-#End Region
-
-
-
-#Region "Add New Farmer"
-    Public Function NewFarmer() As ActionResult
+    Public Function NewFarmer(Optional ErrorMessage As String = "") As ActionResult
         Dim model As New NewFarmerViewModel
 
         With model
             .ProvinceList = New AddressRepository().GetProvinceList()
             .DistrictList = New List(Of SelectListItem)
             .SubDistrictList = New List(Of SelectListItem)
+            .ErrorMessage = ErrorMessage
         End With
 
         Return View(model)
     End Function
 
-    <HttpPost>
-    Public Function NewFarmer(model As NewFarmerViewModel) As ActionResult
-
-        Try
-
-            Dim repo As New FarmerRepository
-
-            Dim _farmer = repo.CreateFarmer(model)
-
-            Return RedirectToAction(
-            "VisitFarmer",
-            New With {
-                .farmerCode = _farmer.FarmerCode,
-                ._farmer = _farmer
-            })
-
-        Catch ex As Exception
-
-            'ModelState.AddModelError("", ex.Message)
-            ViewBag.ErrorMessage = ex.Message
-
-            model.ProvinceList = New AddressRepository().GetProvinceList()
-
-            Return View(model)
-
-        End Try
-
-    End Function
     Public Function GetDistrictList(provinceCode As String) As JsonResult
         Dim list = New AddressRepository().GetDistrictList(provinceCode)
         Return Json(list, JsonRequestBehavior.AllowGet)
@@ -291,8 +339,8 @@ Public Class DailyWorkController
         Dim list = New AddressRepository().GetSubDistrictList(provinceCode, districtCode)
         Return Json(list, JsonRequestBehavior.AllowGet)
     End Function
-
 #End Region
+
 
 
 End Class

@@ -1,3 +1,5 @@
 ﻿Public Class CheckOutViewModel
-    Inherits TimeOutViewModel
+    Inherits CheckInViewModel
+
+    Public Property DocNumber As String
 End Class

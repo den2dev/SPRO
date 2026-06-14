@@ -23,9 +23,10 @@ Public Class FarmerRepository
                                 '' as  CityName,
                                 '' as  DistrictName 
                             FROM OD50CIAC 
-                            where FIACODE='VIS' 
-                          
+                            where FIACODE='VIS'                             
                             AND (FCONTCODE is null or FCONTCODE='') 
+                            AND FSMCODE=@FSMCODE
+                            AND FACTDATE=CONVERT(DATE, GETDATE())
 
                             Union all 
 
@@ -49,12 +50,10 @@ Public Class FarmerRepository
                                AND A.FCITYCD = R.FHCITYCD
                                AND A.FDISTRICTCD = R.FHDISTRICTCD
                             where (R.FNOTUSE is null or R.FNOTUSE='N') 
-                           
+                            and  R.FSMCODE=@FSMCODE
                           "
-        'and  R.FSMCODE=@FSMCODE
 
-        'ด้านบน AND FSMCODE=@FSMCODE
-        'AND FACTDATE=CONVERT(DATE, GETDATE())
+        Debug.WriteLine("[" & FSMCODE & "]")
 
         Using cn As SqlConnection = DBConnection.GetConnection()
 
@@ -224,23 +223,5 @@ Public Class FarmerRepository
     End Function
 
 
-
-    Public Function CreateFarmer(model As NewFarmerViewModel) As Farmer
-
-#Region "Mock"
-        Return New Farmer With {
-            .FarmerCode = "F26005",
-            .FarmerName = model.FarmerName,
-            .MobileNo = model.MobileNo,
-            .AddressNo = model.AddressNo,
-            .Moo = model.Moo,
-            .SubDistrict = model.SubDistrictCode,
-            .District = model.DistrictCode,
-            .Province = model.ProvinceCode,
-            .ContractNo = ""
-        }
-#End Region
-
-    End Function
 
 End Class

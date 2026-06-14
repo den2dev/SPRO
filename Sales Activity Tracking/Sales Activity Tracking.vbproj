@@ -162,6 +162,7 @@
     <Compile Include="App_Start\BundleConfig.vb" />
     <Compile Include="App_Start\FilterConfig.vb" />
     <Compile Include="App_Start\RouteConfig.vb" />
+    <Compile Include="Controllers\BaseController.vb" />
     <Compile Include="Controllers\DailyWorkController.vb" />
     <Compile Include="Controllers\TestController.vb" />
     <Compile Include="Global.asax.vb">
@@ -499,6 +500,7 @@
     <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
     <Content Include="Views\DailyWork\NewFarmer.vbhtml" />
     <Content Include="Views\Home\Landing.vbhtml" />
+    <Content Include="Views\Home\SessionTimeOut.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
@@ -534,6 +536,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Uploads\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

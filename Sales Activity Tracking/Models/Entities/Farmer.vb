@@ -1,4 +1,6 @@
-﻿Public Class Farmer
+﻿Imports System.Security.Policy
+
+Public Class Farmer
 
     Public Property IsNewFarmer As Boolean
     Public Property FarmerCode As String
@@ -13,5 +15,16 @@
     Public Property Province As String
 
     Public Property ContractNo As String
+
+    Public ReadOnly Property ConcateAddress As String
+        Get
+            Return AddressNo &
+                IIf(Moo <> "", " " & Moo, "") &
+                IIf(VillageName <> "", " " & VillageName, "") &
+                IIf(SubDistrict <> "", " " & SubDistrict, "") &
+                IIf(District <> "", " " & District, "") &
+                IIf(Province <> "", " " & Province, "")
+        End Get
+    End Property
 
 End Class

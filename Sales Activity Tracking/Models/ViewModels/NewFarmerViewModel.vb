@@ -1,4 +1,6 @@
 ﻿Public Class NewFarmerViewModel
+
+    Public Property GeoLocation As String
     Public Property FarmerName As String
 
     Public Property MobileNo As String
@@ -20,4 +22,6 @@
     Public Property DistrictList As IEnumerable(Of SelectListItem)
 
     Public Property SubDistrictList As IEnumerable(Of SelectListItem)
+
+    Public Property ErrorMessage As String
 End Class

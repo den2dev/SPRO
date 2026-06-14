@@ -4,12 +4,29 @@ Imports Dapper
 Imports Microsoft.VisualBasic.ApplicationServices
 
 Public Class DailyWorkRepository
-    Public Function GetTodayTimIn(SalesmanCode As String) As DailyWorkViewModel
-
-        Dim vechicle As New VehicleRepository
-        Dim model As New DailyWorkViewModel
+    Public Function GetTodayTimIn(SalesmanCode As String, UserID As String) As DailyWorkViewModel
 
 #Region "SQL"
+
+        Dim model As New DailyWorkViewModel
+        With model
+            .UserID = UserID
+        End With
+
+        Dim sqlNotTimeOut As String = "
+            SELECT TOP 1 
+                FIANO,
+                FESTRDATE,
+                FESTRTIME,
+                FACTFNDATE,
+                FACTFNTIME,
+                FVEHICLENO,
+                FMETERSTR,
+                LD01SMAN.FSMNAME
+            FROM OD50CIAC LEFT OUTER JOIN LD01SMAN ON LD01SMAN.FSMCODE = OD50CIAC.FSMCODE
+            WHERE OD50CIAC.FSMCODE = @FSMCODE
+            AND FIACODE = @FIACODE
+            AND FACTFNDATE IS NULL"
 
         Dim sql As String = "
             SELECT TOP 1 
@@ -24,25 +41,26 @@ Public Class DailyWorkRepository
             FROM OD50CIAC LEFT OUTER JOIN LD01SMAN ON LD01SMAN.FSMCODE = OD50CIAC.FSMCODE
             WHERE OD50CIAC.FSMCODE = @FSMCODE
             AND FIACODE = @FIACODE
-            AND FACTDATE = @FACTDATE"
+            AND FACTDATE = CONVERT(DATE, GETDATE())"
+
+        Dim IsNotTimeOut As Boolean = False
 
         Using cn As SqlConnection = DBConnection.GetConnection()
 
             cn.Open()
 
-            Using cmd As New SqlCommand(sql, cn)
+            Using cmd_NotTimeOut As New SqlCommand(sqlNotTimeOut, cn)
 
-                cmd.Parameters.AddWithValue("@FSMCODE", SalesmanCode)
-                cmd.Parameters.AddWithValue("@FIACODE", "TIO")
-                cmd.Parameters.AddWithValue("@FACTDATE", Date.Today)
+                cmd_NotTimeOut.Parameters.AddWithValue("@FSMCODE", SalesmanCode)
+                cmd_NotTimeOut.Parameters.AddWithValue("@FIACODE", "TIO")
 
-                Using dr As SqlDataReader = cmd.ExecuteReader()
+                Using dr As SqlDataReader = cmd_NotTimeOut.ExecuteReader()
 
-                    If dr.Read() Then 'login แล้ว
+                    If dr.Read() Then
+
+                        IsNotTimeOut = True
 
                         With model
-
-                            .UserID = "ZZY" '--default gsUserId = "ZZY"
 
                             .SalesmanCode = SalesmanCode
                             .SalesmanName = dr("FSMNAME").ToString()
@@ -60,15 +78,7 @@ Public Class DailyWorkRepository
 
                             .VehicleNo = dr("FVEHICLENO").ToString()
                             .OdometerStart = dr("FMETERSTR").ToString()
-                        End With
 
-                    Else 'ยังไม่ login
-
-                        With model
-                            .UserID = "ZZY" '--default gsUserId = "ZZY"
-                            .SalesmanCode = SalesmanCode
-                            .IsTimeIn = False
-                            .VehicleList = vechicle.GetVehicleList()
                         End With
 
                     End If
@@ -77,10 +87,61 @@ Public Class DailyWorkRepository
 
             End Using
 
+            If IsNotTimeOut = False Then 'กรณี TimeOut หมดแล้ว ให้ตรวจสอบรายการของวันนี้
+
+                Using cmd As New SqlCommand(sql, cn)
+
+                    cmd.Parameters.AddWithValue("@FSMCODE", SalesmanCode)
+                    cmd.Parameters.AddWithValue("@FIACODE", "TIO")
+
+                    Using dr As SqlDataReader = cmd.ExecuteReader()
+
+                        If dr.Read() Then 'login แล้ว
+
+                            With model
+
+                                .SalesmanCode = SalesmanCode
+                                .SalesmanName = dr("FSMNAME").ToString()
+
+                                .DocNumber = dr("FIANO").ToString()
+
+                                .TimeInDate = If(IsDBNull(dr("FESTRDATE")), "", Convert.ToDateTime(dr("FESTRDATE")).ToString("dd/MM/yyyy"))
+                                .TimeInTime = If(IsDBNull(dr("FESTRTIME")), "", dr("FESTRTIME").ToString() & " น.")
+
+                                .TimeOutDate = If(IsDBNull(dr("FACTFNDATE")), "", Convert.ToDateTime(dr("FACTFNDATE")).ToString("dd/MM/yyyy"))
+                                .TimeOutTime = If(IsDBNull(dr("FACTFNTIME")), "", dr("FACTFNTIME").ToString() & " น.")
+
+                                .IsTimeIn = Not String.IsNullOrEmpty(.TimeInDate)
+                                .IsTimeOut = Not String.IsNullOrEmpty(.TimeOutDate)
+
+                                .VehicleNo = dr("FVEHICLENO").ToString()
+                                .OdometerStart = dr("FMETERSTR").ToString()
+
+                            End With
+
+                        Else 'ยังไม่ login
+
+                            Dim vechicle As New VehicleRepository
+
+                            With model
+                                .SalesmanCode = SalesmanCode
+                                .IsTimeIn = False
+                                .VehicleList = vechicle.GetVehicleList()
+                            End With
+
+                        End If
+
+                    End Using
+
+                End Using
+
+            End If
         End Using
+
 #End Region
 
 #Region "Mock"
+        'Dim model As New DailyWorkViewModel
         'If SalesmanCode = "" Or IsDBNull(SalesmanCode) Then
         '    With model
         '        .IsTimeIn = False
@@ -427,14 +488,14 @@ Public Class DailyWorkRepository
         End Using
 
     End Function
-    Public Function CheckIn(model As CheckInViewModel) As String
+
+    Public Function CheckIn(model As CheckInViewModel) As ResultMessageModel
 
         'Running Number  : VISNOK260613025030
         '{DocCode}{UserID}{YY}{MM}{DD}{HH}{MM}{SS} 
 
         Dim FIACODE = "VIS"
         Dim FIANO = FIACODE & model.UserID & DateTime.Now.ToString("yyMMddHHmmss")
-
 
         '-------------------------------
         Dim sql As String = "
@@ -483,11 +544,7 @@ Public Class DailyWorkRepository
             FACTNEED,
             FACTAMOUNT,
 
-            FACTLOCATION,
-
-            FVEHICLENO,
-            FVEHICLETY,
-            FMETERSTR 
+            FACTLOCATION 
         )
         VALUES
         (
@@ -534,12 +591,11 @@ Public Class DailyWorkRepository
             @FACTNEED,
             @FACTAMOUNT,
 
-            @FACTLOCATION,
-
-            @FVEHICLENO,
-            @FVEHICLETY,
-            @FMETERSTR 
+            @FACTLOCATION
         )"
+
+
+        Dim result As New ResultMessageModel
 
         Using cn As SqlConnection = DBConnection.GetConnection()
 
@@ -547,7 +603,7 @@ Public Class DailyWorkRepository
 
             Dim cmd As New SqlCommand(sql, cn)
 
-            cmd.Parameters.AddWithValue("@FCONTCODE", "")
+            cmd.Parameters.AddWithValue("@FCONTCODE", If(model.IsNewFarmer, "", model.FarmerCode))
             cmd.Parameters.AddWithValue("@FCONTPERSON", "")
             cmd.Parameters.AddWithValue("@FSMCODE", model.SalesmanCode)
             cmd.Parameters.AddWithValue("@FIACODE", FIACODE)
@@ -563,23 +619,23 @@ Public Class DailyWorkRepository
             cmd.Parameters.AddWithValue("@FENTBY", model.UserID)
             cmd.Parameters.AddWithValue("@FEPREDATE", Date.Today)
 
-            cmd.Parameters.AddWithValue("@FPREPYN", 0) ' --ชาวไร่ใหม่=0,null
+            cmd.Parameters.AddWithValue("@FPREPYN", If(model.IsNewFarmer, 0, DBNull.Value)) ' --ชาวไร่ใหม่=0,null
 
-            cmd.Parameters.AddWithValue("@FAPPMYN", "Y") '--ชาวไร่ใหม่=Y,null
+            cmd.Parameters.AddWithValue("@FAPPMYN", If(model.IsNewFarmer, "Y", DBNull.Value)) '--ชาวไร่ใหม่=Y,null
             cmd.Parameters.AddWithValue("@FAPPMBY", model.UserID)
             cmd.Parameters.AddWithValue("@FAPPMDATE", Date.Today)
 
             '----Follow Up
-            cmd.Parameters.AddWithValue("@FFLUPYN", DBNull.Value) '--Default N ,Null ชาวไร่ใหม่
-            cmd.Parameters.AddWithValue("@FFLUPACT", DBNull.Value) '--Default '',Null ชาวไร่ใหม่
+            cmd.Parameters.AddWithValue("@FFLUPYN", If(model.IsNewFarmer, DBNull.Value, "N")) '--Default N ,Null ชาวไร่ใหม่
+            cmd.Parameters.AddWithValue("@FFLUPACT", If(model.IsNewFarmer, DBNull.Value, "")) '--Default '',Null ชาวไร่ใหม่
 
-            cmd.Parameters.AddWithValue("@FFROMIANO", DBNull.Value) '--Default '',Null ชาวไร่ใหม่
+            cmd.Parameters.AddWithValue("@FFROMIANO", If(model.IsNewFarmer, DBNull.Value, "")) '--Default '',Null ชาวไร่ใหม่
             cmd.Parameters.AddWithValue("@FACTOUTSIDEYN", "Y") 'default Y นอกพื้นที่
 
-            cmd.Parameters.AddWithValue("@FCONTADDR", "") 'concat(address)
+            cmd.Parameters.AddWithValue("@FCONTADDR", If(model.IsNewFarmer, model.ConcateAddress, DBNull.Value)) 'concat(address)
             cmd.Parameters.AddWithValue("@FCONTCHANNEL", 4) '-default 4-Visit
-            cmd.Parameters.AddWithValue("@FCONTNAME", "ชื่อชาวไร่")
-            cmd.Parameters.AddWithValue("@FCONTPERSTEL", "0812345678")
+            cmd.Parameters.AddWithValue("@FCONTNAME", If(model.IsNewFarmer, model.FarmerName, DBNull.Value))
+            cmd.Parameters.AddWithValue("@FCONTPERSTEL", If(model.IsNewFarmer, model.MobileNo, DBNull.Value))
 
             cmd.Parameters.AddWithValue("@FLASTUPD", Date.Today)   '---Date.Today.ToString("yyyy-MM-dd") กรณีใน table เป็น varchar(10)
             cmd.Parameters.AddWithValue("@FLASTUPDTM", Date.Now.ToString("HH:mm"))
@@ -595,12 +651,38 @@ Public Class DailyWorkRepository
 
             cmd.Parameters.AddWithValue("@FACTLOCATION", model.GeoLocation)
 
-            cmd.Parameters.AddWithValue("@FVEHICLENO", "1กข1234")
-            cmd.Parameters.AddWithValue("@FVEHICLETY", 1)
-            cmd.Parameters.AddWithValue("@FMETERSTR", 50000)
+            For Each p As SqlParameter In cmd.Parameters
+                Debug.WriteLine(p.ParameterName & "=" & p.Value)
+            Next
 
-            Dim rows As Integer = cmd.ExecuteNonQuery()
-            Return If(rows > 0, FIANO, "")
+            Try
+
+                Dim rows As Integer = cmd.ExecuteNonQuery()
+
+                If rows > 0 Then
+
+                    Result.IsSuccess = True
+                    Result.DocCode = FIACODE
+                    Result.DocNumber = FIANO
+                    Result.Message = "บันทึกข้อมูลสำเร็จ"
+
+                Else
+
+                    Result.IsSuccess = False
+                    Result.DocNumber = ""
+                    Result.Message = "ไม่พบข้อมูลที่ถูกบันทึก"
+
+                End If
+
+            Catch ex As Exception
+
+                Result.IsSuccess = False
+                Result.DocNumber = ""
+                Result.Message = ex.Message
+
+            End Try
+
+            Return Result
 
         End Using
     End Function
@@ -617,9 +699,7 @@ Public Class DailyWorkRepository
 
                     FACTFNDATE      = @FACTFNDATE,
                     FACTFNTIME      = @FACTFNTIME, 
-                    FACTLOCATION   =  FACTLOCATION + '|' + @FACTLOCATION,
-
-                    FMETEREND      = @FMETEREND
+                    FACTLOCATION   =  FACTLOCATION + '|' + @FACTLOCATION 
 
                 WHERE FIANO = @FIANO"
 
@@ -641,8 +721,6 @@ Public Class DailyWorkRepository
             cmd.Parameters.AddWithValue("@FACTFNTIME", Date.Now.ToString("HH:mm"))
 
             cmd.Parameters.AddWithValue("@FACTLOCATION", model.GeoLocation)
-
-            cmd.Parameters.AddWithValue("@FMETEREND", model.OdometerEnd)
 
             rows = cmd.ExecuteNonQuery()
 

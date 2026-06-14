@@ -330,7 +330,7 @@ End Code
                     @<div>วันที่เข้างาน : @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
                 ElseIf Not Model.IsTimeOut Then
                     @<div>วันที่เข้างาน : @Model.TimeInDate  @Model.TimeInTime</div>
-                    @<div>วันที่ออกงาน : @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
+                    @<div>วันที่ออกงาน : @DateTime.Now.ToString("dd/MM/yyyy HH:mm") น.</div>
                 End if
 
 
@@ -581,7 +581,9 @@ End Code
             ข้อความ
         </div>
 
-        <button id="btnMsgOK" class="msg-btn">
+        <button id="btnMsgOK" 
+                class="msg-btn"
+                onclick="document.getElementById('msgOverlay').style.display='none';">
             ตกลง
         </button>
 
@@ -590,11 +592,15 @@ End Code
 </div>
 @*END Messagbox*@
 
+
+
 @section Scripts
 
     <script>
 
         $(document).ready(function () {
+
+         /*   typeof bootstrap*/
 
             $("#vehicleSection").hide();
             $("#txtVehicleno").hide();
@@ -1137,7 +1143,7 @@ End Section
 
                 @<div Class="col no-padding">
                     <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" 
-                            onclick="location.href='@Url.Action("SelectFarmer", New With {.FSMCODE = Model.SalesmanCode}))'">
+                            onclick="location.href='@Url.Action("SelectFarmer", New With {.FSMCODE = Model.SalesmanCode})'">
                         ข้อมูลชาวไร่
                     </Button>
                 </div>
