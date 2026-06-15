@@ -3,6 +3,7 @@ Imports System.Drawing
 Imports System.IO
 Imports System.Reflection
 Imports System.Web.Mvc
+Imports System.Web.Services.Description
 Imports Sales_Activity_Tracking.Controllers
 
 Public Class DailyWorkController
@@ -28,8 +29,7 @@ Public Class DailyWorkController
         Return View(model)
     End Function
 
-    Function AlertMessage(message As String) As ActionResult
-        TempData("ErrorMessage") = message
+    Function AlertMessage() As ActionResult
         Return View()
     End Function
 
@@ -196,74 +196,75 @@ Public Class DailyWorkController
                 Return View("Index")
 
             Else
-
-                Return RedirectToAction("AlertMessage", New With {.message = rs.Message})
+                TempData("ErrorMessage") = rs.Message
+                Return RedirectToAction("AlertMessage")
             End If
         Catch ex As Exception
 
             'ModelState.AddModelError("", ex.Message)
             'ViewBag.ErrorMessage = ex.Message
-
-            Return RedirectToAction("AlertMessage", New With {.message = ex.Message})
+            TempData("ErrorMessage") = ex.Message
+            Return RedirectToAction("AlertMessage")
 
         End Try
 
     End Function
 
     <HttpPost>
-    Public Function CheckInSave(farmer As Farmer) As ActionResult
+    Public Function CheckInSave(farmercode As String, farmername As String, GeoLocation As String) As JsonResult
 
         Try
-
+            Dim _repoFarmer As New FarmerRepository
+            Dim _farmer = _repoFarmer.GetFarmer(False, farmercode)
 
             Dim model As New CheckInViewModel
             With model
                 .SalesmanCode = Session("FSMCODE")
                 .UserID = Session("FUSERID")
                 .IsNewFarmer = False
-                .FarmerCode = farmer.FarmerCode
-                '.FarmerName = farmer.FarmerName
-                '.MobileNo = farmer.MobileNo
-                '.AddressNo = farmer.AddressNo
-                '.Moo = farmer.Moo
-                '.VillageName = farmer.VillageName
-                '.SubDistrict = farmer.SubDistrict
-                '.District = farmer.District
-                '.Province = farmer.Province
-                '.ContractNo = farmer.ContractNo
+                .FarmerCode = farmercode
+                .FarmerName = farmername
+                .MobileNo = _farmer.MobileNo
+                .AddressNo = _farmer.AddressNo
+                .Moo = _farmer.Moo
+                .VillageName = _farmer.VillageName
+                .SubDistrict = _farmer.SubDistrict
+                .District = _farmer.District
+                .Province = _farmer.Province
+                .GeoLocation = GeoLocation
             End With
+
 
             Dim rs = repo.CheckIn(model)
 
             If rs.IsSuccess = True Then
 
-                Return View("Index")
+                Return Json(New With {
+                    .Success = True,
+                    .Message = "เพิ่มรายการแล้ว!",
+                    .RedirectUrl = "/DailyWork/VisitFarmer?farmerCode=" & farmercode
+                })
 
             Else
-                Return RedirectToAction(
-                                     "VisitFarmer",
-                                     New With {
-                                         .isnewfarmer = farmer.IsNewFarmer,
-                                         .farmerCode = farmer.FarmerCode,
-                                         ._farmer = farmer
-                                     })
+                Return Json(New With {
+                    .Success = False,
+                    .Message = rs.Message
+                })
+
             End If
+
+
         Catch ex As Exception
 
-            'ModelState.AddModelError("", ex.Message)
-            ViewBag.ErrorMessage = ex.Message
-
-            Return RedirectToAction(
-                                 "VisitFarmer",
-                                 New With {
-                                     .isnewfarmer = farmer.IsNewFarmer,
-                                     .farmerCode = farmer.FarmerCode,
-                                     ._farmer = farmer
-                                 })
+            Return Json(New With {
+                    .Success = False,
+                    .Message = ex.Message
+                })
 
         End Try
 
     End Function
+
     <HttpPost>
     Public Function CheckOutSave(model As CheckOutViewModel) As JsonResult
 
@@ -303,21 +304,20 @@ Public Class DailyWorkController
     End Function
 
 
-    Public Function VisitFarmer(isnewfarmer As Boolean, farmerCode As String, Optional _farmer As Farmer = Nothing) As ActionResult
-        Dim _repoFarmer As New FarmerRepository
+    Public Function VisitFarmer(farmerCode As String) As ActionResult
 
+        Dim repo As New FarmerRepository
+        Dim farmer = repo.GetFarmer(False, farmerCode)
 
-        Dim model As New VisitFarmerViewModel()
-        If _farmer Is Nothing Then
-            model.Farmer = _repoFarmer.GetFarmer(isnewfarmer, farmerCode)
+        If farmer Is Nothing Then
+            TempData("ErrorMessage") = "ไม่พบรหัส : " & farmerCode
+            Return RedirectToAction("AlertMessage")
         Else
-            model.Farmer = _farmer
+            Dim model As New VisitFarmerViewModel
+            model.Farmer = farmer
+
+            Return View(model)
         End If
-
-        'Dim _repoQuesn As New QuestionnaireRepository
-        'model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
-
-        Return View(model)
 
     End Function
 
@@ -336,6 +336,42 @@ Public Class DailyWorkController
         'model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
 
         Return View(model)
+
+    End Function
+    Public Function VisitItemDelete(fiano As String) As ActionResult
+
+        Dim model As New VisitFarmerEditModeViewModel()
+
+        Dim atv As ActivityItem = repo.GetActivityItem(fiano)
+        model.ActivityItem = atv
+
+        Dim _repoFarmer As New FarmerRepository
+        model.Farmer = _repoFarmer.GetFarmer(atv.IsNewCont, If(atv.IsNewCont, atv.ActivityNumber, atv.ContactCode))
+
+        Return View(model)
+
+    End Function
+
+
+
+    <HttpPost>
+    Public Function DeleteVisitItem(activityNo As String) As ActionResult
+
+        Try
+
+            Dim rs = repo.DeleteActivity(activityNo)
+            If rs.IsSuccess Then
+                Return RedirectToAction("Index")
+            Else
+                TempData("ErrorMessage") = rs.Message
+                Return RedirectToAction("AlertMessage")
+            End If
+
+
+        Catch ex As Exception
+            TempData("ErrorMessage") = ex.Message
+            Return RedirectToAction("AlertMessage")
+        End Try
 
     End Function
 
@@ -363,6 +399,9 @@ Public Class DailyWorkController
     End Function
 #End Region
 
+
+
+
     <HttpPost>
     Public Function DeleteActivity(activityNo As String) As JsonResult
         Try
@@ -371,7 +410,8 @@ Public Class DailyWorkController
 
             Return Json(New With {
                     .Success = rs.IsSuccess,
-                    .Message = rs.Message
+                    .Message = rs.Message,
+                    .RedirectUrl = "/DailyWork/Index"
                 })
         Catch ex As Exception
 

@@ -1,6 +1,6 @@
 ﻿@Modeltype VisitFarmerEditModeViewModel
 @Code
-    ViewData("Title") = "ตรวจเยี่ยมชาวไร่"
+    ViewData("Title") = "ยืนยันลบรายการตรวจเยี่ยมชาวไร่"
     Layout = "~/Views/Shared/_Layout.vbhtml"
 End Code
 
@@ -22,7 +22,7 @@ End Code
         height: 40px;
     }
 </style>
-
+ 
 <div class="row g-0">
 
     <div id="mainItems">
@@ -44,6 +44,7 @@ End Code
             </div>
 
             <hr />
+
 
 
             <div id="farmerHeader"
@@ -119,10 +120,6 @@ End Code
 
 
 
-
-
-
-
             </div>
 
         </div>
@@ -147,48 +144,6 @@ End Code
 
 </div>
 
-
-
-@*Confirm Messagbox*@
-<div id="confirmOverlay"
-     class="msg-overlay">
-
-    <div class="msg-box">
-
-        <div class="modal-content">
-
-            <div class="msg-box">
-
-                <div id="confirmTitle" class="msg-title">
-                    ยืนยันรายการ
-                </div>
-
-                <div id="confirmText" class="msg-text">
-                </div>
-
-                <div class="confirm-buttons">
-
-                    <button id="btnConfirmYes" class="msg-btn">
-                        ตกลง
-                    </button>
-
-                    <button id="btnConfirmNo" class="msg-btn btn-cancel">
-                        ยกเลิก
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
- 
-@*End Confirm Messagbox*@
-
 <!-- Bottom Buttons -->
 
 <div style="
@@ -206,7 +161,7 @@ End Code
         <div class="row g-0">
 
             <div class="col">
-                <Button id="btnIndex"  type="button"
+                <Button id="btnIndex" type="button"
                         onclick="location.href='@Url.Action("index")'"
                         class="ui-btn btn-cancel ui-icon-back  ui-btn-icon-top"
                         style="height: 60px; padding-top: 25px !important;">
@@ -214,48 +169,24 @@ End Code
                 </Button>
             </div>
 
-            <div class="col"
-                 style="display:none">
-                <Button id="btnBack"
-                        class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" 
-                        style="height: 60px; padding-top: 25px !important;" 
-                        onclick="history.back();">
-                    Back
-                </Button>
-            </div>
             <div class="col">
-                <Button id="btnDelete"   type="button"
-                        class="ui-btn btn-cancel ui-icon-delete ui-btn-icon-top"
-                        style="height: 60px; padding-top: 25px !important;"
-                        onclick="location.href='@Url.Action("VisitItemDelete", New With {.fiano = Model.ActivityItem.ActivityNumber})'">
-                    ลบ
-                </Button>
-            </div>
+                
 
-            <div class="col">
-                <Button id="btnCapture"  type="button"
-                        class="ui-btn btn-confirm ui-icon-camera ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                    ถ่ายรูป
-                </Button>
-            </div>
+                @Using Html.BeginForm("DeleteVisitItem", "DailyWork", FormMethod.Post)
 
-            <div class="col">
-                <Button id="btnSave"
-                        class="ui-btn btn-confirm ui-icon-check ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                    บันทึก
-                </Button>
-            </div>
+                    @Html.Hidden("activityNo", Model.ActivityItem.ActivityNumber)
 
-            <div class="col">
-                <Button id="btnCheckout"
-                        class="ui-btn btn-deny ui-icon-location ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;">
-                    Check Out
-                </Button>
+                    @<button type="submit"
+                            class="ui-btn btn-cancel ui-icon-delete ui-btn-icon-top"
+                            style="height: 60px; padding-top: 25px !important;">
+                        Delete
+                    </button>
+
+                End Using
             </div>
 
         </div>
-
-
+         
     </div>
 </div>
 
@@ -284,77 +215,10 @@ End Code
             });
 
 
-          
+
 
         });
 
-
-        $("#btnDelete").on("click", function (e) {
-            e.preventDefault();
-        });
-
-    </script>
-
-    <script> 
-
-        function DeleteAtivityItem(doc) {
-
-            //alert("DeleteAtivityItem " + doc);
-            console.log("DeleteAtivityItem " + doc);
-
-            ShowConfirm(
-
-                "ต้องการลบข้อมูลนี้ " + doc + " หรือไม่ ?",
-
-                function () {
-
-                    console.log("ลบรายการ " + doc);
-
-                    /*     alert("ลบรายการ");*/
-
-                    $.ajax({
-                        url: '/DailyWork/DeleteActivity',
-                        type: 'POST',
-                        data: {
-                            activityNo: doc
-                        },
-                        success: function (res) {
-
-                            if (res.Success) {
-
-                                /*  alert("reload"); */
-
-                                window.location.href = res.RedirectUrl;
-
-                            }
-                            else {
-                                ShowMessage(res.Message, "มีข้อผิดพลาดเกิดขึ้น!");
-                                /*alert(res.Message);*/
-
-                            }
-
-                        },
-
-                        error: function (er) {
-
-                            ShowMessage(er.Message, "Save Error.มีข้อผิดพลาดเกิดขึ้น!");
-                            /*alert("Save Error");*/
-
-                        }
-                    });
-                },
-
-                function () {
-                    console.log("ยกเลิก " + doc);
-                    /*  alert("ยกเลิก " + doc);*/
-
-                },
-
-                "ยืนยันการลบ"
-
-            );
-
-        }
 
     </script>
 

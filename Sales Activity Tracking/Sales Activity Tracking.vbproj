@@ -486,8 +486,6 @@
     <Content Include="Scripts\bootstrap.esm.js.map" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.bundle.js.map" />
-    <Content Include="Views\DailyWork\CheckIn.vbhtml" />
-    <Content Include="Views\DailyWork\CheckOut.vbhtml" />
     <Content Include="Views\DailyWork\Index.vbhtml" />
     <Content Include="Views\Test\Index.vbhtml" />
     <Content Include="Views\Test\TestLoading.vbhtml" />
@@ -504,6 +502,7 @@
     <Content Include="Views\Home\SessionTimeOut.vbhtml" />
     <Content Include="Views\DailyWork\AlertMessage.vbhtml" />
     <Content Include="Views\DailyWork\VisitFarmerEditMode.vbhtml" />
+    <Content Include="Views\DailyWork\VisitItemDelete.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

@@ -11,7 +11,7 @@ End Code
 
         <div class="panel-body">
 
-            <div class="row" hidden>
+            <div class="row" hidden88>
 
                 <div class="col-6 text-start">
                     <input type="text" id="txtUserID" value="@Model.UserID" />
@@ -21,7 +21,7 @@ End Code
                     <input type="text" id="txtSalesmanCode" value="@Model.SalesmanCode" />
                 </div>
 
-
+                
                 <div class="col-6 text-start">
                     <input type="text" id="txtDocumentNumber" value="@Model.DocNumber" />
                 </div>
@@ -88,7 +88,7 @@ End Code
                           style="margin-bottom:10px;
                             padding:10px;
                             border:1px solid #ddd;
-                            border-radius:10px;">
+                            border-radius:2px;">
 
                         <!-- Header -->
                         <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -587,6 +587,8 @@ End Code
 
         $(document).ready(function () {
 
+/*            window.location.replace('/DailyWork/Index');*/
+
          /*   typeof bootstrap*/
 
             $("#vehicleSection").hide();
@@ -925,7 +927,7 @@ End Code
                 return;
             }
 
-            alert('formData');
+          /*  alert('formData');*/
 
            var formData = new FormData();
 
@@ -937,6 +939,9 @@ End Code
                "DocNumber",
                $("#txtDocumentNumber").val());
 
+            formData.append(
+                "UserID",
+                $("#txtUserID").val());
 
             formData.append(
                 "OdometerStart", odometerStart);
@@ -1099,7 +1104,7 @@ End Code
 
                     console.log("ลบรายการ " + doc); 
 
-                    alert("ลบรายการ"); 
+                /*    alert("ลบรายการ"); */
 
                     $.ajax({
                         url: '/DailyWork/DeleteActivity',
@@ -1188,7 +1193,7 @@ End Section
                 </div>
 
                 @<div Class="col no-padding"
-                      style="display:@(If(Model.IsMustTimeOut, "none8", "block"))">
+                      style="display:@(If(Model.IsMustTimeOut, "none", "block"))">
                     <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;"
                             onclick="location.href='@Url.Action("SelectFarmer", New With {.FSMCODE = Model.SalesmanCode})'">
                         ข้อมูลชาวไร่

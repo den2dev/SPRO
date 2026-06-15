@@ -39,13 +39,45 @@ $(document).on("click", "#btnMsgOK", function () {
 let confirmYesCallback = null;
 let confirmNoCallback = null;
 
-function ShowConfirm(message, yesCallback, noCallback, title) {
+function ShowConfirm(msg, yesCallback, noCallback, title) {
+
+    $("#confirmText").text(msg);
     $("#confirmTitle").text(title || "ยืนยันรายการ");
-    $("#confirmText").text(message);
-    confirmYesCallback = yesCallback;
-    confirmNoCallback = noCallback;
+
+    $("#btnConfirmYes").off("click");
+    $("#btnConfirmNo").off("click");
+
+    $("#btnConfirmYes").on("click", function () {
+
+        $("#confirmOverlay").hide();
+
+        if (yesCallback) {
+            yesCallback();
+        }
+
+    });
+
+    $("#btnConfirmNo").on("click", function () {
+
+        $("#confirmOverlay").hide();
+
+        if (noCallback) {
+            noCallback();
+        }
+
+    });
+
     $("#confirmOverlay").show();
+
 }
+
+//function ShowConfirm(message, yesCallback, noCallback, title) {
+//    $("#confirmTitle").text(title || "ยืนยันรายการ");
+//    $("#confirmText").text(message);
+//    confirmYesCallback = yesCallback;
+//    confirmNoCallback = noCallback;
+//    $("#confirmOverlay").show();
+//}
 
 function HideConfirm() {
     $("#confirmOverlay").hide();

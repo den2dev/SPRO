@@ -167,13 +167,13 @@ End Code
             <div class="col">
                 <button id="btnIndex"
                         onclick="location.href='@Url.Action("index")'"
-                        class="ui-btn btn-cancel ui-btn-icon-top"
+                        class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
                         style="height: 60px; padding-top: 25px !important;">
                     Activities
                 </button>
             </div>
 
-            <div class="col">
+            <div class="col" style="display:none">
                 <button id="btnBack"
                         class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
                         style="height: 60px; padding-top: 25px !important;"

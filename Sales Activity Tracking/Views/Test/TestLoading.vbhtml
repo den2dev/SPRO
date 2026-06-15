@@ -15,12 +15,12 @@ End Code
 
 <hr />
 
-<button id="btnTest" >
+<button id="btnTest">
     Test Loading
 </button>
- 
 
-@*Show Popup Progress*@
+
+@*Show ShowLoading*@
 <div id="loadingOverlay" class="loading-overlay">
 
     <div class="loading-box">
@@ -32,9 +32,9 @@ End Code
         </div>
     </div>
 </div>
-@*END Show Popup Progress*@
+@*END Show ShowLoading*@
 
-  
+
 @section scripts
 
     <script>
@@ -53,7 +53,7 @@ End Code
 
                 }, 3000);
 
-            }); 
+            });
 
         });
 
