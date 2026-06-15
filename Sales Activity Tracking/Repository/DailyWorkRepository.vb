@@ -1,5 +1,7 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Drawing
+Imports System.Reflection
+Imports System.Web.Util
 Imports Dapper
 Imports Microsoft.VisualBasic.ApplicationServices
 
@@ -8,21 +10,33 @@ Public Class DailyWorkRepository
 
 #Region "SQL"
 
+
+        Dim FACTDate As Date
+
         Dim model As New DailyWorkViewModel
         With model
             .UserID = UserID
         End With
 
+        Dim ActivityItems = New List(Of ActivityItem)
+
         Dim sqlNotTimeOut As String = "
             SELECT TOP 1 
                 FIANO,
+                FACTDATE,
                 FESTRDATE,
                 FESTRTIME,
                 FACTFNDATE,
                 FACTFNTIME,
                 FVEHICLENO,
                 FMETERSTR,
-                LD01SMAN.FSMNAME
+                LD01SMAN.FSMNAME, 
+
+                CASE
+                    WHEN FACTDATE = CONVERT(date, GETDATE()) THEN 0
+                    ELSE 1
+                END AS MustTimeOut
+
             FROM OD50CIAC LEFT OUTER JOIN LD01SMAN ON LD01SMAN.FSMCODE = OD50CIAC.FSMCODE
             WHERE OD50CIAC.FSMCODE = @FSMCODE
             AND FIACODE = @FIACODE
@@ -31,6 +45,7 @@ Public Class DailyWorkRepository
         Dim sql As String = "
             SELECT TOP 1 
                 FIANO,
+                FACTDATE,
                 FESTRDATE,
                 FESTRTIME,
                 FACTFNDATE,
@@ -38,6 +53,7 @@ Public Class DailyWorkRepository
                 FVEHICLENO,
                 FMETERSTR,
                 LD01SMAN.FSMNAME
+
             FROM OD50CIAC LEFT OUTER JOIN LD01SMAN ON LD01SMAN.FSMCODE = OD50CIAC.FSMCODE
             WHERE OD50CIAC.FSMCODE = @FSMCODE
             AND FIACODE = @FIACODE
@@ -60,6 +76,7 @@ Public Class DailyWorkRepository
 
                         IsNotTimeOut = True
 
+                        FACTDate = dr("FACTDATE")
                         With model
 
                             .SalesmanCode = SalesmanCode
@@ -79,6 +96,9 @@ Public Class DailyWorkRepository
                             .VehicleNo = dr("FVEHICLENO").ToString()
                             .OdometerStart = dr("FMETERSTR").ToString()
 
+
+                            .IsMustTimeOut = If(CInt(dr("MustTimeOut")) = 1, True, False)
+
                         End With
 
                     End If
@@ -87,7 +107,7 @@ Public Class DailyWorkRepository
 
             End Using
 
-            If IsNotTimeOut = False Then 'กรณี TimeOut หมดแล้ว ให้ตรวจสอบรายการของวันนี้
+            If IsNotTimeOut = False Then 'กรณี TimeOut แล้ว ให้ตรวจสอบรายการของวันนี้
 
                 Using cmd As New SqlCommand(sql, cn)
 
@@ -97,6 +117,8 @@ Public Class DailyWorkRepository
                     Using dr As SqlDataReader = cmd.ExecuteReader()
 
                         If dr.Read() Then 'login แล้ว
+
+                            FACTDate = dr("FACTDATE")
 
                             With model
 
@@ -136,6 +158,50 @@ Public Class DailyWorkRepository
                 End Using
 
             End If
+
+            '**get WorkItems    FROM dbo.OD50CIAC  a LEFT OUTER JOIN  dbo.OD50RCVD b ON a.FCONTCODE =b.FCONTCODE
+            Dim sqlActivity = "SELECT  
+                                 FIACODE,
+                                 FIANO,
+                                 FCONTCODE,
+                                 FCONTNAME,
+                                 FESTRDATE,
+                                 FESTRTIME,
+                                 FACTFNDATE,
+                                 FACTFNTIME	
+                                FROM OD50CIAC 
+                                WHERE FIACODE='VIS' 
+                                and FACTDATE=@FACTDATE
+                                order by FACTTIME"
+
+            Using cmd_Activity As New SqlCommand(sqlActivity, cn)
+
+                cmd_Activity.Parameters.AddWithValue("@FACTDATE", FACTDate)
+
+                Using dr As SqlDataReader = cmd_Activity.ExecuteReader()
+
+                    While dr.Read()
+
+                        ActivityItems.Add(
+                            New ActivityItem With {
+                                .ActivityCode = dr("FIACODE").ToString(),
+                                .ActivityNumber = dr("FIANO").ToString(),
+                                .ContactCode = dr("FCONTCODE").ToString(),
+                                .ContactName = dr("FCONTNAME").ToString(),
+                                .CheckInDateTime = If(IsDBNull(dr("FESTRDATE")), "", Convert.ToDateTime(dr("FESTRDATE")).ToString("dd/MM/yyyy")) &
+                                                     If(IsDBNull(dr("FESTRTIME")), "", dr("FESTRTIME").ToString() & " น."),
+                                .CheckOutDateTime = If(IsDBNull(dr("FACTFNDATE")), "", Convert.ToDateTime(dr("FACTFNDATE")).ToString("dd/MM/yyyy")) &
+                                                    If(IsDBNull(dr("FACTFNTIME")), "", dr("FACTFNTIME").ToString() & " น.")
+                        })
+
+                    End While
+
+                End Using
+
+            End Using
+
+            model.ActivityItems = ActivityItems
+
         End Using
 
 #End Region
@@ -231,7 +297,92 @@ Public Class DailyWorkRepository
 
     End Function
 
+    Public Function GetActivityItem(fiacno As String) As ActivityItem
+        Dim ActivityItem As New ActivityItem
 
+        Dim sql As String = "SELECT  
+                                 FIACODE,
+                                 FIANO,
+                                 FCONTCODE,
+                                 FCONTNAME,
+                                 FESTRDATE,
+                                 FESTRTIME,
+                                 FACTFNDATE,
+                                 FACTFNTIME	
+                                FROM OD50CIAC 
+                                WHERE FIANO=@FIANO"
+
+        Using cn As SqlConnection = DBConnection.GetConnection()
+            cn.Open()
+            Using cmd As New SqlCommand(sql, cn)
+
+                cmd.Parameters.AddWithValue("@FIANO", fiacno)
+
+                Using dr As SqlDataReader = cmd.ExecuteReader()
+
+                    If dr.Read() Then
+
+                        With ActivityItem
+
+                            .ActivityCode = dr("FIACODE").ToString()
+                            .ActivityNumber = dr("FIANO").ToString()
+                            .ContactCode = dr("FCONTCODE").ToString()
+                            .ContactName = dr("FCONTNAME").ToString()
+                            .CheckInDateTime = If(IsDBNull(dr("FESTRDATE")), "", Convert.ToDateTime(dr("FESTRDATE")).ToString("dd/MM/yyyy")) &
+                                                     If(IsDBNull(dr("FESTRTIME")), "", dr("FESTRTIME").ToString() & " น.")
+                            .CheckOutDateTime = If(IsDBNull(dr("FACTFNDATE")), "ยังไม่ CheckOut", Convert.ToDateTime(dr("FACTFNDATE")).ToString("dd/MM/yyyy")) &
+                                                    If(IsDBNull(dr("FACTFNTIME")), "", dr("FACTFNTIME").ToString() & " น.")
+
+                        End With
+
+                    End If
+
+                End Using
+
+            End Using
+        End Using
+
+        Return ActivityItem
+    End Function
+
+    Public Function DeleteActivity(activityNumber As String) As ResultMessageModel
+        Dim result As New ResultMessageModel
+        Try
+            Dim sql As String = "DELETE FROM OD50CIAC WHERE FIANO=@FIANO"
+
+            Using cn As SqlConnection = DBConnection.GetConnection()
+                cn.Open()
+
+                Dim cmd As New SqlCommand(sql, cn)
+
+                cmd.Parameters.AddWithValue("@FIANO", activityNumber)
+
+                Dim rows As Integer = cmd.ExecuteNonQuery()
+
+                If rows > 0 Then
+
+                    result.IsSuccess = True
+                    result.DocCode = ""
+                    result.DocNumber = ""
+                    result.Message = "ทำรายการเรียบร้อยแล้ว"
+
+                Else
+
+                    result.IsSuccess = False
+                    result.DocNumber = ""
+                    result.Message = "มีข้อผิดพลาดบางอย่างเกิดขึ้น#"
+
+                End If
+
+            End Using
+
+        Catch ex As Exception
+            result.IsSuccess = False
+            result.DocNumber = ""
+            result.Message = ex.Message
+        End Try
+        Return result
+    End Function
     Public Function TimeIn(model As TimeInViewModel) As ResultMessageModel
 
         'Running Number  : TIONOK260613032344 

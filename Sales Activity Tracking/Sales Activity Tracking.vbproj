@@ -171,7 +171,8 @@
     <Compile Include="Models\Entities\CheckInLog.vb" />
     <Compile Include="Models\Entities\Farmer.vb" />
     <Compile Include="Models\Entities\QuestionModel.vb" />
-    <Compile Include="Models\Entities\WorkItem.vb" />
+    <Compile Include="Models\Entities\RouteController.vb" />
+    <Compile Include="Models\Entities\ActivityItem.vb" />
     <Compile Include="Models\ViewModels\CheckInViewModel.vb" />
     <Compile Include="Models\ViewModels\CheckOutViewModel.vb" />
     <Compile Include="Models\ViewModels\DailyWorkViewModel.vb" />
@@ -501,6 +502,8 @@
     <Content Include="Views\DailyWork\NewFarmer.vbhtml" />
     <Content Include="Views\Home\Landing.vbhtml" />
     <Content Include="Views\Home\SessionTimeOut.vbhtml" />
+    <Content Include="Views\DailyWork\AlertMessage.vbhtml" />
+    <Content Include="Views\DailyWork\VisitFarmerEditMode.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
@@ -536,7 +539,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Uploads\" />
-    <Folder Include="Views\Base\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

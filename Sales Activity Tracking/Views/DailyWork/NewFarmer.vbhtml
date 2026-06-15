@@ -33,99 +33,6 @@ End Code
     }
 </style>
 
-@*Show Popup Messgaebox*@
-<div id="msgOverlay" class="msg-overlay" style="display:@(If(String.IsNullOrEmpty(Model.ErrorMessage), "none", "flex"))">
-
-    <div class="msg-box">
-
-        <div id="msgTitle" class="msg-title">
-            แจ้งเตือน
-        </div>
-
-        <div id="msgText" class="msg-text">
-            @Model.ErrorMessage
-        </div>
-
-        <button id="btnMsgOK"
-                class="msg-btn"
-                onclick="document.getElementById('msgOverlay').style.display='none';">
-            ตกลง
-        </button>
-
-    </div>
-
-</div>
-@*END Messagbox*@
-
-@***หาพิกัด*****@
-<div id="gpsLoadingModal"
-     class="modal fade"
-     data-backdrop="static"
-     data-keyboard="false">
-
-    <div class="modal-dialog modal-sm">
-
-        <div class="modal-content">
-
-            <div class="modal-body text-center">
-
-                <h4>กำลังค้นหาตำแหน่ง</h4>
-
-                <br />
-
-                <div class="loading-spinner"></div>
-
-                <br /><br />
-
-                กรุณารอสักครู่...
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<div id="gpsErrorModal"
-     class="modal fade"
-     data-bs-backdrop="static"
-     data-bs-keyboard="false">
-
-    <div class="modal-dialog">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h4>ไม่สามารถระบุตำแหน่งได้</h4>
-
-            </div>
-
-            <div class="modal-body">
-
-                กรุณาเปิด Location ของอุปกรณ์
-                แล้วลองใหม่อีกครั้ง
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button id="btnCloseGPSMessage" class="btn btn-danger"
-                        data-dismiss="modal" onclick="CloseGPSMessage()">
-
-                    ปิด
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
 
 @***Form*****@
 
@@ -136,7 +43,7 @@ End Code
     @<div Class="row g-0">
         <div id="mainItems">
 
-            <input type="text" id="GeoLocation" />
+            <input type="hidden" id="GeoLocation" name="GeoLocation" data-role="none" />
 
             <div class="container" style="padding-bottom:5px;padding-top:5px;">
                 <div class="row">ชื่อ-นามสกุล *</div>
@@ -251,8 +158,103 @@ End Code
         </div>
     </div>
 End Using
+ 
+ 
 
+@if TempData("ErrorMessage") IsNot Nothing Then
 
+    @<div id="msgOverlay" class="msg-overlay" style="display:flex">
+
+        <div class="msg-box">
+
+            <div class="msg-title">
+                แจ้งเตือน
+            </div>
+
+            <div class="msg-text">
+                @TempData("ErrorMessage")
+            </div>
+
+            <button type="button"
+                    class="msg-btn"
+                    onclick="location.href = '/DailyWork/NewFarmer';">
+                ตกลง
+            </button>
+
+        </div>
+
+    </div>
+
+End If
+
+@***หาพิกัด*****@
+<div id="gpsLoadingModal"
+     class="modal fade"
+     data-backdrop="static"
+     data-keyboard="false">
+
+    <div class="modal-dialog modal-sm">
+
+        <div class="modal-content">
+
+            <div class="modal-body text-center">
+
+                <h4> กำลังค้นหาตำแหน่ง</h4>
+
+                <br />
+
+                <div class="loading-spinner"></div>
+
+                <br /><br />
+
+                กรุณารอสักครู่...
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="gpsErrorModal"
+     class="modal fade"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h4> ไม่สามารถระบุตำแหน่งได้</h4>
+
+            </div>
+
+            <div class="modal-body">
+
+                กรุณาเปิด Location ของอุปกรณ์
+                แล้วลองใหม่อีกครั้ง
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn btn-danger"
+                        data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
+
+                    ปิด
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- Bottom Buttons -->
 
@@ -297,11 +299,12 @@ End Using
 @section Scripts
 
     <script>
-        $(document).ready(function () {
-             
 
-            $("#GeoLocation").val("");  
-             
+        $(document).ready(function () {
+
+
+            $("#GeoLocation").val("");
+
             typeof bootstrap
 
             var gpsLoadingModal = new bootstrap.Modal(
@@ -310,9 +313,9 @@ End Using
 
             gpsLoadingModal.show();
 
-             /*     $('#gpsLoadingModal').modal('show');*/
+            /*     $('#gpsLoadingModal').modal('show');*/
 
-            
+
 
             navigator.geolocation.getCurrentPosition(
 
@@ -358,7 +361,7 @@ End Using
                 }
             );
         });
-       
+
         function CloseGPSMessage() {
 
             var gpsErrorModal = new bootstrap.Modal(
@@ -368,8 +371,9 @@ End Using
             gpsErrorModal.hide();
         }
 
+      
         $(function () {
- 
+
             $("#ddlProvince").change(function () {
 
                 var provinceCode = $(this).val();

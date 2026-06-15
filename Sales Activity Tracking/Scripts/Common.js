@@ -55,20 +55,20 @@ function HideConfirm() {
 
 $(document).on("click", "#btnConfirmYes", function () {
 
-    HideConfirm();
-
     if (confirmYesCallback) {
         confirmYesCallback();
     }
+
+    HideConfirm();
 
 });
 
 $(document).on("click", "#btnConfirmNo", function () {
 
-    HideConfirm();
-
     if (confirmNoCallback) {
         confirmNoCallback();
     }
+
+    HideConfirm();
 
 });

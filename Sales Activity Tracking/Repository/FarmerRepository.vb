@@ -116,9 +116,8 @@ Public Class FarmerRepository
 
     'End Function
 
+    '--ถ้าเป็น new farmer ให้ส่ง FIANO มา.
     Public Function GetFarmer(isnewfarmer As Boolean, farmercode As String) As Farmer
-
-
 
         Dim sql As String
 

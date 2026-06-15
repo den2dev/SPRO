@@ -20,7 +20,7 @@ End Code
                 <div class="col-6 text-start">
                     <input type="text" id="txtSalesmanCode" value="@Model.SalesmanCode" />
                 </div>
-                
+
 
                 <div class="col-6 text-start">
                     <input type="text" id="txtDocumentNumber" value="@Model.DocNumber" />
@@ -79,12 +79,13 @@ End Code
     <div class="row g-0">
         <div id="mainItems">
 
-            @If Model.WorkItems IsNot Nothing AndAlso Model.WorkItems.Any() Then
+            @If Model.ActivityItems IsNot Nothing AndAlso Model.ActivityItems.Any() Then
 
 
-                @For Each item In Model.WorkItems
+                @For Each item In Model.ActivityItems
 
-                    @<div class="card" style="margin-bottom:10px;
+                    @<div class="card"
+                          style="margin-bottom:10px;
                             padding:10px;
                             border:1px solid #ddd;
                             border-radius:10px;">
@@ -93,10 +94,9 @@ End Code
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <strong>@item.ActivityName</strong>
 
-                            <span style="
-                                        color:red;
-                                        cursor:pointer;
-                                        font-size:16px;">
+                            <span id="btnDeleteAtivity"
+                                  onclick="DeleteAtivityItem('@item.ActivityNumber')"
+                                  style="color:red;cursor:pointer;font-size:16px;">
                                 🗑️
                             </span>
                         </div>
@@ -118,10 +118,19 @@ End Code
                             </span>
 
                         </div>
+            
+                        @If item.IsCheckOut Then
+                            @<div style="margin-top:5px;">
+                                ⏰ @item.CheckInDateTime - @item.CheckOutDateTime
+                            </div>
+                        Else
+                            @<div style="margin-top:5px;">
+                                ⏰ @item.CheckInDateTime - <a href="@Url.Action("VisitFarmerEditMode", "DailyWork")?fiano=@item.ActivityNumber">
+                                    Check Out!
+                                </a>
+                            </div>
+                        End If
 
-                        <div style="margin-top:5px;">
-                            ⏰ @item.CheckInDateTime - @item.CheckOutDateTime
-                        </div>
 
                     </div>
 
@@ -140,55 +149,6 @@ End Code
             End If
 
         </div>
-    </div>
-
-    <div class="row g-0" hidden>
-
-        @If Not Model.IsTimeIn Then
-            @<div Class="col-6 no-padding">
-                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                    Back
-                </Button>
-            </div>
-
-            @<div Class="col-6 no-padding">
-                <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeInOut()">
-                    Time In
-                </Button>
-            </div>
-
-        ElseIf Not Model.IsTimeOut Then
-
-            @<div Class="col-4 no-padding">
-                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                    Back
-                </Button>
-            </div>
-
-            @<div Class="col-4 no-padding">
-                <Button Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="ShowAddClickModal()">
-                    Add
-                </Button>
-            </div>
-
-            @<div Class="col-4 no-padding">
-                <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeInOut()">
-                    Time Out
-                </Button>
-            </div>
-
-        Else
-
-            'TimeIn&TimeOut ในวันแล้ว
-
-            @<div Class="col-12 no-padding">
-                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                    Back
-                </Button>
-            </div>
-
-        End If
-
     </div>
 
 
@@ -581,7 +541,7 @@ End Code
             ข้อความ
         </div>
 
-        <button id="btnMsgOK" 
+        <button id="btnMsgOK"
                 class="msg-btn"
                 onclick="document.getElementById('msgOverlay').style.display='none';">
             ตกลง
@@ -592,7 +552,34 @@ End Code
 </div>
 @*END Messagbox*@
 
+@*Confirm Messagbox*@
+<div id="confirmOverlay" class="msg-overlay">
 
+    <div class="msg-box">
+
+        <div id="confirmTitle" class="msg-title">
+            ยืนยันรายการ
+        </div>
+
+        <div id="confirmText" class="msg-text">
+        </div>
+
+        <div class="confirm-buttons">
+
+            <button id="btnConfirmYes" class="msg-btn">
+                ตกลง
+            </button>
+
+            <button id="btnConfirmNo" class="msg-btn btn-cancel">
+                ยกเลิก
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+@*End Confirm Messagbox*@
 
 @section Scripts
 
@@ -636,7 +623,7 @@ End Code
             photoBlob = null;
             $("#previewImage").hide().attr("src", "");
             $("#imagePlaceholder").show();
-            $("#txtgeolocation").val(""); 
+            $("#txtgeolocation").val("");
             $("#txtOdometerStart,#txtOdometerEnd").val("");
             /*end clear ค่าเดิม*/
 
@@ -645,7 +632,7 @@ End Code
             navigator.geolocation.getCurrentPosition(
 
                 function (position) {
-                     
+
                     var lat = position.coords.latitude;
                     var lng = position.coords.longitude;
 
@@ -808,7 +795,7 @@ End Code
             }
 
             var vehicleType = $("#ddlVehicletype").val();
-             
+
             if (vehicleType === "0") {
 
                 // รถบริษัท
@@ -828,7 +815,7 @@ End Code
                     return;
                 } else {
                     var vehicleno = $("#txtVehicleno").val();
-                } 
+                }
 
             }
 
@@ -845,7 +832,7 @@ End Code
 
 
             var formData = new FormData();
- 
+
             formData.append("UserID", $("#txtUserID").val());
 
             formData.append("SalesmanCode",$("#txtSalesmanCode").val());
@@ -958,7 +945,7 @@ End Code
                "OdometerEnd", odometerEnd);
 
            formData.append("GeoLocation", $("#txtgeolocation").val());
- 
+
 
            formData.append(
                "PhotoFile",
@@ -1101,6 +1088,65 @@ End Code
     </script>
 
 
+    <script>
+        function DeleteAtivityItem(doc) {
+
+            ShowConfirm(
+
+                "ต้องการลบข้อมูลนี้ " + doc +" หรือไม่ ?",
+
+                function () {
+
+                    console.log("ลบรายการ " + doc); 
+
+                    alert("ลบรายการ"); 
+
+                    $.ajax({
+                        url: '/DailyWork/DeleteActivity',
+                        type: 'POST',
+                        data: {
+                            activityNo: doc
+                        },
+                        success: function (res) {
+
+                            if (res.Success) {
+
+                              /*  alert("reload"); */
+
+                                location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
+
+                            }
+                            else {
+                                ShowMessage(res.Message, "มีข้อผิดพลาดเกิดขึ้น!");
+                                /*alert(res.Message);*/
+
+                            }
+
+                        },
+
+                        error: function (er) {
+
+                            ShowMessage(er.Message, "Save Error.มีข้อผิดพลาดเกิดขึ้น!");
+                            /*alert("Save Error");*/
+
+                        } 
+                    });
+                },
+
+                function () {
+                   console.log("ยกเลิก " + doc);
+                  /*  alert("ยกเลิก " + doc);*/
+
+                },
+
+                "ยืนยันการลบ"
+
+            );
+
+        }
+        
+    </script>
+
 End Section
 
 
@@ -1141,8 +1187,9 @@ End Section
                     </Button>
                 </div>
 
-                @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" 
+                @<div Class="col no-padding"
+                      style="display:@(If(Model.IsMustTimeOut, "none8", "block"))">
+                    <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;"
                             onclick="location.href='@Url.Action("SelectFarmer", New With {.FSMCODE = Model.SalesmanCode})'">
                         ข้อมูลชาวไร่
                     </Button>

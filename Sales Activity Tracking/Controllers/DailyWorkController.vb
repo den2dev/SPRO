@@ -28,6 +28,10 @@ Public Class DailyWorkController
         Return View(model)
     End Function
 
+    Function AlertMessage(message As String) As ActionResult
+        TempData("ErrorMessage") = message
+        Return View()
+    End Function
 
 #Region "TimeIn & TimeOut พนักงาน"
     <HttpPost>
@@ -192,19 +196,19 @@ Public Class DailyWorkController
                 Return View("Index")
 
             Else
-                Return RedirectToAction("NewFarmer", New With {.ErrorMessage = rs.Message})
+
+                Return RedirectToAction("AlertMessage", New With {.message = rs.Message})
             End If
         Catch ex As Exception
 
             'ModelState.AddModelError("", ex.Message)
             'ViewBag.ErrorMessage = ex.Message
 
-            Return RedirectToAction("NewFarmer", New With {.ErrorMessage = ex.Message})
+            Return RedirectToAction("AlertMessage", New With {.message = ex.Message})
 
         End Try
 
     End Function
-
 
     <HttpPost>
     Public Function CheckInSave(farmer As Farmer) As ActionResult
@@ -317,14 +321,32 @@ Public Class DailyWorkController
 
     End Function
 
-    Public Function NewFarmer(Optional ErrorMessage As String = "") As ActionResult
+    Public Function VisitFarmerEditMode(fiano As String) As ActionResult
+
+        Dim model As New VisitFarmerEditModeViewModel()
+
+        Dim atv As ActivityItem = repo.GetActivityItem(fiano)
+        model.ActivityItem = atv
+
+        Dim _repoFarmer As New FarmerRepository
+        model.Farmer = _repoFarmer.GetFarmer(atv.IsNewCont, If(atv.IsNewCont, atv.ActivityNumber, atv.ContactCode))
+
+
+        'Dim _repoQuesn As New QuestionnaireRepository
+        'model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
+
+        Return View(model)
+
+    End Function
+
+    Public Function NewFarmer() As ActionResult
+
         Dim model As New NewFarmerViewModel
 
         With model
             .ProvinceList = New AddressRepository().GetProvinceList()
             .DistrictList = New List(Of SelectListItem)
             .SubDistrictList = New List(Of SelectListItem)
-            .ErrorMessage = ErrorMessage
         End With
 
         Return View(model)
@@ -341,6 +363,26 @@ Public Class DailyWorkController
     End Function
 #End Region
 
+    <HttpPost>
+    Public Function DeleteActivity(activityNo As String) As JsonResult
+        Try
 
+            Dim rs = repo.DeleteActivity(activityNo)
+
+            Return Json(New With {
+                    .Success = rs.IsSuccess,
+                    .Message = rs.Message
+                })
+        Catch ex As Exception
+
+            Return Json(New With {
+                .Success = False,
+                .Message = ex.Message
+            })
+
+
+        End Try
+
+    End Function
 
 End Class

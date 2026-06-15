@@ -1,9 +1,10 @@
-﻿@ModelType VisitFarmerViewModel
-
+﻿@Modeltype VisitFarmerEditModeViewModel
 @Code
-    ViewData("Title") = "ตรวจเยี่ยมชาวไร่"
+    ViewData("Title") = "EidVisitFarmer"
     Layout = "~/Views/Shared/_Layout.vbhtml"
 End Code
+
+
 
 <style>
     #mainItems {
@@ -148,6 +149,35 @@ End Code
 
 
 
+@*Confirm Messagbox*@
+<div id="confirmOverlay" class="msg-overlay">
+
+    <div class="msg-box">
+
+        <div id="confirmTitle" class="msg-title">
+            ยืนยันรายการ
+        </div>
+
+        <div id="confirmText" class="msg-text">
+        </div>
+
+        <div class="confirm-buttons">
+
+            <button id="btnConfirmYes" class="msg-btn">
+                ตกลง
+            </button>
+
+            <button id="btnConfirmNo" class="msg-btn btn-cancel">
+                ยกเลิก
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+@*End Confirm Messagbox*@
+
 <!-- Bottom Buttons -->
 
 <div style="
@@ -167,20 +197,27 @@ End Code
             <div class="col">
                 <button id="btnIndex"
                         onclick="location.href='@Url.Action("index")'"
-                        class="ui-btn btn-cancel ui-btn-icon-top"
+                        class="ui-btn btn-cancel ui-icon-back  ui-btn-icon-top"
                         style="height: 60px; padding-top: 25px !important;">
                     Activities
                 </button>
             </div>
 
-            <div class="col">
+            <div class="col" 
+                 style="display:none">
                 <button id="btnBack"
-                        class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
-                        style="height: 60px; padding-top: 25px !important;"
-                        onclick="history.back();">
+                        class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="history.back();">
                     Back
                 </button>
-            </div> 
+            </div>
+            <div class="col">
+                <button id="btnDelete"
+                        onclick="DeleteAtivityItem('@Model.ActivityItem.ActivityNumber')"
+                        class="ui-btn btn-cancel ui-icon-delete ui-btn-icon-top" 
+                        style="height: 60px; padding-top: 25px !important;">
+                    ลบ
+                </button>
+            </div>
 
             <div class="col">
                 <button id="btnCapture"
@@ -213,7 +250,6 @@ End Code
 <!-- End Bottom Buttons -->
 
 
-
 @section Scripts
     <script>
         $(function () {
@@ -239,5 +275,64 @@ End Code
     </script>
 
 
-    
+
+    <script>
+        function DeleteAtivityItem(doc) {
+
+            ShowConfirm(
+
+                "ต้องการลบข้อมูลนี้ " + doc + " หรือไม่ ?",
+
+                function () {
+
+                    console.log("ลบรายการ " + doc);
+
+                    alert("ลบรายการ");
+
+                    $.ajax({
+                        url: '/DailyWork/DeleteActivity',
+                        type: 'POST',
+                        data: {
+                            activityNo: doc
+                        },
+                        success: function (res) {
+
+                            if (res.Success) {
+
+                                /*  alert("reload"); */
+
+                                location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
+
+                            }
+                            else {
+                                ShowMessage(res.Message, "มีข้อผิดพลาดเกิดขึ้น!");
+                                /*alert(res.Message);*/
+
+                            }
+
+                        },
+
+                        error: function (er) {
+
+                            ShowMessage(er.Message, "Save Error.มีข้อผิดพลาดเกิดขึ้น!");
+                            /*alert("Save Error");*/
+
+                        }
+                    });
+                },
+
+                function () {
+                    console.log("ยกเลิก " + doc);
+                    /*  alert("ยกเลิก " + doc);*/
+
+                },
+
+                "ยืนยันการลบ"
+
+            );
+
+        }
+
+    </script>
+
 End Section

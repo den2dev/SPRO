@@ -125,13 +125,17 @@ End Section
         <div class="row g-0">
 
             <div Class="col no-padding">
-                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="history.back();">
+                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" 
+                        style="height: 60px; padding-top: 25px !important;" 
+                        onclick="history.back();">
                     Back
                 </Button>
             </div>
 
             <div Class="col no-padding">
-                <Button Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="location.href='@Url.Action("NewFarmer")'">
+                <Button Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top" 
+                        style="height: 60px; padding-top: 25px !important;" 
+                        onclick="location.href='@Url.Action("NewFarmer")'">
                     ชาวไร่รายใหม่
                 </Button>
             </div>

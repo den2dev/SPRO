@@ -23,5 +23,4 @@
 
     Public Property SubDistrictList As IEnumerable(Of SelectListItem)
 
-    Public Property ErrorMessage As String
 End Class
