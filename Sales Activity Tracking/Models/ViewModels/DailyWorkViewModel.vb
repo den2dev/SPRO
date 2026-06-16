@@ -1,7 +1,17 @@
 ﻿
+Imports System.Reflection
+
 Public Class DailyWorkViewModel
     Public Property IsMustTimeOut As Boolean
-
+    Public ReadOnly Property IsAllCheckOut As Boolean
+        Get
+            If ActivityItems Is Nothing Then
+                Return True ' return true เพื่อให้สามารถ TimeOut ได้ 
+            Else
+                Return ActivityItems.All(Function(x) x.IsCheckOut) 'ทุก Activity มี IsCheckOut = True ถ้ามีสักรายการที่ยังไม่ CheckOut จะได้ False
+            End If
+        End Get
+    End Property
     Public Property IsTimeIn As Boolean 'มีการเช็ค TimeIn แล้ว?
     Public Property IsTimeOut As Boolean 'มีการเช็ค TimeOut แล้ว?
 

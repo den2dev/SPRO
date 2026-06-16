@@ -168,6 +168,7 @@
     <Compile Include="Global.asax.vb">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Entities\ActivityPhotoViewModel.vb" />
     <Compile Include="Models\Entities\CheckInLog.vb" />
     <Compile Include="Models\Entities\Farmer.vb" />
     <Compile Include="Models\Entities\QuestionModel.vb" />
@@ -496,13 +497,15 @@
     <Content Include="Views\Test\TestCamera.vbhtml" />
     <Content Include="Views\DailyWork\SelectFarmer.vbhtml" />
     <Content Include="Views\Shared\_Questionnaire.vbhtml" />
-    <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
     <Content Include="Views\DailyWork\NewFarmer.vbhtml" />
     <Content Include="Views\Home\Landing.vbhtml" />
     <Content Include="Views\Home\SessionTimeOut.vbhtml" />
     <Content Include="Views\DailyWork\AlertMessage.vbhtml" />
-    <Content Include="Views\DailyWork\VisitFarmerEditMode.vbhtml" />
+    <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
     <Content Include="Views\DailyWork\VisitItemDelete.vbhtml" />
+    <Content Include="Views\DailyWork\VisitFarmerPhoto.vbhtml" />
+    <Content Include="Views\Shared\_PhotoList.vbhtml" />
+    <Content Include="Views\DailyWork\Questionnaire.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

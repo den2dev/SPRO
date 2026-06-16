@@ -11,8 +11,11 @@ End Code
 
         <div class="panel-body">
 
-            <div class="row" hidden88>
+            <div class="row" hidden>
 
+                <div class="col-6 text-start">
+                    <input type="checkbox" id="chkallcheckout" checked="@Model.IsAllCheckOut" />
+                </div>
                 <div class="col-6 text-start">
                     <input type="text" id="txtUserID" value="@Model.UserID" />
                 </div>
@@ -21,7 +24,7 @@ End Code
                     <input type="text" id="txtSalesmanCode" value="@Model.SalesmanCode" />
                 </div>
 
-                
+
                 <div class="col-6 text-start">
                     <input type="text" id="txtDocumentNumber" value="@Model.DocNumber" />
                 </div>
@@ -35,7 +38,7 @@ End Code
                     พนักงานส่งเสริม :
                 </div>
                 <div class="col-8 text-start">
-                    @Model.SalesmanCode @Model.SalesmanName
+                    @Model.SalesmanName
                 </div>
             </div>
             <div class="row">
@@ -68,7 +71,7 @@ End Code
 
     <style>
         #mainItems {
-            height: calc(100vh - 248px);
+            height: calc(100vh - 235px);
             overflow-y: auto;
             background: white;
             border: 1px solid #ddd;
@@ -85,10 +88,7 @@ End Code
                 @For Each item In Model.ActivityItems
 
                     @<div class="card"
-                          style="margin-bottom:10px;
-                            padding:10px;
-                            border:1px solid #ddd;
-                            border-radius:2px;">
+                          style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 2px;">
 
                         <!-- Header -->
                         <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -101,36 +101,36 @@ End Code
                             </span>
                         </div>
 
-                        <div style="margin-top:5px;">
-                            เลขที่ : @item.ActivityNumber
-                        </div>
+                        <div style="cursor: pointer;"
+                             onclick="location.href='@Url.Action("VisitFarmer", New With {.fiano = item.ActivityNumber})'">
 
-                        <!-- Contact + Type -->
-                        <div style="display:flex;
+                            <div style="margin-top:5px;">
+                                Activity No. : @item.ActivityNumber
+                            </div>
+
+                            <!-- Contact + Type -->
+                            <div style="display:flex;
                                         justify-content:space-between;
                                         align-items:center;
                                         margin-top:5px;">
 
-                            <span>@item.ContactName</span>
+                                <span>@item.ContactCode  @item.ContactName</span>
 
-                            <span style="color:#666;">
-                                @item.TypeContactName
-                            </span>
+                                <span style="color:#666;">
+                                    @item.TypeContactName
+                                </span>
+                            </div>
 
+                            @If item.IsCheckOut Then
+                                @<div style="margin-top:5px;">
+                                    ⏰ @item.CheckInDateTime - @item.CheckOutDateTime
+                                </div>
+                            Else
+                                @<div style="margin-top:5px;">
+                                    ⏰ @item.CheckInDateTime - <span style="color:red">Check Out!</span>
+                                </div>
+                            End If
                         </div>
-            
-                        @If item.IsCheckOut Then
-                            @<div style="margin-top:5px;">
-                                ⏰ @item.CheckInDateTime - @item.CheckOutDateTime
-                            </div>
-                        Else
-                            @<div style="margin-top:5px;">
-                                ⏰ @item.CheckInDateTime - <a href="@Url.Action("VisitFarmerEditMode", "DailyWork")?fiano=@item.ActivityNumber">
-                                    Check Out!
-                                </a>
-                            </div>
-                        End If
-
 
                     </div>
 
@@ -142,7 +142,7 @@ End Code
                     @If Not Model.IsTimeIn Then
                         @<span class="small">กรุณาบันทึกลงเวลา Time In!</span>
                     Else
-                        @<span class="small">ไม่พบข้อมูล!</span>
+                        @<span class="small">0 items.</span>
                     End If
                 </div>
 
@@ -537,7 +537,9 @@ End Code
             แจ้งเตือน
         </div>
 
-        <div id="msgText" class="msg-text">
+        <div id="msgText"
+             class="msg-text"
+             style="white-space: pre-line;">
             ข้อความ
         </div>
 
@@ -619,7 +621,28 @@ End Code
                 location.href='@Url.Action("Logout", "Home")'
         }
 
-        function goTimeInOut() {
+        function goTimeIn() {
+            getLocation();
+        }
+        function goTimeOut() {
+
+            var isallcheckout = $("#chkallcheckout").prop("checked");
+            console.log(isallcheckout);
+
+            if (!isallcheckout) {
+                /* alert('กรุณาระบุเลขไมล์หลังใช้');*/
+                console.log("พบรายการที่ยังไม่ CheckOut!");
+                ShowMessage("พบรายการที่ยังไม่ CheckOut!\nกรุณา CheckOut ให้ครบทุกรายการ");
+                return;
+
+            } else {
+
+                getLocation();
+
+            }
+
+        }
+        function getLocation() {
 
             /*clear ค่าเดิม*/
             photoBlob = null;
@@ -671,6 +694,8 @@ End Code
                 }
             );
         }
+
+
 
         function getLocation_Test() {
 
@@ -975,10 +1000,10 @@ End Code
 
                    if (res.Success) {
 
+                       /*  alert("Time In Completed");*/
+
                        $('#timeInModal')
                            .modal('hide');
-
-                      /* alert("reload");*/
 
                        location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
 
@@ -1093,18 +1118,19 @@ End Code
     </script>
 
 
+    @*DeleteAtivityItem*@
     <script>
         function DeleteAtivityItem(doc) {
 
             ShowConfirm(
 
-                "ต้องการลบข้อมูลนี้ " + doc +" หรือไม่ ?",
+                "ต้องการลบข้อมูลนี้ " + doc + " หรือไม่ ?",
 
                 function () {
 
-                    console.log("ลบรายการ " + doc); 
+                    console.log("ลบรายการ " + doc);
 
-                /*    alert("ลบรายการ"); */
+                    /*    alert("ลบรายการ"); */
 
                     $.ajax({
                         url: '/DailyWork/DeleteActivity',
@@ -1116,7 +1142,7 @@ End Code
 
                             if (res.Success) {
 
-                              /*  alert("reload"); */
+                                /*  alert("reload"); */
 
                                 location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
 
@@ -1134,13 +1160,13 @@ End Code
                             ShowMessage(er.Message, "Save Error.มีข้อผิดพลาดเกิดขึ้น!");
                             /*alert("Save Error");*/
 
-                        } 
+                        }
                     });
                 },
 
                 function () {
-                   console.log("ยกเลิก " + doc);
-                  /*  alert("ยกเลิก " + doc);*/
+                    console.log("ยกเลิก " + doc);
+                    /*  alert("ยกเลิก " + doc);*/
 
                 },
 
@@ -1149,7 +1175,7 @@ End Code
             );
 
         }
-        
+
     </script>
 
 End Section
@@ -1179,7 +1205,7 @@ End Section
                 </div>
 
                 @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeInOut()">
+                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeIn()">
                         Time In
                     </Button>
                 </div>
@@ -1201,7 +1227,7 @@ End Section
                 </div>
 
                 @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeInOut()">
+                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeOut()">
                         Time Out
                     </Button>
                 </div>

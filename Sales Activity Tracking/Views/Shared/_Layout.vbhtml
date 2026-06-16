@@ -34,9 +34,10 @@
         </h1>
     </div>
 
-    <div class="container body-content small">
-         
-        @RenderBody() 
+    @*class="container body-content small"*@
+    <div class="container small" style="padding-top:10px">
+
+        @RenderBody()
 
     </div>
 

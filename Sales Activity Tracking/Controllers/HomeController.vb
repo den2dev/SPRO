@@ -42,6 +42,8 @@ Public Class HomeController
         Session.Remove("FSMCODE")
         Session.Remove("FSMCODE")
 
+        FormsAuthentication.SignOut()
+
         Return RedirectToAction("Index", "Home")
 
     End Function

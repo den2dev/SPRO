@@ -135,13 +135,6 @@ Public Class DailyWorkController
                         Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
                         file.SaveAs(PathFile)
 
-
-                        FormsAuthentication.SignOut() 'เคลียร์ค่า
-
-                        'userlogin markstatus การ login ชั่วคราว ก่อนที่จะตรวจสอบการ TimeIn จริงจาก database  
-                        Session("FSMCODE") = ""
-                        Session("FUSERID") = ""
-
                     End If
 
 
@@ -167,7 +160,7 @@ Public Class DailyWorkController
 #Region "CheckIn & CheckOut เยี่ยมลูกค้า"
 
     <HttpPost>
-    Public Function NewFarmerCheckInSave(newfarmer As NewFarmerViewModel) As ActionResult
+    Public Function NewFarmerCheckInSave(newfarmer As NewFarmerViewModel) As JsonResult
 
         Try
 
@@ -177,6 +170,7 @@ Public Class DailyWorkController
                 .SalesmanCode = Session("FSMCODE")
                 .UserID = Session("FUSERID")
                 .IsNewFarmer = True
+                .NewFarmerType = newfarmer.NewType
                 .FarmerCode = ""
                 .FarmerName = newfarmer.FarmerName
                 .MobileNo = newfarmer.MobileNo
@@ -193,18 +187,26 @@ Public Class DailyWorkController
 
             If rs.IsSuccess = True Then
 
-                Return View("Index")
+                Return Json(New With {
+                    .Success = True,
+                    .Message = "เพิ่มรายการแล้ว!",
+                    .RedirectUrl = "/DailyWork/VisitFarmer?fiano=" & rs.DocNumber
+                })
 
             Else
-                TempData("ErrorMessage") = rs.Message
-                Return RedirectToAction("AlertMessage")
+
+                Return Json(New With {
+                    .Success = False,
+                    .Message = rs.Message
+                })
+
             End If
         Catch ex As Exception
 
-            'ModelState.AddModelError("", ex.Message)
-            'ViewBag.ErrorMessage = ex.Message
-            TempData("ErrorMessage") = ex.Message
-            Return RedirectToAction("AlertMessage")
+            Return Json(New With {
+                    .Success = False,
+                    .Message = ex.Message
+                })
 
         End Try
 
@@ -242,7 +244,7 @@ Public Class DailyWorkController
                 Return Json(New With {
                     .Success = True,
                     .Message = "เพิ่มรายการแล้ว!",
-                    .RedirectUrl = "/DailyWork/VisitFarmer?farmerCode=" & farmercode
+                    .RedirectUrl = "/DailyWork/VisitFarmer?fiano=" & rs.DocNumber
                 })
 
             Else
@@ -266,24 +268,46 @@ Public Class DailyWorkController
     End Function
 
     <HttpPost>
-    Public Function CheckOutSave(model As CheckOutViewModel) As JsonResult
+    Public Function CheckOutSave(fiano As String, GeoLocation As String) As JsonResult
+
+        Try
+
+            Dim model As New CheckOutViewModel
+            With model
+                .SalesmanCode = Session("FSMCODE")
+                .UserID = Session("FUSERID")
+                .DocNumber = fiano
+                .GeoLocation = GeoLocation
+            End With
 
 
-        Dim id = CLng(Request.Form("ID"))
-        Dim lat = Request.Form("Latitude")
-        Dim lng = Request.Form("Longitude")
+            Dim rs = repo.CheckOut(model)
 
-        Dim file = Request.Files("PhotoFile")
-        Dim fileName = Guid.NewGuid.ToString() & Path.GetExtension(file.FileName)
-        Dim PathFile = Server.MapPath("~/Uploads/" & fileName)
+            If rs.IsSuccess = True Then
 
-        file.SaveAs(PathFile)
+                Return Json(New With {
+                    .Success = True,
+                    .Message = "Check Out แล้ว!",
+                    .RedirectUrl = "/DailyWork/Index"
+                })
 
-        repo.CheckOut(model)
+            Else
+                Return Json(New With {
+                    .Success = False,
+                    .Message = rs.Message
+                })
 
-        Return Json(New With {
-        .success = True
-    })
+            End If
+
+
+        Catch ex As Exception
+
+            Return Json(New With {
+                    .Success = False,
+                    .Message = ex.Message
+                })
+
+        End Try
 
     End Function
 
@@ -303,25 +327,44 @@ Public Class DailyWorkController
 
     End Function
 
+    Public Function Questionnaire(fiano As String, fcontcode As String, fqesntype As Integer) As ActionResult
 
-    Public Function VisitFarmer(farmerCode As String) As ActionResult
+        Dim baseUrl As String = "https://spclnt3.softprohub.net/AFSKSP/App_CRM/frmOC20QANS.aspx?"
 
-        Dim repo As New FarmerRepository
-        Dim farmer = repo.GetFarmer(False, farmerCode)
+        Dim qs As New List(Of String)
 
-        If farmer Is Nothing Then
-            TempData("ErrorMessage") = "ไม่พบรหัส : " & farmerCode
-            Return RedirectToAction("AlertMessage")
-        Else
-            Dim model As New VisitFarmerViewModel
-            model.Farmer = farmer
+        qs.Add("ShowExit=Y")
+        qs.Add("ISCODE=010004")
+        qs.Add("REFNO=26IA1906150006")
+        qs.Add("CONTCODE=19000001")
+        qs.Add("ENTTYPE=2")
+        qs.Add("ParamCode=B5NdcfPHKgjiyX5AOECjcA==")
 
-            Return View(model)
-        End If
+        Dim url As String = baseUrl & String.Join("&", qs)
+
+        ViewBag.QuestionnaireUrl = url
+
+        Return View()
 
     End Function
+    'Public Function VisitFarmer(farmerCode As String) As ActionResult
 
-    Public Function VisitFarmerEditMode(fiano As String) As ActionResult
+    '    Dim repo As New FarmerRepository
+    '    Dim farmer = repo.GetFarmer(False, farmerCode)
+
+    '    If farmer Is Nothing Then
+    '        TempData("ErrorMessage") = "ไม่พบรหัส : " & farmerCode
+    '        Return RedirectToAction("AlertMessage")
+    '    Else
+    '        Dim model As New VisitFarmerViewModel
+    '        model.Farmer = farmer
+
+    '        Return View(model)
+    '    End If
+
+    'End Function
+
+    Public Function VisitFarmer(fiano As String) As ActionResult
 
         Dim model As New VisitFarmerEditModeViewModel()
 
@@ -331,13 +374,23 @@ Public Class DailyWorkController
         Dim _repoFarmer As New FarmerRepository
         model.Farmer = _repoFarmer.GetFarmer(atv.IsNewCont, If(atv.IsNewCont, atv.ActivityNumber, atv.ContactCode))
 
+        Return View(model)
 
-        'Dim _repoQuesn As New QuestionnaireRepository
-        'model.Questionnaire = _repoQuesn.GetQuestionnaireActiveForm()
+    End Function
+
+    Function VisitFarmerPhoto(activityNo As String, ischeckout As Boolean) As ActionResult
+
+        Dim model As New ActivityPhotoViewModel
+
+        model.ActivityNo = activityNo
+        model.IsCheckOut = ischeckout
+
+        model.Photos = GetPhotoList(activityNo)
 
         Return View(model)
 
     End Function
+
     Public Function VisitItemDelete(fiano As String) As ActionResult
 
         Dim model As New VisitFarmerEditModeViewModel()
@@ -351,8 +404,6 @@ Public Class DailyWorkController
         Return View(model)
 
     End Function
-
-
 
     <HttpPost>
     Public Function DeleteVisitItem(activityNo As String) As ActionResult
@@ -397,10 +448,9 @@ Public Class DailyWorkController
         Dim list = New AddressRepository().GetSubDistrictList(provinceCode, districtCode)
         Return Json(list, JsonRequestBehavior.AllowGet)
     End Function
+
+
 #End Region
-
-
-
 
     <HttpPost>
     Public Function DeleteActivity(activityNo As String) As JsonResult
@@ -424,5 +474,167 @@ Public Class DailyWorkController
         End Try
 
     End Function
+
+
+#Region "Photo"
+    Function PhotoList(activityNo As String) As PartialViewResult
+
+        Dim photos = GetPhotoList(activityNo)
+
+        Return PartialView("_PhotoList", photos)
+
+    End Function
+
+
+    <HttpPost>
+    Public Function UploadPhoto(activityNo As String) As JsonResult
+
+        Try
+
+            Dim uploadFolder =
+                Server.MapPath("~/Uploads")
+
+            If Not Directory.Exists(uploadFolder) Then
+                Directory.CreateDirectory(uploadFolder)
+            End If
+
+            Dim nextNo = GetNextPhotoNo(activityNo)
+
+            For i = 0 To Request.Files.Count - 1
+
+                Dim file = Request.Files(i)
+
+                If file.ContentLength > 0 Then
+
+                    Dim ext =
+                        Path.GetExtension(file.FileName)
+
+                    Dim fileName =
+                        activityNo &
+                        "_" &
+                        nextNo &
+                        ext
+
+                    file.SaveAs(
+                        Path.Combine(
+                            uploadFolder,
+                            fileName))
+
+                    nextNo += 1
+
+                End If
+
+            Next
+
+            Return Json(New With {
+                .success = True
+            })
+
+        Catch ex As Exception
+
+            Return Json(New With {
+                .success = False,
+                .message = ex.Message
+            })
+
+        End Try
+
+    End Function
+
+    <HttpPost>
+    Public Function DeletePhoto(fileName As String) As JsonResult
+
+        Try
+
+            Dim physicalFile =
+                Server.MapPath("~/Uploads/" & fileName)
+
+            If System.IO.File.Exists(physicalFile) Then
+
+                System.IO.File.Delete(physicalFile)
+
+            End If
+
+            Return Json(New With {
+                .success = True
+            })
+
+        Catch ex As Exception
+
+            Return Json(New With {
+                .success = False,
+                .message = ex.Message
+            })
+
+        End Try
+
+    End Function
+
+    Private Function GetPhotoList(activityNo As String) As List(Of String)
+
+        Dim result As New List(Of String)
+
+        Dim uploadFolder =
+            Server.MapPath("~/Uploads")
+
+        If Not Directory.Exists(uploadFolder) Then
+
+            Return result
+
+        End If
+
+        Dim files =
+            Directory.GetFiles(
+                uploadFolder,
+                activityNo & "_*.*")
+
+        result =
+            files.
+            Select(Function(f)
+                       Return Path.GetFileName(f)
+                   End Function).
+            OrderBy(Function(x) x).
+            ToList()
+
+        Return result
+
+    End Function
+
+    Private Function GetNextPhotoNo(
+        activityNo As String
+    ) As Integer
+
+        Dim uploadFolder =
+            Server.MapPath("~/Uploads")
+
+        Dim files =
+            Directory.GetFiles(
+                uploadFolder,
+                activityNo & "_*.*")
+
+        If files.Count = 0 Then
+
+            Return 1
+
+        End If
+
+        Dim maxNo =
+            files.Select(Function(f)
+
+                             Dim name =
+                                 Path.GetFileNameWithoutExtension(f)
+
+                             Dim arr =
+                                 name.Split("_"c)
+
+                             Return Integer.Parse(arr(1))
+
+                         End Function).Max()
+
+        Return maxNo + 1
+
+    End Function
+#End Region
+
 
 End Class

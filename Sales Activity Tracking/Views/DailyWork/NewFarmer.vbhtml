@@ -6,7 +6,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 170px);
+        height: calc(100vh - 173px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -44,6 +44,26 @@ End Code
         <div id="mainItems">
 
             <input type="hidden" id="GeoLocation" name="GeoLocation" data-role="none" />
+
+            <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                <div class="row">ประเภท *</div>
+                <div class="row">
+
+                    @Html.DropDownListFor(
+                              Function(m) m.NewType,
+                             New List(Of SelectListItem) From {
+                                 New SelectListItem With {.Value = "", .Text = "-- เลือกประเภท --"},
+                                 New SelectListItem With {.Value = "1", .Text = "1-ปลูกอ้อยอย่างเดียว"},
+                                 New SelectListItem With {.Value = "2", .Text = "2-ปลูกอ้อยและพืชอื่น"},
+                                 New SelectListItem With {.Value = "3", .Text = "3-ปลูกพิชอื่น"}
+                             },
+                             New With {
+                                 .data_role = "none",
+                                 .class = "custom-select"
+                             })
+
+                </div>
+            </div>
 
             <div class="container" style="padding-bottom:5px;padding-top:5px;">
                 <div class="row">ชื่อ-นามสกุล *</div>
@@ -158,34 +178,35 @@ End Code
         </div>
     </div>
 End Using
- 
- 
 
-@if TempData("ErrorMessage") IsNot Nothing Then
 
-    @<div id="msgOverlay" class="msg-overlay" style="display:flex">
 
-        <div class="msg-box">
 
-            <div class="msg-title">
-                แจ้งเตือน
-            </div>
+@*Show Popup Messgaebox*@
+<div id="msgOverlay" class="msg-overlay">
 
-            <div class="msg-text">
-                @TempData("ErrorMessage")
-            </div>
+    <div class="msg-box">
 
-            <button type="button"
-                    class="msg-btn"
-                    onclick="location.href = '/DailyWork/NewFarmer';">
-                ตกลง
-            </button>
-
+        <div id="msgTitle" class="msg-title">
+            แจ้งเตือน
         </div>
+
+        <div id="msgText"
+             class="msg-text"
+             style="white-space: pre-line;">
+            ข้อความ
+        </div>
+
+        <button id="btnMsgOK"
+                class="msg-btn"
+                onclick="document.getElementById('msgOverlay').style.display='none';">
+            ตกลง
+        </button>
 
     </div>
 
-End If
+</div>
+@*END Messagbox*@
 
 @***หาพิกัด*****@
 <div id="gpsLoadingModal"
@@ -272,10 +293,9 @@ End If
         <div class="row g-0">
 
             <div Class="col no-padding">
-                <Button 
-                        Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" 
-                        style="height: 60px; padding-top: 25px !important;" 
-                         onclick="location.href='@Url.Action("index")'">
+                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
+                        style="height: 60px; padding-top: 25px !important;"
+                        onclick="history.back()">
                     Back
                 </Button>
             </div>
@@ -374,7 +394,6 @@ End If
             gpsErrorModal.hide();
         }
 
-      
         $(function () {
 
             $("#ddlProvince").change(function () {
@@ -455,7 +474,81 @@ End If
                     });
 
             });
+             
+        });
+
+        $("#frmNewFarmer").submit(function (e) {
+
+            e.preventDefault();
+
+
+            if ($("#NewType").val() == "") {
+                ShowMessage("กรุณาเลือกประเภท", null, "ตรวจสอบข้อมูล");
+                return false;
+            }
+
+            if ($("#FarmerName").val().trim() == "") {
+                ShowMessage("กรุณาระบุชื่อ-นามสกุล", null, "ตรวจสอบข้อมูล");
+                return false;
+            }
+
+
+            var mobile = $("#MobileNo").val();
+
+            console.log('MobileNo' + mobile);
+
+            if (mobile == "") {
+                ShowMessage("กรุณาระบุเบอร์โทร", null, "ตรวจสอบข้อมูล");
+                return false;
+            }
+            console.log("ผ่านตรวจเบอร์โทร");
+
+            if ($("#ddlProvince").val() == "") {
+                ShowMessage("กรุณาเลือกจังหวัด", null, "ตรวจสอบข้อมูล");
+                return false;
+            }
+            console.log("ผ่านตรวจจังหวัด");
+
+            if ($("#ddlDistrict").val() == "") {
+                ShowMessage("กรุณาเลือกอำเภอ", null, "ตรวจสอบข้อมูล");
+                return false;
+            }
+            console.log("ผ่านตรวจอำเภอ");
+
+            if ($("#ddlSubDistrict").val() == "") {
+                ShowMessage("กรุณาเลือกตำบล", null, "ตรวจสอบข้อมูล");
+                return false;
+            }
+            console.log("ผ่านตรวจตำบล");
+
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: $(this).serialize(),
+                success: function (res) {
+
+                    console.log(res);
+
+                    console.log(res.RedirectUrl);
+
+                    if (res.Success) {
+
+                        window.location.href = res.RedirectUrl;
+
+                    } else {
+
+                        ShowMessage(
+                            res.Message,
+                            null,
+                            "ข้อผิดพลาด"
+                        );
+
+                    }
+
+                }
+            });
 
         });
+
     </script>
 End Section

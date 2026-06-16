@@ -3,6 +3,7 @@
 Public Class Farmer
 
     Public Property IsNewFarmer As Boolean
+    Public Property NewFarmerType As String ' เลือกได้ 3แบบ: 1-ปลูกอ้อยอย่างเดียว 2-ปลูกอ้อยและพืชอื่น 3-ปลูกพิชอื่น
     Public Property FarmerCode As String
     Public Property FarmerName As String
     Public Property MobileNo As String

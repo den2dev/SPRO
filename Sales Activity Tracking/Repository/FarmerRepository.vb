@@ -8,30 +8,52 @@ Public Class FarmerRepository
 
         Dim FarmerList As New List(Of Farmer)
 
-        Dim sql As String = "SELECT 
-                                'VIS' as FCODE,
-	                            FIANO as FCONTCODE,
-	                            FCONTNAME as FCONTENM,
-	                            FCONTPERSTEL as FMOBILE,
-	                            FCONTADDR as FHADDNO, 
-                                '' as FHADDMOO,
-                                '' as FHADDVILL,
-                                '' as FHPROVCD,
-                                '' as FHCITYCD,
-                                '' as FHDISTRICTCD,
-                                '' as  ProvinceName,
-                                '' as  CityName,
-                                '' as  DistrictName 
-                            FROM OD50CIAC 
-                            where FIACODE='VIS'                             
-                            AND (FCONTCODE is null or FCONTCODE='') 
-                            AND FSMCODE=@FSMCODE
-                            AND FACTDATE=CONVERT(DATE, GETDATE())
+        'Dim sql As String = "SELECT 
+        '                        'VIS' as FCODE,
+        '                     FIANO as FCONTCODE,
+        '                     FCONTNAME as FCONTENM,
+        '                     FCONTPERSTEL as FMOBILE,
+        '                     FCONTADDR as FHADDNO, 
+        '                        '' as FHADDMOO,
+        '                        '' as FHADDVILL,
+        '                        '' as FHPROVCD,
+        '                        '' as FHCITYCD,
+        '                        '' as FHDISTRICTCD,
+        '                        '' as  ProvinceName,
+        '                        '' as  CityName,
+        '                        '' as  DistrictName 
+        '                    FROM OD50CIAC 
+        '                    where FIACODE='VIS'                             
+        '                    AND (FCONTCODE is null or FCONTCODE='') 
+        '                    AND FSMCODE=@FSMCODE
+        '                    AND FACTDATE=CONVERT(DATE, GETDATE())
 
-                            Union all 
+        '                    Union all 
 
-                            SELECT
-                                'OD50' as FCODE,
+        '                    SELECT
+        '                        'OD50' as FCODE,
+        '                        R.FCONTCODE,
+        '                        R.FCONTENM ,
+        '                        R.FMOBILE,
+        '                        R.FHADDNO,
+        '                        R.FHADDMOO,
+        '                        R.FHADDVILL,
+        '                        R.FHPROVCD,
+        '                        R.FHCITYCD,
+        '                        R.FHDISTRICTCD,
+        '                        A.FPROVINCE  AS ProvinceName,
+        '                        A.FCITY      AS CityName,
+        '                        A.FDISTRICT  AS DistrictName
+        '                    FROM OD50RCVD R
+        '                    LEFT JOIN LD07AZIP A
+        '                        ON A.FPROVCD = R.FHPROVCD
+        '                       AND A.FCITYCD = R.FHCITYCD
+        '                       AND A.FDISTRICTCD = R.FHDISTRICTCD
+        '                    where (R.FNOTUSE is null or R.FNOTUSE='N') 
+        '                    and  R.FSMCODE=@FSMCODE
+        '                  "
+
+        Dim sql As String = "  SELECT 
                                 R.FCONTCODE,
                                 R.FCONTENM ,
                                 R.FMOBILE,
@@ -53,7 +75,7 @@ Public Class FarmerRepository
                             and  R.FSMCODE=@FSMCODE
                           "
 
-        Debug.WriteLine("[" & FSMCODE & "]")
+        'Debug.WriteLine("[" & FSMCODE & "]")
 
         Using cn As SqlConnection = DBConnection.GetConnection()
 
@@ -69,7 +91,7 @@ Public Class FarmerRepository
 
                         FarmerList.Add(
                             New Farmer With {
-                                .IsNewFarmer = If(dr("FCODE").ToString() = "VIS", True, False),
+                                .IsNewFarmer = False, 'If(dr("FCODE").ToString() = "VIS", True, False),
                                 .FarmerCode = dr("FCONTCODE").ToString(),
                                 .FarmerName = dr("FCONTENM").ToString(),
                                 .MobileNo = dr("FMOBILE").ToString(),

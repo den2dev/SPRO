@@ -10,7 +10,6 @@ Public Class DailyWorkRepository
 
 #Region "SQL"
 
-
         Dim FACTDate As Date
 
         Dim model As New DailyWorkViewModel
@@ -159,8 +158,10 @@ Public Class DailyWorkRepository
 
             End If
 
-            '**get WorkItems    FROM dbo.OD50CIAC  a LEFT OUTER JOIN  dbo.OD50RCVD b ON a.FCONTCODE =b.FCONTCODE
-            Dim sqlActivity = "SELECT  
+            If model.IsTimeIn Then 'ถ้า login แล้ว ให้หารายการในวันนั้นๆ
+
+                '**get WorkItems    FROM dbo.OD50CIAC  a LEFT OUTER JOIN  dbo.OD50RCVD b ON a.FCONTCODE =b.FCONTCODE
+                Dim sqlActivity = "SELECT  
                                  FIACODE,
                                  FIANO,
                                  FCONTCODE,
@@ -174,33 +175,35 @@ Public Class DailyWorkRepository
                                 and FACTDATE=@FACTDATE
                                 order by FACTTIME"
 
-            Using cmd_Activity As New SqlCommand(sqlActivity, cn)
+                Using cmd_Activity As New SqlCommand(sqlActivity, cn)
 
-                cmd_Activity.Parameters.AddWithValue("@FACTDATE", FACTDate)
+                    cmd_Activity.Parameters.AddWithValue("@FACTDATE", FACTDate)
 
-                Using dr As SqlDataReader = cmd_Activity.ExecuteReader()
+                    Using dr As SqlDataReader = cmd_Activity.ExecuteReader()
 
-                    While dr.Read()
+                        While dr.Read()
 
-                        ActivityItems.Add(
-                            New ActivityItem With {
-                                .ActivityCode = dr("FIACODE").ToString(),
-                                .ActivityNumber = dr("FIANO").ToString(),
-                                .ContactCode = dr("FCONTCODE").ToString(),
-                                .ContactName = dr("FCONTNAME").ToString(),
-                                .CheckInDateTime = If(IsDBNull(dr("FESTRDATE")), "", Convert.ToDateTime(dr("FESTRDATE")).ToString("dd/MM/yyyy")) &
-                                                     If(IsDBNull(dr("FESTRTIME")), "", dr("FESTRTIME").ToString() & " น."),
-                                .CheckOutDateTime = If(IsDBNull(dr("FACTFNDATE")), "", Convert.ToDateTime(dr("FACTFNDATE")).ToString("dd/MM/yyyy")) &
-                                                    If(IsDBNull(dr("FACTFNTIME")), "", dr("FACTFNTIME").ToString() & " น.")
-                        })
+                            ActivityItems.Add(
+                                New ActivityItem With {
+                                    .ActivityCode = dr("FIACODE").ToString(),
+                                    .ActivityNumber = dr("FIANO").ToString(),
+                                    .ContactCode = dr("FCONTCODE").ToString(),
+                                    .ContactName = dr("FCONTNAME").ToString(),
+                                    .CheckInDateTime = If(IsDBNull(dr("FESTRDATE")), "", Convert.ToDateTime(dr("FESTRDATE")).ToString("dd/MM/yyyy")) &
+                                                         If(IsDBNull(dr("FESTRTIME")), "", dr("FESTRTIME").ToString() & " น."),
+                                    .CheckOutDateTime = If(IsDBNull(dr("FACTFNDATE")), "", Convert.ToDateTime(dr("FACTFNDATE")).ToString("dd/MM/yyyy")) &
+                                                        If(IsDBNull(dr("FACTFNTIME")), "", dr("FACTFNTIME").ToString() & " น.")
+                            })
 
-                    End While
+                        End While
+
+                    End Using
 
                 End Using
 
-            End Using
+                model.ActivityItems = ActivityItems
 
-            model.ActivityItems = ActivityItems
+            End If
 
         End Using
 
@@ -330,7 +333,7 @@ Public Class DailyWorkRepository
                             .ContactName = dr("FCONTNAME").ToString()
                             .CheckInDateTime = If(IsDBNull(dr("FESTRDATE")), "", Convert.ToDateTime(dr("FESTRDATE")).ToString("dd/MM/yyyy")) &
                                                      If(IsDBNull(dr("FESTRTIME")), "", dr("FESTRTIME").ToString() & " น.")
-                            .CheckOutDateTime = If(IsDBNull(dr("FACTFNDATE")), "ยังไม่ CheckOut", Convert.ToDateTime(dr("FACTFNDATE")).ToString("dd/MM/yyyy")) &
+                            .CheckOutDateTime = If(IsDBNull(dr("FACTFNDATE")), "", Convert.ToDateTime(dr("FACTFNDATE")).ToString("dd/MM/yyyy")) &
                                                     If(IsDBNull(dr("FACTFNTIME")), "", dr("FACTFNTIME").ToString() & " น.")
 
                         End With
@@ -770,14 +773,13 @@ Public Class DailyWorkRepository
             cmd.Parameters.AddWithValue("@FENTBY", model.UserID)
             cmd.Parameters.AddWithValue("@FEPREDATE", Date.Today)
 
-            cmd.Parameters.AddWithValue("@FPREPYN", If(model.IsNewFarmer, 0, DBNull.Value)) ' --ชาวไร่ใหม่=0,null
-
             cmd.Parameters.AddWithValue("@FAPPMYN", If(model.IsNewFarmer, "Y", DBNull.Value)) '--ชาวไร่ใหม่=Y,null
             cmd.Parameters.AddWithValue("@FAPPMBY", model.UserID)
             cmd.Parameters.AddWithValue("@FAPPMDATE", Date.Today)
 
-            '----Follow Up
-            cmd.Parameters.AddWithValue("@FFLUPYN", If(model.IsNewFarmer, DBNull.Value, "N")) '--Default N ,Null ชาวไร่ใหม่
+            cmd.Parameters.AddWithValue("@FPREPYN", If(model.IsNewFarmer, 0, 9)) ' --ชาวไร่ใหม่=0,9-รายเดิม
+
+            cmd.Parameters.AddWithValue("@FFLUPYN", If(model.IsNewFarmer, model.NewFarmerType, "N")) '--Default N ,ชาวไร่ใหม่ ประเภท 1-ปลูกอ้อยอย่างเดียว 2-ปลูกอ้อยและพืชอื่น 3-ปลูกพิชอื่น
             cmd.Parameters.AddWithValue("@FFLUPACT", If(model.IsNewFarmer, DBNull.Value, "")) '--Default '',Null ชาวไร่ใหม่
 
             cmd.Parameters.AddWithValue("@FFROMIANO", If(model.IsNewFarmer, DBNull.Value, "")) '--Default '',Null ชาวไร่ใหม่
@@ -785,14 +787,14 @@ Public Class DailyWorkRepository
 
             cmd.Parameters.AddWithValue("@FCONTADDR", If(model.IsNewFarmer, model.ConcateAddress, DBNull.Value)) 'concat(address)
             cmd.Parameters.AddWithValue("@FCONTCHANNEL", 4) '-default 4-Visit
-            cmd.Parameters.AddWithValue("@FCONTNAME", If(model.IsNewFarmer, model.FarmerName, DBNull.Value))
+            cmd.Parameters.AddWithValue("@FCONTNAME", model.FarmerName)
             cmd.Parameters.AddWithValue("@FCONTPERSTEL", If(model.IsNewFarmer, model.MobileNo, DBNull.Value))
 
             cmd.Parameters.AddWithValue("@FLASTUPD", Date.Today)   '---Date.Today.ToString("yyyy-MM-dd") กรณีใน table เป็น varchar(10)
             cmd.Parameters.AddWithValue("@FLASTUPDTM", Date.Now.ToString("HH:mm"))
             cmd.Parameters.AddWithValue("@FLASTUPDBY", model.UserID)
 
-            cmd.Parameters.AddWithValue("@FACTRESULT", "Y") 'default Y
+            cmd.Parameters.AddWithValue("@FACTRESULT", "N") ' Y-ดำเนินการเสร็จแล้ว ,N-ยังไม่ดำเนินการ
 
             cmd.Parameters.AddWithValue("@FESTRDATE", Date.Today)
             cmd.Parameters.AddWithValue("@FESTRTIME", Date.Now.ToString("HH:mm"))
@@ -838,7 +840,9 @@ Public Class DailyWorkRepository
         End Using
     End Function
 
-    Public Function CheckOut(model As CheckOutViewModel) As Integer
+    Public Function CheckOut(model As CheckOutViewModel) As ResultMessageModel
+
+        Dim result As New ResultMessageModel
 
         '-------------------------------
         Dim sql As String = "
@@ -854,7 +858,6 @@ Public Class DailyWorkRepository
 
                 WHERE FIANO = @FIANO"
 
-        Dim rows As Integer
 
         Using cn As SqlConnection = DBConnection.GetConnection()
 
@@ -873,11 +876,35 @@ Public Class DailyWorkRepository
 
             cmd.Parameters.AddWithValue("@FACTLOCATION", model.GeoLocation)
 
-            rows = cmd.ExecuteNonQuery()
+            Try
+
+                Dim rows As Integer = cmd.ExecuteNonQuery()
+
+                If rows > 0 Then
+
+                    result.IsSuccess = True
+                    result.Message = "บันทึกข้อมูลสำเร็จ"
+
+                Else
+
+                    result.IsSuccess = False
+                    result.DocNumber = ""
+                    result.Message = "ไม่พบข้อมูลที่ถูกบันทึก"
+
+                End If
+
+            Catch ex As Exception
+
+                result.IsSuccess = False
+                result.DocNumber = ""
+                result.Message = ex.Message
+
+            End Try
+
+            Return result
 
         End Using
 
-        Return rows > 0
 
     End Function
 

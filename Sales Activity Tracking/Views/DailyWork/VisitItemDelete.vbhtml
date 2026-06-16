@@ -170,7 +170,6 @@ End Code
             </div>
 
             <div class="col">
-                
 
                 @Using Html.BeginForm("DeleteVisitItem", "DailyWork", FormMethod.Post)
 

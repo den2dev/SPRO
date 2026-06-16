@@ -2,7 +2,7 @@
 
     Public Property GeoLocation As String
     Public Property FarmerName As String
-
+    Public Property NewType As String
     Public Property MobileNo As String
 
     Public Property AddressNo As String

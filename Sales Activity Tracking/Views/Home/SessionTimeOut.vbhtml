@@ -6,7 +6,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 170px);
+        height: calc(100vh - 160px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;

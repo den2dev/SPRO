@@ -27,7 +27,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 215px);
+        height: calc(100vh - 202px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -294,7 +294,7 @@ End Code
 
                         $("#txtgeolocation").val(gpsText);
 
-                        ShowLoading("กำลังทำรายการ...");
+                        ShowLoading("Checking In...");
                         $('#gpsLoadingModal').modal('hide');
 
                         var formData = new FormData();
@@ -320,7 +320,6 @@ End Code
                                     /*  alert("Time In Completed"); */
 
                                     window.location.href = res.RedirectUrl;
-
 
 
                                 }
@@ -362,72 +361,7 @@ End Code
         }
 
     </script>
-
-
-    @*Validate TimeIn*@
-    <script>
-        function ValidateTimeIn() {
-
-            var vehicleType = $("#ddlVehicletype").val();
-            var odometer = $("#txtOdometerStart").val();
-            var hasImage = $("#previewImage").attr("src");
-
-            var isVehicleValid = false;
-
-            if (vehicleType === "0") {
-                // รถบริษัท
-                isVehicleValid = $("#ddlVehicle").val();
-            }
-            else if (vehicleType === "1") {
-                // รถตนเอง
-                isVehicleValid = $.trim($("#txtVehicleno").val()) !== "";
-            }
-
-            var isValid =
-                vehicleType &&
-                isVehicleValid &&
-                odometer &&
-                Number(odometer) > 0 &&
-                hasImage;
-
-            $("#btnSaveTimeIn").prop("disabled", !isValid);
-        }
-
-        //function ValidateTimeIn() {
-
-        //    var vehicle = $("#ddlVehicle").val();
-        //    var odometer = $("#txtOdometerStart").val();
-        //    var hasImage = $("#previewImage").attr("src");
-
-        //    var isValid =
-        //        vehicle &&
-        //        odometer &&
-        //        odometer > 0 &&
-        //        hasImage;
-
-        //    $("#btnSaveTimeIn").prop("disabled", !isValid);
-
-        //}
-
-        //$("#ddlVehicle").change(function () {
-
-        //    ValidateTimeIn();
-
-        //});
-        //$("#txtOdometerStart").on("input", function () {
-
-        //    ValidateTimeIn();
-
-        //});
-
-        $("#ddlVehicletype").change(ValidateTimeIn);
-        $("#ddlVehicle").change(ValidateTimeIn);
-        $("#txtVehicleno").on("keyup change", ValidateTimeIn);
-        $("#txtOdometerStart").on("keyup change", ValidateTimeIn);
-
-    </script>
-
-
+     
 
 End Section
 
