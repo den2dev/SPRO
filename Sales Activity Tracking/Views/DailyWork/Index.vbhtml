@@ -2,7 +2,18 @@
 @Code
     ViewData("Title") = "Daily Report"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
+
+<style>
+    #mainItems {
+        height: calc(100vh - 217px);
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+</style>
 
 <div>
     @*class="container"*@
@@ -69,15 +80,7 @@ End Code
 
     </div>
 
-    <style>
-        #mainItems {
-            height: calc(100vh - 235px);
-            overflow-y: auto;
-            background: white;
-            border: 1px solid #ddd;
-            padding: 10px;
-        }
-    </style>
+
 
     <div class="row g-0">
         <div id="mainItems">
@@ -208,12 +211,21 @@ End Code
 
             <div class="modal-footer">
 
-                <button class="btn btn-danger"
-                        data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
+                @*<button class="btn btn-danger"
+                    data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
 
-                    ปิด
+                        ปิด
 
-                </button>
+                    </button>*@
+
+                <a href="#" data-dismiss="modal"
+                   class="ui-btn btn-style col no-padding"
+                   onclick="$('#gpsErrorModal').modal('hide');">
+
+                    <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+                    <span class="button-menu-label">ปิด</span>
+
+                </a>
 
             </div>
 
@@ -389,12 +401,22 @@ End Code
                 <div style="display:flex; justify-content:space-between; align-items:center;">
 
                     <label style="margin:0;">
-                        รูปภาพ &#128247;
+                        รูปภาพ
                     </label>
 
-                    <label style="margin:0; cursor:pointer;" id="btnRetake">
-                        🗑️ ล้างรูป
-                    </label>
+                    @*<label style="margin:0; cursor:pointer;" id="btnRetake">
+                            🗑️ ล้างรูป
+                        </label>*@
+
+                    <a id="btnRetake" style="margin:0;"
+                       href="#"
+                       Class="ui-btn btn-style no-padding">
+
+                        @*<img src="@(StaticRootImgs)/check-black.png" alt="ล้างรูป" Class="button-menu-icon" />*@
+                        <span Class="button-menu-label">🗑️ ล้างรูป</span>
+
+                    </a>
+
 
                 </div>
 
@@ -403,12 +425,14 @@ End Code
                     <div id="imagePlaceholder" class="image-placeholder">
                         <a href="#" style="text-decoration:none;"
                            id="btnOpenCamera"
+                           Class="ui-btn btn-style no-padding"
                            onclick="ShowCameraModal()">
 
+                            <img src="@(StaticRootImgs)/camera-black.png" alt="ล้างรูป" Class="button-menu-icon" />
                             @If Not Model.IsTimeIn Then
-                                @<span class="small">รูปไมล์รถก่อนใช้งาน &#128247;</span>
+                                @<span class="button-menu-label">รูปไมล์รถก่อนใช้งาน</span>
                             ElseIf Not Model.IsTimeOut Then
-                                @<span class="small">รูปไมล์รถหลังใช้งาน &#128247;</span>
+                                @<span class="button-menu-label">รูปไมล์รถหลังใช้งาน</span>
                             End if
 
                         </a>
@@ -424,27 +448,54 @@ End Code
 
                     @If Not Model.IsTimeIn Then
 
-                        @<div Class="col-6 no-padding">
-                            <Button id="btnSaveTimeIn" Class="ui-btn btn-confirm" style="height: 60px;" disabled>
-                                ยืนยัน
-                            </Button>
-                        </div>
+                        @*@<div Class="col-6 no-padding">
+                                <Button id="btnSaveTimeIn" Class="ui-btn btn-confirm" style="height: 60px;" disabled>
+                                    ยืนยัน
+                                </Button>
+                            </div>*@
+
+                        @<a id="btnSaveTimeIn"
+                            href="#"
+                            Class="ui-btn btn-style col no-padding disabled-link">
+
+                            <img src="@(StaticRootImgs)/check-black.png" alt="ยืนยัน" Class="button-menu-icon" />
+                            <span Class="button-menu-label">ยืนยัน</span>
+
+                        </a>
 
                     ElseIf Not Model.IsTimeOut Then
 
-                        @<div Class="col-6 no-padding">
-                            <Button id="btnSaveTimeOut" Class="ui-btn btn-confirm" style="height: 60px;" disabled>
-                                ยืนยัน
-                            </Button>
-                        </div>
+                        @*@<div Class="col-6 no-padding">
+                                <Button id="btnSaveTimeOut" Class="ui-btn btn-confirm" style="height: 60px;" disabled>
+                                    ยืนยัน
+                                </Button>
+                            </div>*@
+
+                        @<a id="btnSaveTimeOut"
+                            href="#"
+                            Class="ui-btn btn-style col no-padding disabled-link">
+
+                            <img src="@(StaticRootImgs)/check-black.png" alt="ยืนยัน" Class="button-menu-icon" />
+                            <span Class="button-menu-label">ยืนยัน</span>
+
+                        </a>
 
                     End if
 
-                    <div Class="col-6 no-padding">
-                        <Button onclick="CloseTimeInModal()" data-dismiss="modal" Class="ui-btn btn-cancel" style="height: 60px;">
-                            ยกเลิก
-                        </Button>
-                    </div>
+                    @*<div Class="col-6 no-padding">
+                            <Button onclick="CloseTimeInModal()" data-dismiss="modal" Class="ui-btn btn-cancel" style="height: 60px;">
+                                ยกเลิก
+                            </Button>
+                        </div>*@
+
+                    <a href="#" data-dismiss="modal"
+                       class="ui-btn btn-style col no-padding"
+                       onclick="CloseTimeInModal()">
+
+                        <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+                        <span class="button-menu-label">ปิด</span>
+
+                    </a>
 
                 </div>
 
@@ -476,13 +527,34 @@ End Code
                         style="display:none;">
                 </canvas>
 
-                <button id="btnTakePhoto" Class="ui-btn btn-confirm" style="height: 60px;">
-                    ถ่ายรูป
-                </button>
-                <button Class="ui-btn btn-cancel" style="height: 60px;"
-                        data-dismiss="modal" onclick="CloseCameraModal()">
-                    ยกเลิก
-                </button>
+                @*<button id="btnTakePhoto" Class="ui-btn btn-confirm" style="height: 60px;">
+                        ถ่ายรูป
+                    </button>
+                    <button Class="ui-btn btn-cancel" style="height: 60px;"
+                            data-dismiss="modal" onclick="CloseCameraModal()">
+                        ยกเลิก
+                    </button>*@
+
+                <div class="row">
+                    <a id="btnTakePhoto"
+                       href="#" data-dismiss="modal"
+                       class="ui-btn btn-style col no-padding">
+
+                        <img src="@(StaticRootImgs)/camera-black.png" alt="ปิด" class="button-menu-icon" />
+                        <span class="button-menu-label">ถ่ายรูป</span>
+
+                    </a>
+
+                    <a href="#"
+                       class="ui-btn btn-style col no-padding"
+                       data-dismiss="modal"
+                       onclick="CloseCameraModal()">
+
+                        <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+                        <span class="button-menu-label">ยกเลิก</span>
+
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -520,6 +592,8 @@ End Code
                             ยกเลิก
                         </Button>
                     </div>
+
+
                 </div>
 
             </div>
@@ -543,11 +617,21 @@ End Code
             ข้อความ
         </div>
 
-        <button id="btnMsgOK"
-                class="msg-btn"
-                onclick="document.getElementById('msgOverlay').style.display='none';">
-            ตกลง
-        </button>
+        @*<button id="btnMsgOK"
+                    class="msg-btn"
+                    onclick="document.getElementById('msgOverlay').style.display='none';">
+                ตกลง
+            </button>*@
+
+        <a id="btnMsgOK"
+           href="#"
+           class="ui-btn btn-style col no-padding"
+           onclick="document.getElementById('msgOverlay').style.display='none';">
+
+            <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+            <span class="button-menu-label">ตกลง</span>
+
+        </a>
 
     </div>
 
@@ -568,13 +652,34 @@ End Code
 
         <div class="confirm-buttons">
 
-            <button id="btnConfirmYes" class="msg-btn">
-                ตกลง
-            </button>
+            @*<button id="btnConfirmYes" class="msg-btn">
+                    ตกลง
+                </button>
 
-            <button id="btnConfirmNo" class="msg-btn btn-cancel">
-                ยกเลิก
-            </button>
+                <button id="btnConfirmNo" class="msg-btn btn-cancel">
+                    ยกเลิก
+                </button>*@
+
+     
+
+                <a id="btnConfirmYes"
+                   href="#"
+                   class="ui-btn btn-style col no-padding">
+
+                    <img src="@(StaticRootImgs)/check-black.png" alt="ตกลง" class="button-menu-icon" />
+                    <span class="button-menu-label">ตกลง</span>
+
+                </a>
+                <a id="btnConfirmNo"
+                   href="#"
+                   class="ui-btn btn-style col no-padding">
+
+                    <img src="@(StaticRootImgs)/back-black.png" alt="ยกเลิก" class="button-menu-icon" />
+                    <span class="button-menu-label">ยกเลิก</span>
+
+                </a>
+ 
+
 
         </div>
 
@@ -1057,6 +1162,8 @@ End Code
                 hasImage;
 
             $("#btnSaveTimeIn").prop("disabled", !isValid);
+
+            $("#btnSaveTimeIn").toggleClass("disabled-link", !isValid);
         }
 
         //function ValidateTimeIn() {
@@ -1106,6 +1213,8 @@ End Code
                 hasImage;
 
             $("#btnSaveTimeOut").prop("disabled", !isValid);
+
+            $("#btnSaveTimeOut").toggleClass("disabled-link", !isValid);
 
         }
 
@@ -1184,7 +1293,82 @@ End Section
 
 <!-- Bottom Buttons -->
 
+<div class="button-menu-container">
+    <div class="container">
+        <div class="row g-0">
+            @If Not Model.IsTimeIn Then
+
+                @<a id="btnHome"
+                    href="#"
+                    class="ui-btn btn-style col no-padding"
+                    onclick="goBack()">
+
+                    <img src="@(StaticRootImgs)/home-black.png" alt="Home" class="button-menu-icon" />
+                    <span class="button-menu-label">Home</span>
+
+                </a>
+
+                @<a id="btnTimeIn"
+                    href="#"
+                    class="ui-btn btn-style col no-padding"
+                    onclick="goTimeIn()">
+
+                    <img src="@(StaticRootImgs)/clock-black.png" alt="Time In" class="button-menu-icon" />
+                    <span class="button-menu-label">Time In</span>
+
+                </a>
+
+            ElseIf Not Model.IsTimeOut Then
+
+                @<a id="btnHome"
+                    href="#"
+                    class="ui-btn btn-style col no-padding"
+                    onclick="goBack()">
+
+                    <img src="@(StaticRootImgs)/home-black.png" alt="Home" class="button-menu-icon" />
+                    <span class="button-menu-label">Home</span>
+
+                </a>
+
+                @<a id="btnFarmerList" style="display:@(If(Model.IsMustTimeOut, "none", "block"))"
+                    href="#"
+                    class="ui-btn btn-style col no-padding"
+                    onclick="location.href='@Url.Action("SelectFarmer", New With {.FSMCODE = Model.SalesmanCode})'">
+
+                    <img src="@(StaticRootImgs)/user-black.png" alt="ข้อมูลชาวไร่" class="button-menu-icon" />
+                    <span class="button-menu-label">ข้อมูลชาวไร่</span>
+
+                </a>
+
+                @<a id="btnTimeOut"
+                    href="#"
+                    class="ui-btn btn-style col no-padding"
+                    onclick="goTimeOut()">
+
+                    <img src="@(StaticRootImgs)/clock-black.png" alt="Time Out" class="button-menu-icon" />
+                    <span class="button-menu-label">Time Out</span>
+
+                </a>
+            Else
+
+                'TimeIn&TimeOut ในวันแล้ว
+                @<a id="btnHome"
+                    href="#"
+                    class="ui-btn btn-style col no-padding"
+                    onclick="goBack()">
+
+                    <img src="@(StaticRootImgs)/home-black.png" alt="Home" class="button-menu-icon" />
+                    <span class="button-menu-label">Home</span>
+
+                </a>
+            End If
+
+        </div>
+    </div>
+</div>
+
 <div style="
+    display:none;
     position:fixed;
     bottom:0;
     left:0;

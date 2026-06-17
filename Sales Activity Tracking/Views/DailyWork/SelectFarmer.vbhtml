@@ -2,8 +2,18 @@
 @Code
     ViewData("Title") = "ระบุชาวไร่"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
 
+<style>
+    #mainItems {
+        height: calc(100vh - 184px);
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+</style>
 
 <span style="
     position:fixed;
@@ -25,15 +35,7 @@ End Code
 </div>
 
 
-<style>
-    #mainItems {
-        height: calc(100vh - 202px);
-        overflow-y: auto;
-        background: white;
-        border: 1px solid #ddd;
-        padding: 10px;
-    }
-</style>
+
 
 <input type="hidden" id="txtgeolocation" />
 
@@ -162,13 +164,31 @@ End Code
 
         <div class="confirm-buttons">
 
-            <button id="btnConfirmYes" class="msg-btn">
+            @*<button id="btnConfirmYes" class="msg-btn">
                 ตกลง
             </button>
 
             <button id="btnConfirmNo" class="msg-btn btn-cancel">
                 ยกเลิก
-            </button>
+            </button>*@
+
+            <a id="btnConfirmYes"
+               href="#"
+               class="ui-btn btn-style col no-padding">
+
+                <img src="@(StaticRootImgs)/check-black.png" alt="ok" class="button-menu-icon" />
+                <span class="button-menu-label">ตกลง</span>
+
+            </a>
+
+            <a id="btnConfirmNo"
+               href="#"
+               class="ui-btn btn-style col no-padding">
+
+                <img src="@(StaticRootImgs)/back-black.png" alt="cancel" class="button-menu-icon" />
+                <span class="button-menu-label">ยกเลิก</span>
+
+            </a>
 
         </div>
 
@@ -190,9 +210,18 @@ End Code
             ข้อความ
         </div>
 
-        <button id="btnMsgOK" class="msg-btn">
+        @*<button id="btnMsgOK" class="msg-btn">
             ตกลง
-        </button>
+        </button>*@
+
+        <a id="btnMsgOK"
+           href="#"
+           class="ui-btn btn-style col no-padding">
+
+            <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+            <span class="button-menu-label">ตกลง</span>
+
+        </a>
 
     </div>
 
@@ -367,8 +396,34 @@ End Section
 
 
 <!-- Bottom Buttons -->
+<div class="button-menu-container">
+    <div class="container">
+        <div class="row g-0">
 
-<div style="
+            <a 
+               href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="location.href='@Url.Action("index")'">
+
+                <img src="@(StaticRootImgs)/tag-black.png" alt="Activities" class="button-menu-icon" />
+                <span class="button-menu-label">Activities</span>
+
+            </a>
+            <a id="btnHome"
+               href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="location.href='@Url.Action("NewFarmer")'">
+
+                <img src="@(StaticRootImgs)/plus-black.png" alt="เพิ่มชาวไร่รายใหม่" class="button-menu-icon" />
+                <span class="button-menu-label">ชาวไร่รายใหม่</span>
+
+            </a> 
+
+        </div>
+    </div>
+</div>
+
+<div style="display:none;
     position:fixed;
     bottom:0;
     left:0;

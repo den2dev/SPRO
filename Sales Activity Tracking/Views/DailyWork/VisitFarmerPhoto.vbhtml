@@ -2,13 +2,14 @@
 @Code
     ViewData("Title") = "รูปกิจกรรม"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
 
 @Html.HiddenFor(Function(m) m.ActivityNo)
 
 <style>
     #mainItems {
-        height: calc(100vh - 231px);
+        height: calc(100vh - 210px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -199,8 +200,23 @@ End Section
 
 
 <!-- Bottom Buttons -->
+<div class="button-menu-container">
+    <div class="container">
+        <div class="row g-0">
+            <a href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="history.back()">
 
-<div style="
+                <img src="@(StaticRootImgs)/back-black.png" alt="Back" class="button-menu-icon" />
+                <span class="button-menu-label">Back</span>
+
+            </a> 
+
+        </div>
+    </div>
+</div>
+
+<div style="display:none;
     position:fixed;
     bottom:0;
     left:0;

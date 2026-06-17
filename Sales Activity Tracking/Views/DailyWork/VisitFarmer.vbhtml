@@ -2,13 +2,14 @@
 @Code
     ViewData("Title") = "ตรวจเยี่ยมชาวไร่"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
 
 
 
 <style>
     #mainItems {
-        height: calc(100vh - 157px);
+        height: calc(100vh - 139px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -145,7 +146,7 @@ End Code
             <div class="row g-0">
                 <div class="col">
 
-                    <button id="btnQuesn"
+                    @*<button id="btnQuesn"
                             type="button"
                             class="mobile-btn"
                             onclick="location.href='@Url.Action("Questionnaire", New With {.fiano = Model.ActivityItem.ActivityNumber, .fcontcode = Model.Farmer.FarmerCode, .fqesntype = 1})'">
@@ -153,7 +154,20 @@ End Code
                         <div class="icon">📋</div>
                         <div class="text">แบบสอบถาม</div>
 
-                    </button>
+                    </button>*@
+
+
+                    <a id="btnQuesn"
+                       href="#"
+                       onclick="location.href='@Url.Action("Questionnaire", New With {.fiano = Model.ActivityItem.ActivityNumber, .isnewfarmer = Model.Farmer.IsNewFarmer.ToString, .fcontcode = Model.Farmer.FarmerCode, .fqesntype = Model.Farmer.NewFarmerType})'"
+                       class="ui-btn btn-style col no-padding">
+
+                        <img src="@(StaticRootImgs)/bullets-black.png" alt="เปิดแบบสอบถาม" class="button-menu-icon" />
+                        <span class="button-menu-label">
+                            แบบสอบถาม
+                        </span>
+                    </a>
+
 
                 </div>
             </div>
@@ -249,12 +263,24 @@ End Code
 
             <div class="modal-footer">
 
-                <button class="btn btn-danger"
+                @*<button class="btn btn-danger"
                         data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
 
                     ปิด
 
-                </button>
+                </button>*@
+
+
+                <a  data-dismiss="modal"
+                   href="#"
+                   onclick="$('#gpsErrorModal').modal('hide');"
+                   class="ui-btn btn-style col no-padding">
+
+                    <img src="@(StaticRootImgs)/info-black.png" alt="close" class="button-menu-icon" />
+                    <span class="button-menu-label">
+                        ปิด
+                    </span>
+                </a>
 
             </div>
 
@@ -293,11 +319,22 @@ End Code
             ข้อความ
         </div>
 
-        <button id="btnMsgOK"
+        @*<button id="btnMsgOK"
                 class="msg-btn"
                 onclick="document.getElementById('msgOverlay').style.display='none';">
             ตกลง
-        </button>
+        </button>*@
+
+        <a id="btnMsgOK"
+           href="#"
+          onclick="document.getElementById('msgOverlay').style.display='none';"
+           class="ui-btn btn-style col no-padding">
+
+            <img src="@(StaticRootImgs)/info-black.png" alt="close" class="button-menu-icon" />
+            <span class="button-menu-label">
+                ตกลง
+            </span>
+        </a>
 
     </div>
 
@@ -307,8 +344,57 @@ End Code
 
 
 <!-- Bottom Buttons -->
+<div class="button-menu-container">
+    <div class="container">
+        <div class="row g-0">
 
-<div style="
+            <a href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="location.href='@Url.Action("index")'">
+
+                <img src="@(StaticRootImgs)/tag-black.png" alt="Activities" class="button-menu-icon" />
+                <span class="button-menu-label">Activities</span>
+
+            </a>
+
+          
+            <a  id="btnCapture"
+                href="#"
+                onclick="location.href='/DailyWork/VisitFarmerPhoto?activityNo=@Model.ActivityItem.ActivityNumber&ischeckout=@Model.ActivityItem.IsCheckOut.ToString';"
+                class="ui-btn btn-style col no-padding">
+
+                <img src="@(StaticRootImgs)/camera-black.png" alt="รูป" class="button-menu-icon" />
+                <span class="button-menu-label">
+                    @If Not Model.ActivityItem.IsCheckOut Then
+                        @<span>ถ่ายรูป</span>
+                    Else
+                        @<span>รูปถ่าย</span>
+                    End If
+                </span>
+
+            </a>
+              
+            @If Not Model.ActivityItem.IsCheckOut Then
+
+                @<a 
+                    id="btnCheckout"
+                    href="#"
+                    onclick="CallCheckOut('@Model.ActivityItem.ActivityNumber','@Model.Farmer.FarmerName')"
+                    class="ui-btn btn-style col no-padding">
+
+                    <img src="@(StaticRootImgs)/location-black.png" alt="Check Out" class="button-menu-icon" />
+                    <span class="button-menu-label">
+                        Check Out
+                    </span> 
+                </a>
+
+            End If
+             
+        </div>
+    </div>
+</div>
+
+<div style="display:none;
     position:fixed;
     bottom:0;
     left:0;
@@ -405,13 +491,31 @@ End Code
 
         <div class="confirm-buttons">
 
-            <button id="btnConfirmYes" class="msg-btn">
+            @*<button id="btnConfirmYes" class="msg-btn">
                 ตกลง
-            </button>
+            </button>*@
 
-            <button id="btnConfirmNo" class="msg-btn btn-cancel">
-                ยกเลิก
-            </button>
+            @*<button id="btnConfirmNo" class="msg-btn btn-cancel">
+            ยกเลิก
+            </button>*@
+
+            <a id="btnConfirmYes"
+               href="#"
+               class="ui-btn btn-style col no-padding">
+
+                <img src="@(StaticRootImgs)/check-black.png" alt="Ok" class="button-menu-icon" />
+                <span class="button-menu-label">ตกลง</span>
+
+            </a>
+
+            <a id="btnConfirmNo"
+               href="#"
+               class="ui-btn btn-style col no-padding">
+
+                <img src="@(StaticRootImgs)/back-black.png" alt="Cancel" class="button-menu-icon" />
+                <span class="button-menu-label">ยกเลิก</span>
+
+            </a>
 
         </div>
 

@@ -2,6 +2,7 @@
 @Code
     ViewData("Title") = "ยืนยันลบรายการตรวจเยี่ยมชาวไร่"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
 
 

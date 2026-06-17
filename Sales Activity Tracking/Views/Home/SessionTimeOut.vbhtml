@@ -1,12 +1,13 @@
 ﻿@Code
     ViewData("Title") = "Daily Report"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
 
 
 <style>
     #mainItems {
-        height: calc(100vh - 160px);
+        height: calc(100vh - 140px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -39,7 +40,22 @@ End Code
 
 <!-- Bottom Buttons -->
 
-<div style="
+<div class="button-menu-container">
+    <div class="container">
+        <div class="row g-0">
+            <a href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="goBack();">
+
+                <img src="@(StaticRootImgs)/Home-black.png" alt="Home" class="button-menu-icon" />
+                <span class="button-menu-label">Home</span>
+
+            </a>
+        </div>
+    </div>
+</div>
+
+<div style="display:none;
     position:fixed;
     bottom:0;
     left:0;

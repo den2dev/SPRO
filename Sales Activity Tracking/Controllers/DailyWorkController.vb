@@ -327,18 +327,41 @@ Public Class DailyWorkController
 
     End Function
 
-    Public Function Questionnaire(fiano As String, fcontcode As String, fqesntype As Integer) As ActionResult
+    Public Function Questionnaire(fiano As String, isnewfarmer As Boolean, fcontcode As String, fqesntype As String) As ActionResult
 
-        Dim baseUrl As String = "https://spclnt3.softprohub.net/AFSKSP/App_CRM/frmOC20QANS.aspx?"
+        '' "https://spclnt3.softprohub.net/AFSKSP/App_CRM/frmOC20QANS.aspx?"
+        'ParamCode=B5NdcfPHKgjiyX5AOECjcA=="
+
+        Dim baseUrl As String = ConfigurationManager.AppSettings("URLQuestionnaire")
+
+        If Not String.IsNullOrEmpty(baseUrl) Then
+            If Not baseUrl.Contains("?") Then
+                baseUrl &= "?"
+            End If
+        End If
 
         Dim qs As New List(Of String)
 
+
         qs.Add("ShowExit=Y")
-        qs.Add("ISCODE=010004")
-        qs.Add("REFNO=26IA1906150006")
-        qs.Add("CONTCODE=19000001")
+
+        If isnewfarmer Then
+            Select Case fqesntype
+                '0 - รายใหม่จะแบ่งเป็น 3 (FFLUPYN)=1(หรือไม่กำหนด):จะใช้ 10001, 2: จะใช้ 10002, 3: จะใช้ 10003 
+                Case "1" : qs.Add("ISCODE=010001")
+                Case "2" : qs.Add("ISCODE=010002")
+                Case "3" : qs.Add("ISCODE=010003")
+            End Select
+        Else
+            'FPREPYN = 9(รายเดิม) จะใช้ 010004,
+            qs.Add("ISCODE=010004")
+            qs.Add("CONTCODE=" & fcontcode)
+        End If
+
+        qs.Add("REFNO=" & fiano)
+
         qs.Add("ENTTYPE=2")
-        qs.Add("ParamCode=B5NdcfPHKgjiyX5AOECjcA==")
+        qs.Add("ParamCode=" & ConfigurationManager.AppSettings("QuestionnaireParamCode"))
 
         Dim url As String = baseUrl & String.Join("&", qs)
 

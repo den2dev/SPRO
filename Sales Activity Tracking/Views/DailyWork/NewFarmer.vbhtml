@@ -2,11 +2,12 @@
 @Code
     ViewData("Title") = "เพิ่มชาวไร่รายใหม่"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 173px);
+        height: calc(100vh - 156px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -197,11 +198,21 @@ End Using
             ข้อความ
         </div>
 
-        <button id="btnMsgOK"
+        @*<button id="btnMsgOK"
                 class="msg-btn"
                 onclick="document.getElementById('msgOverlay').style.display='none';">
             ตกลง
-        </button>
+        </button>*@
+
+        <a id="btnMsgOK"
+           href="#"
+           class="ui-btn btn-style col no-padding"
+           onclick="document.getElementById('msgOverlay').style.display='none';">
+
+            <img src="@(StaticRootImgs)/back-black.png" alt="ตกลง" class="button-menu-icon" />
+            <span class="button-menu-label">ตกลง</span>
+
+        </a>
 
     </div>
 
@@ -262,12 +273,21 @@ End Using
 
             <div class="modal-footer">
 
-                <button class="btn btn-danger"
+                @*<button class="btn btn-danger"
                         data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
 
                     ปิด
 
-                </button>
+                </button>*@
+
+                <a href="#"
+                   class="ui-btn btn-style col no-padding"
+                   data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
+
+                    <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+                    <span class="button-menu-label">ปิด</span>
+
+                </a>
 
             </div>
 
@@ -279,7 +299,34 @@ End Using
 
 <!-- Bottom Buttons -->
 
-<div style="
+<div class="button-menu-container">
+    <div class="container">
+        <div class="row g-0">
+            <a  
+               href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="history.back()">
+
+                <img src="@(StaticRootImgs)/back-black.png" alt="Back" class="button-menu-icon" />
+                <span class="button-menu-label">Back</span>
+
+            </a>
+
+            <a id="btnAddNew"
+               href="#"
+               class="ui-btn btn-style col no-padding disabled-link"
+               onclick="$('#frmNewFarmer').submit();">
+
+                <img src="@(StaticRootImgs)/save-black.png" alt="save" class="button-menu-icon" />
+                <span class="button-menu-label">บันทึก</span>
+
+            </a>
+             
+        </div>
+    </div>
+</div>
+
+<div style="display:none;
         position:fixed;
         bottom:0;
         left:0;
@@ -289,8 +336,8 @@ End Using
         background:#fff;
         border-top:1px solid #ddd;
         z-index:999;">
-    <div class="container">
-        <div class="row g-0">
+        <div class="container">
+            <div class="row g-0">
 
             <div Class="col no-padding">
                 <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
@@ -362,6 +409,9 @@ End Using
                     /*$('#gpsLoadingModal').modal('hide');*/
 
                     $("#btnAddNew").prop("disabled", false);
+
+                    $("#btnAddNew").removeClass("disabled-link");
+
                 },
 
                 function (error) {

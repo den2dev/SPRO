@@ -1,6 +1,7 @@
 ﻿@Code
     ViewData("Title") = "Daily Report"
     Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
 End Code
 
 <style>
@@ -25,12 +26,21 @@ End Code
             @TempData("ErrorMessage")
         </div>
 
-        <button type="button"
+        @*<button type="button"
                 class="msg-btn"
                 onclick="history.back();">
             ตกลง
-        </button>
+        </button>*@
 
+        <a  
+           href="#"
+           class="ui-btn btn-style col no-padding"
+           onclick="history.back();">
+
+            <img src="@(StaticRootImgs)/back-black.png" alt="Home" class="button-menu-icon" />
+            <span class="button-menu-label">ตกลง</span>
+
+        </a>
     </div>
 
 </div>
@@ -46,8 +56,9 @@ End Code
 </div>
 
 <!-- Bottom Buttons -->
+ 
 
-<div style="
+<div style=" display:none;
     position:fixed;
     bottom:0;
     left:0;
