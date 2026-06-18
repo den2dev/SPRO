@@ -415,12 +415,7 @@ Public Class DailyWorkRepository
             FENTBY,
             FEPREDATE,
             FOPPNO,
-
-            FFLUPYN,
-            FFLUPACT,
-            FFLUPREM,
-
-            FFROMIANO,
+ 
             FACTOUTSIDEYN, 
 
             FACTLOCATION,
@@ -458,12 +453,7 @@ Public Class DailyWorkRepository
             @FENTBY,
             @FEPREDATE,
             @FOPPNO,
-
-            @FFLUPYN,
-            @FFLUPACT,
-            @FFLUPREM,
-
-            @FFROMIANO,
+ 
             @FACTOUTSIDEYN, 
 
             @FACTLOCATION,
@@ -510,12 +500,6 @@ Public Class DailyWorkRepository
             cmd.Parameters.AddWithValue("@FEPREDATE", Date.Today)
             cmd.Parameters.AddWithValue("@FOPPNO", "")
 
-            '----Follow Up
-            cmd.Parameters.AddWithValue("@FFLUPYN", "N") '--Default N ,Null ชาวไร่ใหม่
-            cmd.Parameters.AddWithValue("@FFLUPACT", "")
-            cmd.Parameters.AddWithValue("@FFLUPREM", "")
-
-            cmd.Parameters.AddWithValue("@FFROMIANO", "") '--Default '',Null ชาวไร่ใหม่
             cmd.Parameters.AddWithValue("@FACTOUTSIDEYN", "Y") 'default Y นอกพื้นที่
 
             cmd.Parameters.AddWithValue("@FACTLOCATION", model.GeoLocation)
@@ -535,9 +519,9 @@ Public Class DailyWorkRepository
             cmd.Parameters.AddWithValue("@FMETERSTR", model.OdometerStart)
 
 
-            For Each p As SqlParameter In cmd.Parameters
-                Debug.WriteLine(p.ParameterName & "=" & p.Value)
-            Next
+            'For Each p As SqlParameter In cmd.Parameters
+            '    Debug.WriteLine(p.ParameterName & "=" & p.Value)
+            'Next
 
             Try
 
@@ -678,8 +662,8 @@ Public Class DailyWorkRepository
 
             FFLUPYN,
             FFLUPACT,
-
-            FFROMIANO,
+            FFLUPREM,
+         
             FACTOUTSIDEYN,
 
             FCONTADDR,
@@ -725,8 +709,8 @@ Public Class DailyWorkRepository
 
             @FFLUPYN,
             @FFLUPACT,
+            @FFLUPREM,
 
-            @FFROMIANO,
             @FACTOUTSIDEYN,
 
             @FCONTADDR,
@@ -779,10 +763,10 @@ Public Class DailyWorkRepository
 
             cmd.Parameters.AddWithValue("@FPREPYN", If(model.IsNewFarmer, 0, 9)) ' --ชาวไร่ใหม่=0,9-รายเดิม
 
-            cmd.Parameters.AddWithValue("@FFLUPYN", If(model.IsNewFarmer, model.NewFarmerType, "N")) '--Default N ,ชาวไร่ใหม่ ประเภท 1-ปลูกอ้อยอย่างเดียว 2-ปลูกอ้อยและพืชอื่น 3-ปลูกพิชอื่น
+            cmd.Parameters.AddWithValue("@FFLUPYN", If(model.IsNewFarmer, model.NewFarmerType, "")) '--รายเก่า='' ,ชาวไร่ใหม่ ประเภท 1-ปลูกอ้อยอย่างเดียว 2-ปลูกอ้อยและพืชอื่น 3-ปลูกพิชอื่น
             cmd.Parameters.AddWithValue("@FFLUPACT", If(model.IsNewFarmer, DBNull.Value, "")) '--Default '',Null ชาวไร่ใหม่
+            cmd.Parameters.AddWithValue("@FFLUPREM", "")
 
-            cmd.Parameters.AddWithValue("@FFROMIANO", If(model.IsNewFarmer, DBNull.Value, "")) '--Default '',Null ชาวไร่ใหม่
             cmd.Parameters.AddWithValue("@FACTOUTSIDEYN", "Y") 'default Y นอกพื้นที่
 
             cmd.Parameters.AddWithValue("@FCONTADDR", If(model.IsNewFarmer, model.ConcateAddress, DBNull.Value)) 'concat(address)
@@ -804,9 +788,9 @@ Public Class DailyWorkRepository
 
             cmd.Parameters.AddWithValue("@FACTLOCATION", model.GeoLocation)
 
-            For Each p As SqlParameter In cmd.Parameters
-                Debug.WriteLine(p.ParameterName & "=" & p.Value)
-            Next
+            'For Each p As SqlParameter In cmd.Parameters
+            '    Debug.WriteLine(p.ParameterName & "=" & p.Value)
+            'Next
 
             Try
 

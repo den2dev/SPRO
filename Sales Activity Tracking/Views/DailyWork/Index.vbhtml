@@ -3,6 +3,7 @@
     ViewData("Title") = "Daily Report"
     Layout = "~/Views/Shared/_Layout.vbhtml"
     Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
+    Dim HomeURL = ConfigurationManager.AppSettings("HomeURL")
 End Code
 
 <style>
@@ -689,232 +690,13 @@ End Code
 @*End Confirm Messagbox*@
 
 @section Scripts
-
+    <script src="~/Scripts/DailyWork/Index.js"></script> 
     <script>
-
-        $(document).ready(function () {
-
-/*            window.location.replace('/DailyWork/Index');*/
-
-         /*   typeof bootstrap*/
-
-            $("#vehicleSection").hide();
-            $("#txtVehicleno").hide();
-            $("#ddlVehicle").hide();
-
-            $("#ddlVehicletype").change(function () {
-
-                var vehicleType = $(this).val();
-
-                $("#vehicleSection").hide();
-                $("#txtVehicleno").hide();
-                $("#ddlVehicle").hide();
-
-                if (vehicleType === "0") {
-                    $("#vehicleSection").show();
-                    $("#ddlVehicle").show();
-                }
-                else if (vehicleType === "1") {
-                    $("#vehicleSection").show();
-                    $("#txtVehicleno").show();
-                }
-            });
-
-        });
-
         function goBack() {
-                location.href='@Url.Action("Logout", "Home")'
+            location.href = '@HomeURL'
         }
 
-        function goTimeIn() {
-            getLocation();
-        }
-        function goTimeOut() {
-
-            var isallcheckout = $("#chkallcheckout").prop("checked");
-            console.log(isallcheckout);
-
-            if (!isallcheckout) {
-                /* alert('กรุณาระบุเลขไมล์หลังใช้');*/
-                console.log("พบรายการที่ยังไม่ CheckOut!");
-                ShowMessage("พบรายการที่ยังไม่ CheckOut!\nกรุณา CheckOut ให้ครบทุกรายการ");
-                return;
-
-            } else {
-
-                getLocation();
-
-            }
-
-        }
-        function getLocation() {
-
-            /*clear ค่าเดิม*/
-            photoBlob = null;
-            $("#previewImage").hide().attr("src", "");
-            $("#imagePlaceholder").show();
-            $("#txtgeolocation").val("");
-            $("#txtOdometerStart,#txtOdometerEnd").val("");
-            /*end clear ค่าเดิม*/
-
-            $('#gpsLoadingModal').modal('show');
-
-            navigator.geolocation.getCurrentPosition(
-
-                function (position) {
-
-                    var lat = position.coords.latitude;
-                    var lng = position.coords.longitude;
-
-                    var latDirection = lat >= 0 ? "N" : "S";
-                    var lngDirection = lng >= 0 ? "E" : "W";
-
-                    var gpsText =
-                        latDirection + Math.abs(lat) +
-                        " " +
-                        lngDirection + Math.abs(lng);
-
-                    $("#txtgeolocation")
-                        .val(gpsText);
-
-
-                    $('#gpsLoadingModal').modal('hide');
-
-                    $('#timeInModal').modal('show');
-
-                },
-
-                function (error) {
-
-                    $('#gpsLoadingModal').modal('hide');
-
-                    $('#gpsErrorModal').modal('show');
-
-                },
-
-                {
-                    enableHighAccuracy: true,
-                    timeout: 15000,
-                    maximumAge: 0
-                }
-            );
-        }
-
-
-
-        function getLocation_Test() {
-
-            navigator.geolocation.getCurrentPosition(
-
-                function (position) {
-
-                    $("#Latitude").val(position.coords.latitude);
-                    $("#Longitude").val(position.coords.longitude);
-
-                    $("#lblLat").text(position.coords.latitude);
-                    $("#lblLng").text(position.coords.longitude);
-
-                },
-
-                function () {
-
-                    alert("กรุณาเปิด GPS ก่อน");
-
-                }
-
-            );
-
-        }
-
-        function CloseTimeInModal() {
-            $('#gpsLoadingModal').modal('hide');
-            $('#timeInModal').modal('hide');
-        }
-        function ShowCameraModal() {
-            StartCamera();
-            $('#timeInModal').modal('hide');
-            $('#CameraModal').modal('show');
-        }
-
-        function CloseCameraModal() {
-            $('#timeInModal').modal('show');
-            $('#CameraModal').modal('hide');
-        }
-
-        function ShowAddClickModal() {
-            $('#AddClickModal').modal('show');
-        }
-
-        function CloseAddClickModal() {
-            $('#AddClickModal').modal('hide');
-        }
-
-
-        let photoBlob = null;
-
-        async function StartCamera() {
-
-            const stream =
-                await navigator.mediaDevices.getUserMedia({
-
-                    video: {
-                        facingMode: "environment"
-                    }
-
-                });
-
-            document
-                .getElementById("video")
-                .srcObject = stream;
-
-        }
-
-        $("#btnTakePhoto").click(function () {
-
-            let video = document.getElementById("video");
-            let canvas = document.getElementById("canvas");
-
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-
-            let ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0);
-            canvas.toBlob(function (blob) {
-
-                photoBlob = blob;
-
-                $("#previewImage")
-                    .show()
-                    .attr(
-                        "src",
-                        URL.createObjectURL(blob));
-
-                ValidateTimeIn();
-                ValidateTimeOut();
-
-                $("#imagePlaceholder").hide();
-                $('#CameraModal').modal('hide');
-                $('#timeInModal').modal('show');
-
-            }, "image/jpeg", 0.9);
-
-        });
-
-        $("#btnRetake").click(function () {
-
-            photoBlob = null;
-
-            $("#previewImage")
-                .hide()
-                .attr("src", "");
-
-            $("#imagePlaceholder").show();
-
-            ValidateTimeIn();
-            ValidateTimeOut();
-
-        });
-
+        /*submit TimeIn*/
         $("#btnSaveTimeIn").click(function () {
 
             //if ($("#btnSaveTimeIn").prop("disabled")) {
@@ -967,17 +749,17 @@ End Code
 
             formData.append("UserID", $("#txtUserID").val());
 
-            formData.append("SalesmanCode",$("#txtSalesmanCode").val());
+            formData.append("SalesmanCode", $("#txtSalesmanCode").val());
 
-            formData.append("VehicleType",vehicleType);
+            formData.append("VehicleType", vehicleType);
 
             formData.append("VehicleNo", vehicleno);
 
-            formData.append("OdometerStart",$("#txtOdometerStart").val());
+            formData.append("OdometerStart", $("#txtOdometerStart").val());
 
-            formData.append( "GeoLocation", $("#txtgeolocation").val());
+            formData.append("GeoLocation", $("#txtgeolocation").val());
 
-            formData.append( "PhotoFile", photoBlob,"TimeIn.jpg");
+            formData.append("PhotoFile", photoBlob, "TimeIn.jpg");
 
             $.ajax({
 
@@ -995,7 +777,7 @@ End Code
 
                     if (res.Success) {
 
-                      /*  alert("Time In Completed");*/
+                        /*  alert("Time In Completed");*/
 
                         $('#timeInModal')
                             .modal('hide');
@@ -1004,7 +786,7 @@ End Code
 
                     }
                     else {
-                        ShowMessage(res.Message,"มีข้อผิดพลาดเกิดขึ้น!");
+                        ShowMessage(res.Message, "มีข้อผิดพลาดเกิดขึ้น!");
                         /*alert(res.Message);*/
 
                     }
@@ -1022,13 +804,13 @@ End Code
 
         });
 
-
+        /*submit TimeOut*/
         $("#btnSaveTimeOut").click(function () {
 
 
-           //if ($("#btnSaveTimeIn").prop("disabled")) {
-           //    return;
-           //}
+            //if ($("#btnSaveTimeIn").prop("disabled")) {
+            //    return;
+            //}
 
 
             var odometerStart = Number($("#txtTimeOutOdometerStart").val());
@@ -1036,7 +818,7 @@ End Code
 
 
             if (!odometerEnd) {
-               /* alert('กรุณาระบุเลขไมล์หลังใช้');*/
+                /* alert('กรุณาระบุเลขไมล์หลังใช้');*/
                 ShowMessage("กรุณาระบุเลขไมล์หลังใช้");
                 return;
             }
@@ -1046,28 +828,28 @@ End Code
 
 
             if (odometerEnd < odometerStart) {
-              /*  alert('เลขไมล์หลังใช้ต้องมากกว่าหรือเท่ากับเลขไมล์เริ่มต้น');*/
+                /*  alert('เลขไมล์หลังใช้ต้องมากกว่าหรือเท่ากับเลขไมล์เริ่มต้น');*/
                 ShowMessage("เลขไมล์หลังใช้ต้องมากกว่าหรือเท่ากับเลขไมล์เริ่มต้น");
                 return;
             }
 
             if (!$("#previewImage").attr("src")) {
-              /*  alert('กรุณาถ่ายรูปไมล์รถ');*/
+                /*  alert('กรุณาถ่ายรูปไมล์รถ');*/
                 ShowMessage("กรุณาถ่ายรูปไมล์รถ");
                 return;
             }
 
-          /*  alert('formData');*/
+            /*  alert('formData');*/
 
-           var formData = new FormData();
+            var formData = new FormData();
 
-           formData.append(
-               "SalesmanCode",
-               $("#txtSalesmanCode").val());
+            formData.append(
+                "SalesmanCode",
+                $("#txtSalesmanCode").val());
 
-           formData.append(
-               "DocNumber",
-               $("#txtDocumentNumber").val());
+            formData.append(
+                "DocNumber",
+                $("#txtDocumentNumber").val());
 
             formData.append(
                 "UserID",
@@ -1076,217 +858,63 @@ End Code
             formData.append(
                 "OdometerStart", odometerStart);
 
-           formData.append(
-               "OdometerEnd", odometerEnd);
+            formData.append(
+                "OdometerEnd", odometerEnd);
 
-           formData.append("GeoLocation", $("#txtgeolocation").val());
+            formData.append("GeoLocation", $("#txtgeolocation").val());
 
 
-           formData.append(
-               "PhotoFile",
-               photoBlob,
-               "TimeOut.jpg");
+            formData.append(
+                "PhotoFile",
+                photoBlob,
+                "TimeOut.jpg");
 
-           $.ajax({
+            $.ajax({
 
-               url: '@Url.Action("TimeOutSave", "DailyWork")',
+                url: '@Url.Action("TimeOutSave", "DailyWork")',
 
-               type: 'POST',
+                type: 'POST',
 
-               data: formData,
+                data: formData,
 
-               processData: false,
+                processData: false,
 
-               contentType: false,
+                contentType: false,
 
-               success: function (res) {
+                success: function (res) {
 
-                  /* alert("before reload = " + res.Success);*/
+                    /* alert("before reload = " + res.Success);*/
 
-                   if (res.Success) {
+                    if (res.Success) {
 
-                       /*  alert("Time In Completed");*/
+                        /*  alert("Time In Completed");*/
 
-                       $('#timeInModal')
-                           .modal('hide');
+                        $('#timeInModal')
+                            .modal('hide');
 
-                       location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
+                        location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
 
-                   }
-                   else {
-                       ShowMessage(res.Message,"มีข้อผิดพลาดเกิดขึ้น!");
-                       alert(res.Message);
+                    }
+                    else {
+                        ShowMessage(res.Message, "มีข้อผิดพลาดเกิดขึ้น!");
+                        alert(res.Message);
 
-                   }
+                    }
 
-               },
+                },
 
-               error: function (er) {
+                error: function (er) {
 
-                   ShowMessage(er.Message, "Save Error.มีข้อผิดพลาดเกิดขึ้น!");
-                   /*alert("Save Error");*/
+                    ShowMessage(er.Message, "Save Error.มีข้อผิดพลาดเกิดขึ้น!");
+                    /*alert("Save Error");*/
 
-               }
+                }
 
-           });
+            });
 
         });
 
     </script>
-
-
-    @*Validate TimeIn*@
-    <script>
-        function ValidateTimeIn() {
-
-            var vehicleType = $("#ddlVehicletype").val();
-            var odometer = $("#txtOdometerStart").val();
-            var hasImage = $("#previewImage").attr("src");
-
-            var isVehicleValid = false;
-
-            if (vehicleType === "0") {
-                // รถบริษัท
-                isVehicleValid = $("#ddlVehicle").val();
-            }
-            else if (vehicleType === "1") {
-                // รถตนเอง
-                isVehicleValid = $.trim($("#txtVehicleno").val()) !== "";
-            }
-
-            var isValid =
-                vehicleType &&
-                isVehicleValid &&
-                odometer &&
-                Number(odometer) > 0 &&
-                hasImage;
-
-            $("#btnSaveTimeIn").prop("disabled", !isValid);
-
-            $("#btnSaveTimeIn").toggleClass("disabled-link", !isValid);
-        }
-
-        //function ValidateTimeIn() {
-
-        //    var vehicle = $("#ddlVehicle").val();
-        //    var odometer = $("#txtOdometerStart").val();
-        //    var hasImage = $("#previewImage").attr("src");
-
-        //    var isValid =
-        //        vehicle &&
-        //        odometer &&
-        //        odometer > 0 &&
-        //        hasImage;
-
-        //    $("#btnSaveTimeIn").prop("disabled", !isValid);
-
-        //}
-
-        //$("#ddlVehicle").change(function () {
-
-        //    ValidateTimeIn();
-
-        //});
-        //$("#txtOdometerStart").on("input", function () {
-
-        //    ValidateTimeIn();
-
-        //});
-
-        $("#ddlVehicletype").change(ValidateTimeIn);
-        $("#ddlVehicle").change(ValidateTimeIn);
-        $("#txtVehicleno").on("keyup change", ValidateTimeIn);
-        $("#txtOdometerStart").on("keyup change", ValidateTimeIn);
-
-    </script>
-
-    @*Validate TimeOut*@
-    <script>
-        function ValidateTimeOut() {
-
-            var odometer = $("#txtOdometerEnd").val();
-            var hasImage = $("#previewImage").attr("src");
-
-            var isValid =
-                odometer &&
-                odometer > 0 &&
-                hasImage;
-
-            $("#btnSaveTimeOut").prop("disabled", !isValid);
-
-            $("#btnSaveTimeOut").toggleClass("disabled-link", !isValid);
-
-        }
-
-
-        $("#txtOdometerEnd").on("input", function () {
-
-            ValidateTimeOut();
-
-        });
-    </script>
-
-
-    @*DeleteAtivityItem*@
-    <script>
-        function DeleteAtivityItem(doc) {
-
-            ShowConfirm(
-
-                "ต้องการลบข้อมูลนี้ " + doc + " หรือไม่ ?",
-
-                function () {
-
-                    console.log("ลบรายการ " + doc);
-
-                    /*    alert("ลบรายการ"); */
-
-                    $.ajax({
-                        url: '/DailyWork/DeleteActivity',
-                        type: 'POST',
-                        data: {
-                            activityNo: doc
-                        },
-                        success: function (res) {
-
-                            if (res.Success) {
-
-                                /*  alert("reload"); */
-
-                                location.reload(); /*โหลดหน้าเดิม คือเรียก action index()*/
-
-                            }
-                            else {
-                                ShowMessage(res.Message, "มีข้อผิดพลาดเกิดขึ้น!");
-                                /*alert(res.Message);*/
-
-                            }
-
-                        },
-
-                        error: function (er) {
-
-                            ShowMessage(er.Message, "Save Error.มีข้อผิดพลาดเกิดขึ้น!");
-                            /*alert("Save Error");*/
-
-                        }
-                    });
-                },
-
-                function () {
-                    console.log("ยกเลิก " + doc);
-                    /*  alert("ยกเลิก " + doc);*/
-
-                },
-
-                "ยืนยันการลบ"
-
-            );
-
-        }
-
-    </script>
-
 End Section
 
 

@@ -7,6 +7,7 @@ End Code
 <style>
     #mainItems {
         height: calc(100vh - 139px);
+        width:100%;
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -14,14 +15,14 @@ End Code
     }
 </style>
 
-URL=@ViewBag.QuestionnaireUrl 
-<input type="text" value="@ViewBag.QuestionnaireUrl" />
-<div id="mainItems">
-    <iframe src="@ViewBag.QuestionnaireUrl"
-            style="width:100%; height:100%; border:none;">
-    </iframe>
-</div>
+@*URL=@ViewBag.QuestionnaireUrl*@
+<input type="hidden" value="@ViewBag.QuestionnaireUrl" />
+@*<div id="mainItems">
 
+</div>*@
+<iframe id="mainItems" src="@ViewBag.QuestionnaireUrl">
+       
+</iframe>
 
 <!-- Bottom Buttons -->
 

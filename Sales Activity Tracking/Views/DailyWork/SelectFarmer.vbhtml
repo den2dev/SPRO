@@ -244,7 +244,7 @@ End Code
 
 
 @section Scripts
-
+     
     <script>
 
         $(document).ready(function () {
@@ -268,10 +268,6 @@ End Code
             });
 
         });
-
-    </script>
-
-    <script>
 
         function CallCheckIn(farmercode,farmername){
 

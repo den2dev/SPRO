@@ -4,36 +4,18 @@
 End Code
 
 
-<div Class="col-12 no-padding">
-    <a Class="ui-btn btn-confirm" style="height: 60px;" href="/Home/Landing?FSMCODE=0101">
-        Daily Report
-    </a>
-</div>
-
-
-<div Class="col-12 no-padding">
-    <Button Class="ui-btn btn-confirm" style="height: 60px;" onclick="location.href='@Url.Action("Index", "Test")'">
-        Test
-    </Button>
-</div>
+ 
 
 <div class="button-menu-container" >
 
-    <a id="btnCapture" href="#" class="ui-btn btn-style" style="width:100%">
-        <img src="@StaticRootImgs/camera-black.png" alt="Back" class="button-menu-icon" />
-        <span class="button-menu-label">Capture</span>
+    <a id="btnCapture" href="/Home/Landing?FSMCODE=0101" class="ui-btn btn-style" style="width:100%">
+        <img src="@StaticRootImgs/bars-black.png" alt="Back" class="button-menu-icon" />
+        <span class="button-menu-label">Daily Report</span>
     </a>
-    <a id="btnAccept" href="#" class="ui-btn btn-style" style="width:100%">
-        <img src="@StaticRootImgs/check-black.png" alt="Back" class="button-menu-icon" />
-        <span class="button-menu-label">Accept</span>
-    </a>
-    <a id="btnCheck" href="#" class="ui-btn btn-style" style="width:100%">
-        <img src="@StaticRootImgs/recycle-black.png" alt="Back" class="button-menu-icon" />
-        <span class="button-menu-label">Check ID</span>
-    </a>
-    <a id="btnAccept" href="#" class="ui-btn btn-style" style="width:100%">
-        <img src="~/Content/images/home-black.png" alt="Back" class="button-menu-icon" />
-        <span class="button-menu-label">Accept</span>
+ 
+    <a id="btnAccept" href="@Url.Action("Index", "Test")" class="ui-btn btn-style" style="width:100%">
+        <img src="~/Content/images/eye-black.png" alt="Back" class="button-menu-icon" />
+        <span class="button-menu-label">Test</span>
     </a>
 
 </div>

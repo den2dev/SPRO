@@ -74,7 +74,7 @@
         </nav>
     *@
 
-    <div class="container p-3 my-0 border">
+    <div class="p-3 my-0 border" style="background-color:white">
         <h1>
             @ViewData("Title")
         </h1>
