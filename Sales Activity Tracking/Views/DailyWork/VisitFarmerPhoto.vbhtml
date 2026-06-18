@@ -13,10 +13,27 @@ End Code
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
-        padding: 10px; 
+        padding: 10px;
     }
 
-    
+    .zoom-image {
+    max-width: 100%;
+    max-height: 100%;
+    animation: zoomIn .25s ease;
+    }
+
+    @@keyframes zoomIn {
+        from {
+            transform: scale(0.85);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
 </style>
 <div data-role="none" style="border:none;padding-top:74px">
 
@@ -195,9 +212,62 @@ End Code
             }
         );
 
+
+        $(document).on(
+            "click",
+            ".photo-preview",
+            function () {
+
+                $("#modalImage")
+                    .attr("src",
+                        $(this).data("src"));
+
+                var modal =
+                    new bootstrap.Modal(
+                        document.getElementById("photoModal")
+                    );
+
+                modal.show();
+
+            });
+
     </script>
 
 End Section
+
+<div class="modal fade"
+     id="photoModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-fullscreen">
+
+        <div class="modal-content bg-dark">
+
+            <div class="modal-header border-0">
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body
+                        d-flex
+                        justify-content-center
+                        align-items-center">
+
+                <img id="modalImage"
+                     src=""
+                     class="zoom-image" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <!-- Bottom Buttons -->

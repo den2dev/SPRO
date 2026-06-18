@@ -616,8 +616,8 @@
     <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
     <Content Include="Views\DailyWork\VisitItemDelete.vbhtml" />
     <Content Include="Views\DailyWork\VisitFarmerPhoto.vbhtml" />
-    <Content Include="Views\Shared\_PhotoList.vbhtml" />
     <Content Include="Views\DailyWork\Questionnaire.vbhtml" />
+    <Content Include="Views\Shared\_PhotoList.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
