@@ -6,7 +6,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 139px);
+        height: calc(100vh - 56px);
         width:100%;
         overflow-y: auto;
         background: white;
@@ -20,8 +20,7 @@ End Code
 @*<div id="mainItems">
 
 </div>*@
-<iframe id="mainItems" src="@ViewBag.QuestionnaireUrl">
-       
+<iframe id="mainItems" src="@ViewBag.QuestionnaireUrl" style="padding-top:66px">
 </iframe>
 
 <!-- Bottom Buttons -->

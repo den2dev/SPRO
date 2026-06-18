@@ -7,7 +7,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 184px);
+        height: calc(100vh - 177px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -25,19 +25,21 @@ End Code
     🔔
 </span>
 
-
-<div class="container" style="padding-bottom:5px;padding-top:0px;">
-    <div class="row">
-        <input type="text" data-role="none"
-               id="txtSearch" style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
-               placeholder="ค้นหารหัส, ชื่อ หรือเบอร์โทร" />
+<div style="padding-top:66px">
+    <div class="row" style="padding-bottom:5px;padding-top:8px;">
+        <div>
+            <div class="row" style="margin-left: 20px; margin-right:20px">
+                <input type="text" data-role="none"
+                       id="txtSearch" style="border: 1px solid #ddd; background-color: white; width: 100%; height: 40px "
+                       placeholder="ค้นหารหัส, ชื่อ หรือเบอร์โทร" />
+            </div>
+        </div>
     </div>
+     
 </div>
 
-
-
-
 <input type="hidden" id="txtgeolocation" />
+
 
 <div class="row g-0">
 
@@ -165,12 +167,12 @@ End Code
         <div class="confirm-buttons">
 
             @*<button id="btnConfirmYes" class="msg-btn">
-                ตกลง
-            </button>
+                    ตกลง
+                </button>
 
-            <button id="btnConfirmNo" class="msg-btn btn-cancel">
-                ยกเลิก
-            </button>*@
+                <button id="btnConfirmNo" class="msg-btn btn-cancel">
+                    ยกเลิก
+                </button>*@
 
             <a id="btnConfirmYes"
                href="#"
@@ -211,8 +213,8 @@ End Code
         </div>
 
         @*<button id="btnMsgOK" class="msg-btn">
-            ตกลง
-        </button>*@
+                ตกลง
+            </button>*@
 
         <a id="btnMsgOK"
            href="#"
@@ -244,7 +246,7 @@ End Code
 
 
 @section Scripts
-     
+
     <script>
 
         $(document).ready(function () {
@@ -386,7 +388,7 @@ End Code
         }
 
     </script>
-     
+
 
 End Section
 
@@ -396,8 +398,7 @@ End Section
     <div class="container">
         <div class="row g-0">
 
-            <a 
-               href="#"
+            <a href="#"
                class="ui-btn btn-style col no-padding"
                onclick="location.href='@Url.Action("index")'">
 
@@ -413,7 +414,7 @@ End Section
                 <img src="@(StaticRootImgs)/plus-black.png" alt="เพิ่มชาวไร่รายใหม่" class="button-menu-icon" />
                 <span class="button-menu-label">ชาวไร่รายใหม่</span>
 
-            </a> 
+            </a>
 
         </div>
     </div>
@@ -435,7 +436,7 @@ End Section
             <div Class="col no-padding">
                 <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
                         style="height: 60px; padding-top: 25px !important;"
-                         onclick="location.href='@Url.Action("index")'">
+                        onclick="location.href='@Url.Action("index")'">
                     Activities
                 </Button>
             </div>

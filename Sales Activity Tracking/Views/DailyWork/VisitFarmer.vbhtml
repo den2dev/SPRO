@@ -9,7 +9,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 139px);
+        height: calc(100vh - 124px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -26,7 +26,7 @@ End Code
 
 <input type="hidden" id="txtgeolocation" />
 
-<div class="row g-0">
+<div class="row g-0" style="padding-top:66px">
 
     <div id="mainItems">
 

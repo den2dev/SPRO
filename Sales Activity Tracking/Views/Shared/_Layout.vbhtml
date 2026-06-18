@@ -74,30 +74,31 @@
         </nav>
     *@
 
-    <div class="p-3 my-0 border" style="background-color:white">
-        <h1>
-            @ViewData("Title")
-        </h1>
-    </div>
+    <div class="p-3 my-0 border header ui-header ui-bar-inherit ui-header-fixed slidedown">
+        <h1 id="app-title" class="ui-title">
+            @*style="margin-top:8px"*@
+        @ViewData("Title")
+    </h1>
+</div>
 
-    @*class="container body-content small"*@
-    <div class="container small" style="padding-top:10px">
+@*class="container body-content small style="padding-top:66px""*@
+<div class="small">
 
-        @RenderBody()
+    @RenderBody()
 
-    </div>
-
-
-    @Styles.Render("~/Content/jquerymobile")
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/jquerymobile")
-
-    <script src="~/Scripts/common.js"></script>
-
-    @Scripts.Render("~/bundles/bootstrap")
+</div>
 
 
-    @RenderSection("scripts", required:=False)
+@Styles.Render("~/Content/jquerymobile")
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jquerymobile")
+
+<script src="~/Scripts/common.js"></script>
+
+@Scripts.Render("~/bundles/bootstrap")
+
+
+@RenderSection("scripts", required:=False)
 </body>
 </html>

@@ -7,7 +7,7 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 156px);
+        height: calc(100vh - 124px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
@@ -34,299 +34,298 @@ End Code
     }
 </style>
 
+<div style="padding-top:50px">
+    @***Form*****@
 
-@***Form*****@
-
-@Using Html.BeginForm("NewFarmerCheckInSave", "DailyWork", FormMethod.Post, New With {.id = "frmNewFarmer"})
+    @Using Html.BeginForm("NewFarmerCheckInSave", "DailyWork", FormMethod.Post, New With {.id = "frmNewFarmer"})
 
 
-    @Html.ValidationSummary(False, "", New With {.class = "text-danger"})
-    @<div Class="row g-0">
-        <div id="mainItems">
+        @Html.ValidationSummary(False, "", New With {.class = "text-danger"})
+        @<div Class="row g-0">
+            <div id="mainItems">
 
-            <input type="hidden" id="GeoLocation" name="GeoLocation" data-role="none" />
+                <input type="hidden" id="GeoLocation" name="GeoLocation" data-role="none" />
 
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">ประเภท *</div>
-                <div class="row">
+                <div class="container">
+                    <div class="row">ประเภท *</div>
+                    <div class="row">
 
-                    @Html.DropDownListFor(
-                              Function(m) m.NewType,
-                             New List(Of SelectListItem) From {
-                                 New SelectListItem With {.Value = "", .Text = "-- เลือกประเภท --"},
-                                 New SelectListItem With {.Value = "1", .Text = "1-ปลูกอ้อยอย่างเดียว"},
-                                 New SelectListItem With {.Value = "2", .Text = "2-ปลูกอ้อยและพืชอื่น"},
-                                 New SelectListItem With {.Value = "3", .Text = "3-ปลูกพิชอื่น"}
-                             },
-                             New With {
-                                 .data_role = "none",
-                                 .class = "custom-select"
-                             })
+                        @Html.DropDownListFor(
+                                  Function(m) m.NewType,
+                                 New List(Of SelectListItem) From {
+                                     New SelectListItem With {.Value = "", .Text = "-- เลือกประเภท --"},
+                                     New SelectListItem With {.Value = "1", .Text = "1-ปลูกอ้อยอย่างเดียว"},
+                                     New SelectListItem With {.Value = "2", .Text = "2-ปลูกอ้อยและพืชอื่น"},
+                                     New SelectListItem With {.Value = "3", .Text = "3-ปลูกพิชอื่น"}
+                                 },
+                                 New With {
+                                     .data_role = "none",
+                                     .class = "custom-select"
+                                 })
 
+                    </div>
                 </div>
-            </div>
 
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">ชื่อ-นามสกุล *</div>
-                <div class="row">
-                    @Html.TextBoxFor(
-                                                                   Function(m) m.FarmerName,
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">ชื่อ-นามสกุล *</div>
+                    <div class="row">
+                        @Html.TextBoxFor(
+                                                                       Function(m) m.FarmerName,
+                                                                       New With {
+                                                                              .data_role = "none",
+                                                                              .class = "custom-input",
+                                                                              .placeholder = "ระบุชื่อ-นามสกุล"
+                                                                       })
+                    </div>
+                </div>
+
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">เบอร์โทร *</div>
+                    <div class="row">
+                        @Html.TextBoxFor(
+                                                                     Function(m) m.MobileNo,
+                                                                     New With {
+                                                                            .data_role = "none",
+                                                                            .class = "custom-input",
+                                                                            .placeholder = "กรอกเบอร์โทรติดต่อ"
+                                                                     })
+                    </div>
+                </div>
+
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">บ้านเลขที่</div>
+                    <div class="row">
+                        @Html.TextBoxFor(
+                                                                   Function(m) m.AddressNo,
                                                                    New With {
                                                                           .data_role = "none",
                                                                           .class = "custom-input",
-                                                                          .placeholder = "ระบุชื่อ-นามสกุล"
+                                                                          .placeholder = ""
                                                                    })
+                    </div>
                 </div>
-            </div>
 
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">เบอร์โทร *</div>
-                <div class="row">
-                    @Html.TextBoxFor(
-                                                                 Function(m) m.MobileNo,
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">หมู่ที่</div>
+                    <div class="row">
+                        @Html.TextBoxFor(
+                                                                  Function(m) m.Moo,
+                                                                  New With {
+                                                                         .data_role = "none",
+                                                                         .class = "custom-input",
+                                                                         .placeholder = ""
+                                                                  })
+                    </div>
+                </div>
+
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">หมู่บ้าน</div>
+                    <div class="row">
+                        @Html.TextBoxFor(
+                                                                 Function(m) m.VillageName,
                                                                  New With {
                                                                         .data_role = "none",
                                                                         .class = "custom-input",
-                                                                        .placeholder = "กรอกเบอร์โทรติดต่อ"
+                                                                        .placeholder = ""
                                                                  })
+                    </div>
                 </div>
-            </div>
 
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">บ้านเลขที่</div>
-                <div class="row">
-                    @Html.TextBoxFor(
-                                                               Function(m) m.AddressNo,
-                                                               New With {
-                                                                      .data_role = "none",
-                                                                      .class = "custom-input",
-                                                                      .placeholder = ""
-                                                               })
-                </div>
-            </div>
-
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">หมู่ที่</div>
-                <div class="row">
-                    @Html.TextBoxFor(
-                                                              Function(m) m.Moo,
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">จังหวัด *</div>
+                    <div class="row">
+                        @Html.DropDownListFor(
+                                                              Function(m) m.ProvinceCode,
+                                                              Model.ProvinceList,
+                                                              "-- เลือกจังหวัด --",
                                                               New With {
-                                                                     .data_role = "none",
-                                                                     .class = "custom-input",
-                                                                     .placeholder = ""
-                                                              })
-                </div>
-            </div>
-
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">หมู่บ้าน</div>
-                <div class="row">
-                    @Html.TextBoxFor(
-                                                             Function(m) m.VillageName,
-                                                             New With {
-                                                                    .data_role = "none",
-                                                                    .class = "custom-input",
-                                                                    .placeholder = ""
-                                                             })
-                </div>
-            </div>
-
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">จังหวัด *</div>
-                <div class="row">
-                    @Html.DropDownListFor(
-                                                          Function(m) m.ProvinceCode,
-                                                          Model.ProvinceList,
-                                                          "-- เลือกจังหวัด --",
-                                                          New With {
-                                                              .id = "ddlProvince",
-                                                              .data_role = "none",
-                                                              .class = "custom-select"
-                                                         })
-                </div>
-            </div>
-
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">อำเภอ *</div>
-                <div class="row">
-                    @Html.DropDownListFor(
-                                                              Function(m) m.DistrictCode,
-                                                              Model.DistrictList,
-                                                               "-- เลือกอำเภอ --",
-                                                              New With {
-                                                                  .id = "ddlDistrict",
+                                                                  .id = "ddlProvince",
                                                                   .data_role = "none",
                                                                   .class = "custom-select"
                                                              })
+                    </div>
                 </div>
-            </div>
 
-            <div class="container" style="padding-bottom:5px;padding-top:5px;">
-                <div class="row">ตำบล *</div>
-                <div class="row">
-                    @Html.DropDownListFor(
-                                                                  Function(m) m.SubDistrictCode,
-                                                                  Model.SubDistrictList,
-                                                                  "-- เลือกตำบล --",
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">อำเภอ *</div>
+                    <div class="row">
+                        @Html.DropDownListFor(
+                                                                  Function(m) m.DistrictCode,
+                                                                  Model.DistrictList,
+                                                                   "-- เลือกอำเภอ --",
                                                                   New With {
-                                                                      .id = "ddlSubDistrict",
+                                                                      .id = "ddlDistrict",
                                                                       .data_role = "none",
                                                                       .class = "custom-select"
                                                                  })
+                    </div>
                 </div>
-            </div>
 
-        </div>
-    </div>
-End Using
-
-
-
-
-@*Show Popup Messgaebox*@
-<div id="msgOverlay" class="msg-overlay">
-
-    <div class="msg-box">
-
-        <div id="msgTitle" class="msg-title">
-            แจ้งเตือน
-        </div>
-
-        <div id="msgText"
-             class="msg-text"
-             style="white-space: pre-line;">
-            ข้อความ
-        </div>
-
-        @*<button id="btnMsgOK"
-                class="msg-btn"
-                onclick="document.getElementById('msgOverlay').style.display='none';">
-            ตกลง
-        </button>*@
-
-        <a id="btnMsgOK"
-           href="#"
-           class="ui-btn btn-style col no-padding"
-           onclick="document.getElementById('msgOverlay').style.display='none';">
-
-            <img src="@(StaticRootImgs)/back-black.png" alt="ตกลง" class="button-menu-icon" />
-            <span class="button-menu-label">ตกลง</span>
-
-        </a>
-
-    </div>
-
-</div>
-@*END Messagbox*@
-
-@***หาพิกัด*****@
-<div id="gpsLoadingModal"
-     class="modal fade"
-     data-backdrop="static"
-     data-keyboard="false">
-
-    <div class="modal-dialog modal-sm">
-
-        <div class="modal-content">
-
-            <div class="modal-body text-center">
-
-                <h4> กำลังค้นหาตำแหน่ง</h4>
-
-                <br />
-
-                <div class="loading-spinner"></div>
-
-                <br /><br />
-
-                กรุณารอสักครู่...
+                <div class="container" style="padding-bottom:5px;padding-top:5px;">
+                    <div class="row">ตำบล *</div>
+                    <div class="row">
+                        @Html.DropDownListFor(
+                                                                      Function(m) m.SubDistrictCode,
+                                                                      Model.SubDistrictList,
+                                                                      "-- เลือกตำบล --",
+                                                                      New With {
+                                                                          .id = "ddlSubDistrict",
+                                                                          .data_role = "none",
+                                                                          .class = "custom-select"
+                                                                     })
+                    </div>
+                </div>
 
             </div>
-
         </div>
-
-    </div>
+    End Using
 
 </div>
 
-<div id="gpsErrorModal"
-     class="modal fade"
-     data-bs-backdrop="static"
-     data-bs-keyboard="false">
 
-    <div class="modal-dialog">
+    @*Show Popup Messgaebox*@
+    <div id="msgOverlay" class="msg-overlay">
 
-        <div class="modal-content">
+        <div class="msg-box">
 
-            <div class="modal-header">
-
-                <h4> ไม่สามารถระบุตำแหน่งได้</h4>
-
+            <div id="msgTitle" class="msg-title">
+                แจ้งเตือน
             </div>
 
-            <div class="modal-body">
-
-                กรุณาเปิด Location ของอุปกรณ์
-                แล้วลองใหม่อีกครั้ง
-
+            <div id="msgText"
+                 class="msg-text"
+                 style="white-space: pre-line;">
+                ข้อความ
             </div>
 
-            <div class="modal-footer">
-
-                @*<button class="btn btn-danger"
-                        data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
-
-                    ปิด
-
+            @*<button id="btnMsgOK"
+                        class="msg-btn"
+                        onclick="document.getElementById('msgOverlay').style.display='none';">
+                    ตกลง
                 </button>*@
 
+            <a id="btnMsgOK"
+               href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="document.getElementById('msgOverlay').style.display='none';">
+
+                <img src="@(StaticRootImgs)/back-black.png" alt="ตกลง" class="button-menu-icon" />
+                <span class="button-menu-label">ตกลง</span>
+
+            </a>
+
+        </div>
+
+    </div>
+    @*END Messagbox*@
+
+    @***หาพิกัด*****@
+    <div id="gpsLoadingModal"
+         class="modal fade"
+         data-backdrop="static"
+         data-keyboard="false">
+
+        <div class="modal-dialog modal-sm">
+
+            <div class="modal-content">
+
+                <div class="modal-body text-center">
+
+                    <h4> กำลังค้นหาตำแหน่ง</h4>
+
+                    <br />
+
+                    <div class="loading-spinner"></div>
+
+                    <br /><br />
+
+                    กรุณารอสักครู่...
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="gpsErrorModal"
+         class="modal fade"
+         data-bs-backdrop="static"
+         data-bs-keyboard="false">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h4> ไม่สามารถระบุตำแหน่งได้</h4>
+
+                </div>
+
+                <div class="modal-body">
+
+                    กรุณาเปิด Location ของอุปกรณ์
+                    แล้วลองใหม่อีกครั้ง
+
+                </div>
+
+                <div class="modal-footer">
+
+                    @*<button class="btn btn-danger"
+                                data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
+
+                            ปิด
+
+                        </button>*@
+
+                    <a href="#"
+                       class="ui-btn btn-style col no-padding"
+                       data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
+
+                        <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+                        <span class="button-menu-label">ปิด</span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bottom Buttons -->
+
+    <div class="button-menu-container">
+        <div class="container">
+            <div class="row g-0">
                 <a href="#"
                    class="ui-btn btn-style col no-padding"
-                   data-dismiss="modal" onclick="$('#gpsErrorModal').modal('hide');">
+                   onclick="history.back()">
 
-                    <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
-                    <span class="button-menu-label">ปิด</span>
+                    <img src="@(StaticRootImgs)/back-black.png" alt="Back" class="button-menu-icon" />
+                    <span class="button-menu-label">Back</span>
+
+                </a>
+
+                <a id="btnAddNew"
+                   href="#"
+                   class="ui-btn btn-style col no-padding disabled-link"
+                   onclick="$('#frmNewFarmer').submit();">
+
+                    <img src="@(StaticRootImgs)/save-black.png" alt="save" class="button-menu-icon" />
+                    <span class="button-menu-label">บันทึก</span>
 
                 </a>
 
             </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Bottom Buttons -->
-
-<div class="button-menu-container">
-    <div class="container">
-        <div class="row g-0">
-            <a  
-               href="#"
-               class="ui-btn btn-style col no-padding"
-               onclick="history.back()">
-
-                <img src="@(StaticRootImgs)/back-black.png" alt="Back" class="button-menu-icon" />
-                <span class="button-menu-label">Back</span>
-
-            </a>
-
-            <a id="btnAddNew"
-               href="#"
-               class="ui-btn btn-style col no-padding disabled-link"
-               onclick="$('#frmNewFarmer').submit();">
-
-                <img src="@(StaticRootImgs)/save-black.png" alt="save" class="button-menu-icon" />
-                <span class="button-menu-label">บันทึก</span>
-
-            </a>
-             
         </div>
     </div>
-</div>
 
-<div style="display:none;
+    <div style="display:none;
         position:fixed;
         bottom:0;
         left:0;
@@ -339,111 +338,111 @@ End Using
         <div class="container">
             <div class="row g-0">
 
-            <div Class="col no-padding">
-                <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
-                        style="height: 60px; padding-top: 25px !important;"
-                        onclick="history.back()">
-                    Back
-                </Button>
-            </div>
+                <div Class="col no-padding">
+                    <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top"
+                            style="height: 60px; padding-top: 25px !important;"
+                            onclick="history.back()">
+                        Back
+                    </Button>
+                </div>
 
-            <div Class="col no-padding">
-                <Button id="btnAddNew"
-                        Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top"
-                        style="height: 60px; padding-top: 25px !important;"
-                        onclick="$('#frmNewFarmer').submit();"
-                        disabled>
-                    บันทึก
-                </Button>
-            </div>
+                <div Class="col no-padding">
+                    <Button id="btnAddNew"
+                            Class="ui-btn btn-deny ui-icon-plus ui-btn-icon-top"
+                            style="height: 60px; padding-top: 25px !important;"
+                            onclick="$('#frmNewFarmer').submit();"
+                            disabled>
+                        บันทึก
+                    </Button>
+                </div>
 
+            </div>
         </div>
     </div>
-</div>
 
 
-<!-- End Bottom Buttons -->
+    <!-- End Bottom Buttons -->
 
 
 
-@section Scripts
+    @section Scripts
 
-    <script src="~/Scripts/DailyWork/NewFarmer.js"></script>
+        <script src="~/Scripts/DailyWork/NewFarmer.js"></script>
 
-    <script>
-         
-        $("#frmNewFarmer").submit(function (e) {
+        <script>
 
-            e.preventDefault();
+            $("#frmNewFarmer").submit(function (e) {
 
-
-            if ($("#NewType").val() == "") {
-                ShowMessage("กรุณาเลือกประเภท", null, "ตรวจสอบข้อมูล");
-                return false;
-            }
-
-            if ($("#FarmerName").val().trim() == "") {
-                ShowMessage("กรุณาระบุชื่อ-นามสกุล", null, "ตรวจสอบข้อมูล");
-                return false;
-            }
+                e.preventDefault();
 
 
-            var mobile = $("#MobileNo").val();
+                if ($("#NewType").val() == "") {
+                    ShowMessage("กรุณาเลือกประเภท", null, "ตรวจสอบข้อมูล");
+                    return false;
+                }
 
-            console.log('MobileNo' + mobile);
+                if ($("#FarmerName").val().trim() == "") {
+                    ShowMessage("กรุณาระบุชื่อ-นามสกุล", null, "ตรวจสอบข้อมูล");
+                    return false;
+                }
 
-            if (mobile == "") {
-                ShowMessage("กรุณาระบุเบอร์โทร", null, "ตรวจสอบข้อมูล");
-                return false;
-            }
-            console.log("ผ่านตรวจเบอร์โทร");
 
-            if ($("#ddlProvince").val() == "") {
-                ShowMessage("กรุณาเลือกจังหวัด", null, "ตรวจสอบข้อมูล");
-                return false;
-            }
-            console.log("ผ่านตรวจจังหวัด");
+                var mobile = $("#MobileNo").val();
 
-            if ($("#ddlDistrict").val() == "") {
-                ShowMessage("กรุณาเลือกอำเภอ", null, "ตรวจสอบข้อมูล");
-                return false;
-            }
-            console.log("ผ่านตรวจอำเภอ");
+                console.log('MobileNo' + mobile);
 
-            if ($("#ddlSubDistrict").val() == "") {
-                ShowMessage("กรุณาเลือกตำบล", null, "ตรวจสอบข้อมูล");
-                return false;
-            }
-            console.log("ผ่านตรวจตำบล");
+                if (mobile == "") {
+                    ShowMessage("กรุณาระบุเบอร์โทร", null, "ตรวจสอบข้อมูล");
+                    return false;
+                }
+                console.log("ผ่านตรวจเบอร์โทร");
 
-            $.ajax({
-                url: $(this).attr("action"),
-                type: "POST",
-                data: $(this).serialize(),
-                success: function (res) {
+                if ($("#ddlProvince").val() == "") {
+                    ShowMessage("กรุณาเลือกจังหวัด", null, "ตรวจสอบข้อมูล");
+                    return false;
+                }
+                console.log("ผ่านตรวจจังหวัด");
 
-                    console.log(res);
+                if ($("#ddlDistrict").val() == "") {
+                    ShowMessage("กรุณาเลือกอำเภอ", null, "ตรวจสอบข้อมูล");
+                    return false;
+                }
+                console.log("ผ่านตรวจอำเภอ");
 
-                    console.log(res.RedirectUrl);
+                if ($("#ddlSubDistrict").val() == "") {
+                    ShowMessage("กรุณาเลือกตำบล", null, "ตรวจสอบข้อมูล");
+                    return false;
+                }
+                console.log("ผ่านตรวจตำบล");
 
-                    if (res.Success) {
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (res) {
 
-                        window.location.href = res.RedirectUrl;
+                        console.log(res);
 
-                    } else {
+                        console.log(res.RedirectUrl);
 
-                        ShowMessage(
-                            res.Message,
-                            null,
-                            "ข้อผิดพลาด"
-                        );
+                        if (res.Success) {
+
+                            window.location.href = res.RedirectUrl;
+
+                        } else {
+
+                            ShowMessage(
+                                res.Message,
+                                null,
+                                "ข้อผิดพลาด"
+                            );
+
+                        }
 
                     }
+                });
 
-                }
             });
 
-        });
-
-    </script>
-End Section
+        </script>
+    End Section

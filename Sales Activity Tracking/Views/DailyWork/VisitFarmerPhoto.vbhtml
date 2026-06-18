@@ -9,22 +9,23 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 210px);
+        height: calc(100vh - 201px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
         padding: 10px; 
     }
-    
 
+    
 </style>
-<div data-role="none" style="border:none;padding-top:3px">
+<div data-role="none" style="border:none;padding-top:74px">
 
 
     <div class="row g-0 text-center">
         <span class="small">Activity : @Model.ActivityNo</span>
     </div>
-    <div class="row g-0">
+    <div class="row g-0" style="margin-left: 20px; margin-right:20px">
+
         @If Not Model.IsCheckOut Then
             @<button id="btnTakePhoto"
                      Class="btn btn-primary">

@@ -8,18 +8,19 @@ End Code
 
 <style>
     #mainItems {
-        height: calc(100vh - 217px);
+        height: calc(100vh - 209px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
         padding: 10px;
+        width:100%
     }
 </style>
 
-<div>
+<div class="row g-0" style="padding-top:66px">
     @*class="container"*@
 
-    <div class="panel panel-primary" style="padding-bottom:5px">
+    <div class="panel panel-primary" style="padding-top: 8px;padding-bottom:5px">
 
         <div class="panel-body">
 
