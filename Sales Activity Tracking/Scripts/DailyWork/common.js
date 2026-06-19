@@ -1,4 +1,7 @@
-﻿/*ShowLoading*/
+﻿ 
+
+/*ShowLoading*/ 
+
 function ShowLoading(message) {
 
     if (message) {

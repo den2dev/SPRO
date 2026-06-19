@@ -3,57 +3,55 @@
     ViewData("Title") = "รูปกิจกรรม"
     Layout = "~/Views/Shared/_Layout.vbhtml"
     Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
+
 End Code
+
+<link href="~/Content/DailyWork/photo.css" rel="stylesheet" />
+
 
 @Html.HiddenFor(Function(m) m.ActivityNo)
 
 <style>
     #mainItems {
-        height: calc(100vh - 201px);
+        height: calc(100vh - 205px);
         overflow-y: auto;
         background: white;
         border: 1px solid #ddd;
         padding: 10px;
     }
 
-    .zoom-image {
-    max-width: 100%;
-    max-height: 100%;
-    animation: zoomIn .25s ease;
-    }
-
-    @@keyframes zoomIn {
-        from {
-            transform: scale(0.85);
-            opacity: 0;
-        }
-
-        to {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-
 </style>
+
+ 
+
 <div data-role="none" style="border:none;padding-top:74px">
 
 
     <div class="row g-0 text-center">
         <span class="small">Activity : @Model.ActivityNo</span>
     </div>
-    <div class="row g-0" style="margin-left: 20px; margin-right:20px">
+    <div class="row g-0" style="margin-left: 18px; margin-right: 18px">
 
         @If Not Model.IsCheckOut Then
-            @<button id="btnTakePhoto"
-                     Class="btn btn-primary">
 
-                📷 เพิ่มรูป
+            @<div> 
+                    <div class="row g-0">
+                        <a href="#"
+                           id="btnTakePhoto"
+                           class="ui-btn btn-style col no-padding">
 
-            </button>
+                            <img src="@(StaticRootImgs)/camera-black.png" alt="Back" class="button-menu-icon" />
+                            <span class="button-menu-label">เพิ่มรูป</span>
+
+                        </a>
+
+                    </div> 
+            </div>
+ 
         Else
 
             @<div style="
-                height:52px;
+                height:58px;
                 display:flex;
                 align-items:center;
                 justify-content:center;
@@ -69,7 +67,7 @@ End Code
 
     <div class="row g-0">
         <div id="mainItems">
-            <div id="photoContainer" style="padding-left:5px;padding-right:5px">
+            <div id="photoContainer" style="padding-left: 5px; padding-right: 5px; padding-top:10px">
 
                 @Html.Partial(
                          "_PhotoList",
@@ -243,14 +241,14 @@ End Section
 
         <div class="modal-content bg-dark">
 
-            <div class="modal-header border-0">
+            <button type="button"
+                    class="photo-close-btn"
+                    data-bs-dismiss="modal">
 
-                <button type="button"
-                        class="btn-close btn-close-white"
-                        data-bs-dismiss="modal">
-                </button>
+                ✕
 
-            </div>
+            </button>
+ 
 
             <div class="modal-body
                         d-flex

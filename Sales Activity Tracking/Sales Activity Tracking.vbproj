@@ -258,6 +258,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <Content Include="Content\DailyWork\photo.css" />
     <Content Include="Content\images\action-black.png" />
     <Content Include="Content\images\action-white.png" />
     <Content Include="Content\images\ajax-loader.gif" />
@@ -583,7 +584,7 @@
     <Content Include="Content\jquery.mobile.structure-1.4.5.min.css" />
     <Content Include="Content\jquery.mobile.theme-1.4.5.css" />
     <Content Include="Content\jquery.mobile.theme-1.4.5.min.css" />
-    <Content Include="Content\common.css" />
+    <Content Include="Content\DailyWork\common.css" />
     <Content Include="Content\PDAStyle.css" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -623,7 +624,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
-    <Content Include="Scripts\common.js" />
+    <Content Include="Scripts\DailyWork\common.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />

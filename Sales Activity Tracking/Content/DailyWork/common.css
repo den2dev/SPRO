@@ -1,4 +1,55 @@
-﻿/* Loading Overlay */
+﻿
+/* button-menu */
+
+
+/*.button-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            white-space: nowrap;
+            margin: 0px;*/ /* Adjust the margin as needed */
+/*height: 50px;
+            background-color: white;
+        }*/
+
+.button-menu-container {
+    position: fixed;
+    display: flex;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-top: 1px solid #ddd;
+    z-index: 999;
+    white-space: nowrap;
+    background-color: white;
+}
+
+.button-menu-label {
+    display: block;
+    text-align: center;
+    font-size: small;
+    color: black
+}
+
+.button-menu-icon {
+    display: block;
+    margin: 0 auto;
+    width: 15px;
+    height: 15px
+}
+
+.disabled-link {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+
+
+/* Loading Overlay */
 
 .loading-overlay {
     position: fixed;
