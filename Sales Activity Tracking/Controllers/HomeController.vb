@@ -35,19 +35,21 @@ Public Class HomeController
         End If
 
     End Function
-    Function Logout() As ActionResult
 
-        Session("FSMCODE") = Nothing
-        Session("FUSERID") = Nothing
-        ' หรือ 
-        Session.Remove("FSMCODE")
-        Session.Remove("FSMCODE")
+    <HttpPost>
+    Public Function Logout() As JsonResult
+
+        Session.Clear()
+        Session.Abandon()
 
         FormsAuthentication.SignOut()
 
-        Return RedirectToAction("Index", "Home")
+        Return Json(New With {
+            .success = True
+        })
 
     End Function
+
 
     Function SessionTimeOut() As ActionResult
         Return View()

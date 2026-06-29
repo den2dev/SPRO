@@ -693,8 +693,18 @@ End Code
 @section Scripts
     <script src="~/Scripts/DailyWork/Index.js"></script> 
     <script>
-        function goBack() {
-            location.href = '@HomeURL'
+        function goBack() { 
+            fetch('@Url.Action("LogOut", "Home")', {
+                method: 'POST'
+            })
+            .then(response => {
+                window.location.href = '@HomeURL';
+            })
+            .catch(error => {
+                console.error(error);
+                // ถึง Logout ไม่สำเร็จ ก็ยัง Redirect
+                window.location.href = '@HomeURL';
+            });
         }
 
         /*submit TimeIn*/

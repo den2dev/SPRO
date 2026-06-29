@@ -2,6 +2,7 @@
     ViewData("Title") = "Daily Report"
     Layout = "~/Views/Shared/_Layout.vbhtml"
     Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
+    Dim HomeURL = ConfigurationManager.AppSettings("HomeURL")
 End Code
 
 
@@ -83,7 +84,7 @@ End Code
 @section Scripts
     <script>
          function goBack() {
-                location.href='@Url.Action("index", "Home")'
+                location.href='@HomeURL'
         }
     </script>
 End Section
