@@ -27,7 +27,7 @@ End Code
 
         <div style="height:100%;display:flex;align-items:center;justify-content:center;">
            
-                 <h1 style="color:red">ไม่พบ FSMCODE ที่ส่งมา!</h1>
+            <h1 style="color:red">กรุณาตรวจสอบ FSMCODE & FUSERID ที่ส่งมา!</h1>
              
         </div>
 

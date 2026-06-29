@@ -8,7 +8,7 @@ End Code
 
 <div class="button-menu-container" >
 
-    <a id="btnCapture" href="/Home/Landing?FSMCODE=0101" class="ui-btn btn-style" style="width:100%">
+    <a id="btnCapture" href="/Home/Landing?FSMCODE=0101&FUSERID=ZZY" class="ui-btn btn-style" style="width:100%">
         <img src="@StaticRootImgs/bars-black.png" alt="Back" class="button-menu-icon" />
         <span class="button-menu-label">Daily Report</span>
     </a>

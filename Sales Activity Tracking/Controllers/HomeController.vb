@@ -22,11 +22,12 @@ Public Class HomeController
         '</a>
 
         Dim fsmCode As String = Request.QueryString("FSMCODE")
+        Dim fuserid As String = Request.QueryString("FUSERID")
 
         If Not String.IsNullOrEmpty(fsmCode) Then
 
             Session("FSMCODE") = fsmCode
-            Session("FUSERID") = "ZZY" '--default gsUserId = "ZZY"
+            Session("FUSERID") = fuserid '----------"ZZY" '--default gsUserId = "ZZY"
 
             Return RedirectToAction("Index", "DailyWork") 'Redirect("/DailyWork/Index") '
         Else
