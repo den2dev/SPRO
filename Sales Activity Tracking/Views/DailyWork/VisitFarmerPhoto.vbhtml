@@ -77,14 +77,72 @@ End Code
         </div>
     </div>
 
-    <input type="file"
+    @*<input type="file"
            id="photoUpload"
            accept="image/*"
            capture="environment"
            multiple
-           style="display:none;" />
+           style="display:none;" />*@
 
 
+
+
+</div>
+
+<div class="modal fade"
+     id="cameraModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-fullscreen">
+
+        <div class="modal-content bg-dark">
+
+            <div class="modal-body p-0">
+
+                <video id="cameraVideo"
+                       autoplay
+                       playsinline
+                       style="width:100%;height:97%;object-fit:cover;">
+                </video>
+
+                <canvas id="cameraCanvas"
+                        style="display:none;">
+                </canvas>
+
+
+                <div class="button-menu-container">
+                    <div class="container">
+                        <div class="row g-0">
+
+                            <a id="btnCapture" href="#"
+                               class="ui-btn btn-style col no-padding">
+
+                                <img src="@(StaticRootImgs)/camera-black.png"  alt="Capture"  class="button-menu-icon" />
+                                <span class="button-menu-label">ถ่ายรูป</span>
+
+                            </a> 
+
+                            <a 
+                               href="#"
+                               class="ui-btn btn-style col no-padding"
+                               data-bs-dismiss="modal">
+
+                                <img src="@(StaticRootImgs)/back-black.png" alt="Back" class="button-menu-icon" />
+                                <span class="button-menu-label">Back</span>
+
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                  
+
+            </div>
+
+
+         </div>
+
+    </div>
 
 </div>
 
@@ -92,14 +150,141 @@ End Code
 
     <script>
 
+        let stream;
+        async function startCamera() {
+
+            stream = await navigator.mediaDevices.getUserMedia({
+
+                video: {
+
+                    facingMode: "environment"
+
+                },
+
+                audio: false
+
+            });
+
+            document
+                .getElementById("cameraVideo")
+                .srcObject = stream;
+
+        }
+        function stopCamera() {
+
+            if (!stream)
+                return;
+
+            stream.getTracks().forEach(function (t) {
+
+                t.stop();
+
+            });
+
+        }
+        $("#btnTakePhoto").click(async function () {
+
+            var modal =
+                new bootstrap.Modal(
+                    document.getElementById("cameraModal")
+                );
+
+            modal.show();
+
+            await startCamera();
+
+        });
+        $("#btnCapture").click(function () {
+
+            var video =
+                document.getElementById("cameraVideo");
+
+            var canvas =
+                document.getElementById("cameraCanvas");
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            var ctx =
+                canvas.getContext("2d");
+
+            ctx.drawImage(
+                video,
+                0,
+                0
+            );
+
+            canvas.toBlob(function (blob) {
+
+                uploadBlob(blob);
+
+            }, "image/jpeg", 0.9);
+
+        });
+
+        function uploadBlob(blob) {
+
+            var formData =
+                new FormData();
+
+            formData.append(
+                "activityNo",
+                $("#ActivityNo").val()
+            );
+
+            formData.append(
+                "file0",
+                blob,
+                "photo.jpg"
+            );
+
+            $.ajax({
+
+                url: "/DailyWork/UploadPhoto",
+
+                type: "POST",
+
+                data: formData,
+
+                processData: false,
+
+                contentType: false,
+
+                success: function (r) {
+
+                    stopCamera();
+
+                    bootstrap.Modal
+                        .getInstance(
+                            document.getElementById("cameraModal")
+                        )
+                        .hide();
+
+                    loadPhotos();
+
+                }
+
+            });
+
+        }
+        $("#cameraModal").on(
+            "hidden.bs.modal",
+            function () {
+
+                stopCamera();
+
+            });
+
+
+
         $(function () {
 
             // กดปุ่มเพิ่มรูป
-            $("#btnTakePhoto").click(function () {
+            //$("#btnTakePhoto").click(function () {
 
-                $("#photoUpload").click();
+            //    $("#photoUpload").click();
 
-            });
+            //});
 
             // เลือกรูปเสร็จ
             $("#photoUpload").change(function () {

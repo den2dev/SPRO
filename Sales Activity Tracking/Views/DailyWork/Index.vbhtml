@@ -517,50 +517,50 @@ End Code
      data-bs-backdrop="static"
      data-bs-keyboard="false">
 
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
-            <div class="modal-body">
+            <div class="modal-body p-0 bg-dark">
                 <video id="video"
                        autoplay
                        playsinline
-                       style="width:100%;height:100%;border:1px solid #ccc;">
+                       style="width: 100%; height: 97%; object-fit: cover;border: 1px solid #ccc;">
                 </video>
                 <canvas id="canvas"
                         style="display:none;">
-                </canvas>
-
-                @*<button id="btnTakePhoto" Class="ui-btn btn-confirm" style="height: 60px;">
-                        ถ่ายรูป
-                    </button>
-                    <button Class="ui-btn btn-cancel" style="height: 60px;"
-                            data-dismiss="modal" onclick="CloseCameraModal()">
-                        ยกเลิก
-                    </button>*@
-
-                <div class="row">
-                    <a id="btnTakePhoto"
-                       href="#" data-dismiss="modal"
-                       class="ui-btn btn-style col no-padding">
-
-                        <img src="@(StaticRootImgs)/camera-black.png" alt="ปิด" class="button-menu-icon" />
-                        <span class="button-menu-label">ถ่ายรูป</span>
-
-                    </a>
-
-                    <a href="#"
-                       class="ui-btn btn-style col no-padding"
-                       data-dismiss="modal"
-                       onclick="CloseCameraModal()">
-
-                        <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
-                        <span class="button-menu-label">ยกเลิก</span>
-
-                    </a>
-                </div>
+                </canvas> 
+           
             </div>
+
+            <div class="button-menu-container">
+                 <div class="container">
+                     <div class="row g-0">
+                         <a id="btnTakePhoto"
+                            href="#" data-dismiss="modal"
+                            class="ui-btn btn-style col no-padding">
+
+                             <img src="@(StaticRootImgs)/camera-black.png" alt="ปิด" class="button-menu-icon" />
+                             <span class="button-menu-label">ถ่ายรูป</span>
+
+                         </a>
+
+                         <a href="#"
+                            class="ui-btn btn-style col no-padding"
+                            data-dismiss="modal"
+                            onclick="CloseCameraModal()">
+
+                             <img src="@(StaticRootImgs)/back-black.png" alt="ปิด" class="button-menu-icon" />
+                             <span class="button-menu-label">ยกเลิก</span>
+
+                         </a>
+                     </div>
+                 </div> 
+            </div>
+           
+
+
         </div>
     </div>
-</div>
+</div> 
 
 <div id="AddClickModal"
      class="modal fade"
