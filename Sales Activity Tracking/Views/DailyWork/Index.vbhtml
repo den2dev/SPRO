@@ -707,6 +707,106 @@ End Code
             });
         }
 
+
+        let photoBlob = null;
+        function getLocation() {
+
+            /*clear ค่าเดิม*/
+            photoBlob = null;
+            $("#previewImage").hide().attr("src", "");
+            $("#imagePlaceholder").show();
+            $("#txtgeolocation").val("");
+            $("#txtOdometerStart,#txtOdometerEnd").val("");
+            /*end clear ค่าเดิม*/
+
+            $('#gpsLoadingModal').modal('show');
+
+            navigator.geolocation.getCurrentPosition(
+
+                function (position) {
+
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+
+                    var latDirection = lat >= 0 ? "N" : "S";
+                    var lngDirection = lng >= 0 ? "E" : "W";
+
+                    var gpsText =
+                        latDirection + Math.abs(lat) +
+                        " " +
+                        lngDirection + Math.abs(lng);
+
+                    $("#txtgeolocation")
+                        .val(gpsText);
+
+
+                    $('#gpsLoadingModal').modal('hide');
+
+                    $('#timeInModal').modal('show');
+
+                },
+
+                function (error) {
+
+                    $('#gpsLoadingModal').modal('hide');
+
+                    $('#gpsErrorModal').modal('show');
+
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                }
+            );
+        }
+        $("#btnTakePhoto").click(function () {
+
+            let video = document.getElementById("video");
+            let canvas = document.getElementById("canvas");
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0);
+            canvas.toBlob(function (blob) {
+
+                photoBlob = blob;
+
+                $("#previewImage")
+                    .show()
+                    .attr(
+                        "src",
+                        URL.createObjectURL(blob));
+
+                ValidateTimeIn();
+                ValidateTimeOut();
+
+                $("#imagePlaceholder").hide();
+                $('#CameraModal').modal('hide');
+                $('#timeInModal').modal('show');
+
+            }, "image/jpeg", 0.9);
+
+        });
+
+        $("#btnRetake").click(function () {
+
+            photoBlob = null;
+
+            $("#previewImage")
+                .hide()
+                .attr("src", "");
+
+            $("#imagePlaceholder").show();
+
+            ValidateTimeIn();
+            ValidateTimeOut();
+
+        });
+
         /*submit TimeIn*/
         $("#btnSaveTimeIn").click(function () {
 
@@ -816,6 +916,7 @@ End Code
         });
 
         /*submit TimeOut*/
+
         $("#btnSaveTimeOut").click(function () {
 
 
@@ -924,6 +1025,8 @@ End Code
             });
 
         });
+
+         
 
     </script>
 End Section
