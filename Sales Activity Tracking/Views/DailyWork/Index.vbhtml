@@ -1,6 +1,6 @@
 ﻿@ModelType DailyWorkViewModel
 @Code
-    ViewData("Title") = "Daily Report"
+    ViewData("Title") = "Daily Activities"
     Layout = "~/Views/Shared/_Layout.vbhtml"
     Dim StaticRootImgs = ConfigurationManager.AppSettings("StaticRootImages")
     Dim HomeURL = ConfigurationManager.AppSettings("HomeURL")
@@ -1038,17 +1038,19 @@ End Section
 <div class="button-menu-container">
     <div class="container">
         <div class="row g-0">
+
+            <a id="btnHome"
+               href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="goBack()">
+
+                <img src="@(StaticRootImgs)/home-black.png" alt="Apps-หลัก" class="button-menu-icon" />
+                <span class="button-menu-label">Home</span>
+
+            </a>
+
             @If Not Model.IsTimeIn Then
 
-                @<a id="btnHome"
-                    href="#"
-                    class="ui-btn btn-style col no-padding"
-                    onclick="goBack()">
-
-                    <img src="@(StaticRootImgs)/home-black.png" alt="Home" class="button-menu-icon" />
-                    <span class="button-menu-label">Home</span>
-
-                </a>
 
                 @<a id="btnTimeIn"
                     href="#"
@@ -1062,15 +1064,6 @@ End Section
 
             ElseIf Not Model.IsTimeOut Then
 
-                @<a id="btnHome"
-                    href="#"
-                    class="ui-btn btn-style col no-padding"
-                    onclick="goBack()">
-
-                    <img src="@(StaticRootImgs)/home-black.png" alt="Home" class="button-menu-icon" />
-                    <span class="button-menu-label">Home</span>
-
-                </a>
 
                 @<a id="btnFarmerList" style="display:@(If(Model.IsMustTimeOut, "none", "block"))"
                     href="#"
@@ -1091,88 +1084,23 @@ End Section
                     <span class="button-menu-label">Time Out</span>
 
                 </a>
-            Else
 
-                'TimeIn&TimeOut ในวันแล้ว
-                @<a id="btnHome"
-                    href="#"
-                    class="ui-btn btn-style col no-padding"
-                    onclick="goBack()">
-
-                    <img src="@(StaticRootImgs)/home-black.png" alt="Home" class="button-menu-icon" />
-                    <span class="button-menu-label">Home</span>
-
-                </a>
             End If
+
+
+            <a id="btnDailyReport"
+               href="#"
+               class="ui-btn btn-style col no-padding"
+               onclick="location.href='@Url.Action("index", "DailyReport")'">
+
+                <img src="@(StaticRootImgs)/bars-black.png" alt="Home" class="button-menu-icon" />
+                <span class="button-menu-label">Daily Report</span>
+
+            </a>
 
         </div>
     </div>
 </div>
-
-<div style="
-    display:none;
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    padding-left:5px;
-    padding-right:5px;
-    background:#fff;
-    border-top:1px solid #ddd;
-    z-index:999;">
-    <div class="container">
-        <div class="row g-0">
-
-            @If Not Model.IsTimeIn Then
-                @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                        Home
-                    </Button>
-                </div>
-
-                @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeIn()">
-                        Time In
-                    </Button>
-                </div>
-
-            ElseIf Not Model.IsTimeOut Then
-
-                @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                        Home
-                    </Button>
-                </div>
-
-                @<div Class="col no-padding"
-                      style="display:@(If(Model.IsMustTimeOut, "none", "block"))">
-                    <Button Class="ui-btn btn-deny ui-icon-user ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;"
-                            onclick="location.href='@Url.Action("SelectFarmer", New With {.FSMCODE = Model.SalesmanCode})'">
-                        ข้อมูลชาวไร่
-                    </Button>
-                </div>
-
-                @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-confirm ui-icon-clock ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goTimeOut()">
-                        Time Out
-                    </Button>
-                </div>
-
-            Else
-
-                'TimeIn&TimeOut ในวันแล้ว
-
-                @<div Class="col no-padding">
-                    <Button Class="ui-btn btn-cancel ui-icon-back ui-btn-icon-top" style="height: 60px; padding-top: 25px !important;" onclick="goBack()">
-                        Home
-                    </Button>
-                </div>
-
-            End If
-
-        </div>
-    </div>
-</div>
-
+ 
 
 <!-- End Bottom Buttons -->

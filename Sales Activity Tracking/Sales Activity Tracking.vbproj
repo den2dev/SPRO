@@ -163,6 +163,7 @@
     <Compile Include="App_Start\FilterConfig.vb" />
     <Compile Include="App_Start\RouteConfig.vb" />
     <Compile Include="Controllers\BaseController.vb" />
+    <Compile Include="Controllers\DailyReportController.vb" />
     <Compile Include="Controllers\DailyWorkController.vb" />
     <Compile Include="Controllers\TestController.vb" />
     <Compile Include="Global.asax.vb">
@@ -181,6 +182,7 @@
     <Compile Include="Models\ViewModels\QuestionnaireViewModel.vb" />
     <Compile Include="Models\Entities\ResultMessageModel.vb" />
     <Compile Include="Models\ViewModels\SelectFarmerViewModel.vb" />
+    <Compile Include="Models\ViewModels\DailyReportViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeInViewModel.vb" />
     <Compile Include="Models\ViewModels\TimeOutViewModel.vb" />
     <Compile Include="Models\ViewModels\VisitFarmerViewModel.vb" />
@@ -201,6 +203,7 @@
     </Compile>
     <Compile Include="Controllers\HomeController.vb" />
     <Compile Include="Repository\AddressRepository.vb" />
+    <Compile Include="Repository\DailyReportRepository.vb" />
     <Compile Include="Repository\DailyWorkRepository.vb" />
     <Compile Include="Repository\DBConnection.vb.vb" />
     <Compile Include="Repository\FarmerRepository.vb" />
@@ -609,16 +612,14 @@
     <Content Include="Views\Test\TestGPS.vbhtml" />
     <Content Include="Views\Test\TestCamera.vbhtml" />
     <Content Include="Views\DailyWork\SelectFarmer.vbhtml" />
-    <Content Include="Views\Shared\_Questionnaire.vbhtml" />
     <Content Include="Views\DailyWork\NewFarmer.vbhtml" />
     <Content Include="Views\Home\Landing.vbhtml" />
     <Content Include="Views\Home\SessionTimeOut.vbhtml" />
     <Content Include="Views\DailyWork\AlertMessage.vbhtml" />
     <Content Include="Views\DailyWork\VisitFarmer.vbhtml" />
-    <Content Include="Views\DailyWork\VisitItemDelete.vbhtml" />
-    <Content Include="Views\DailyWork\VisitFarmerPhoto.vbhtml" />
-    <Content Include="Views\DailyWork\Questionnaire.vbhtml" />
     <Content Include="Views\Shared\_PhotoList.vbhtml" />
+    <Content Include="Views\DailyReport\Index.vbhtml" />
+    <Content Include="Views\Shared\_TIOList.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

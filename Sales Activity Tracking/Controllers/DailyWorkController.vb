@@ -327,11 +327,66 @@ Public Class DailyWorkController
 
     End Function
 
-    Public Function Questionnaire(fiano As String, isnewfarmer As Boolean, fcontcode As String, fqesntype As String) As ActionResult
+    'Public Function Questionnaire(fiano As String, isnewfarmer As Boolean, fcontcode As String, fqesntype As String) As ActionResult
 
-        '' "https://spclnt3.softprohub.net/AFSKSP/App_CRM/frmOC20QANS.aspx?"
-        'ParamCode=B5NdcfPHKgjiyX5AOECjcA=="
+    '    '' "https://spclnt3.softprohub.net/AFSKSP/App_CRM/frmOC20QANS.aspx?"
+    '    'ParamCode=B5NdcfPHKgjiyX5AOECjcA=="
 
+    '    Dim baseUrl As String = ConfigurationManager.AppSettings("URLQuestionnaire")
+
+    '    If Not String.IsNullOrEmpty(baseUrl) Then
+    '        If Not baseUrl.Contains("?") Then
+    '            baseUrl &= "?"
+    '        End If
+    '    End If
+
+    '    Dim qs As New List(Of String)
+
+
+    '    qs.Add("ShowExit=Y")
+
+    '    If isnewfarmer Then
+    '        Select Case fqesntype
+    '            '0 - รายใหม่จะแบ่งเป็น 3 (FFLUPYN)=1(หรือไม่กำหนด):จะใช้ 10001, 2: จะใช้ 10002, 3: จะใช้ 10003 
+    '            Case "1" : qs.Add("ISCODE=010001")
+    '            Case "2" : qs.Add("ISCODE=010002")
+    '            Case "3" : qs.Add("ISCODE=010003")
+    '        End Select
+    '    Else
+    '        'FPREPYN = 9(รายเดิม) จะใช้ 010004,
+    '        qs.Add("ISCODE=010004")
+    '        qs.Add("CONTCODE=" & fcontcode)
+    '    End If
+
+    '    qs.Add("REFNO=" & fiano)
+
+    '    qs.Add("ENTTYPE=2")
+    '    qs.Add("ParamCode=" & ConfigurationManager.AppSettings("QuestionnaireParamCode"))
+
+    '    Dim url As String = baseUrl & String.Join("&", qs)
+
+    '    ViewBag.QuestionnaireUrl = url
+
+    '    Return View()
+
+    'End Function 
+
+
+
+    Public Function VisitFarmer(fiano As String) As ActionResult
+
+        Dim model As New VisitFarmerEditModeViewModel()
+
+        Dim atv As ActivityItem = repo.GetActivityItem(fiano)
+
+        model.ActivityItem = atv
+
+        model.Photos = GetPhotoList(atv.ActivityNumber)
+
+        Dim _repoFarmer As New FarmerRepository
+        model.Farmer = _repoFarmer.GetFarmer(atv.IsNewCont, If(atv.IsNewCont, atv.ActivityNumber, atv.ContactCode))
+
+        '---------------
         Dim baseUrl As String = ConfigurationManager.AppSettings("URLQuestionnaire")
 
         If Not String.IsNullOrEmpty(baseUrl) Then
@@ -345,8 +400,8 @@ Public Class DailyWorkController
 
         qs.Add("ShowExit=Y")
 
-        If isnewfarmer Then
-            Select Case fqesntype
+        If model.Farmer.IsNewFarmer Then
+            Select Case model.Farmer.NewFarmerType
                 '0 - รายใหม่จะแบ่งเป็น 3 (FFLUPYN)=1(หรือไม่กำหนด):จะใช้ 10001, 2: จะใช้ 10002, 3: จะใช้ 10003 
                 Case "1" : qs.Add("ISCODE=010001")
                 Case "2" : qs.Add("ISCODE=010002")
@@ -355,7 +410,7 @@ Public Class DailyWorkController
         Else
             'FPREPYN = 9(รายเดิม) จะใช้ 010004,
             qs.Add("ISCODE=010004")
-            qs.Add("CONTCODE=" & fcontcode)
+            qs.Add("CONTCODE=" & model.Farmer.FarmerCode)
         End If
 
         qs.Add("REFNO=" & fiano)
@@ -366,67 +421,28 @@ Public Class DailyWorkController
         Dim url As String = baseUrl & String.Join("&", qs)
 
         ViewBag.QuestionnaireUrl = url
+        '---------------
 
-        Return View()
+        Return View(model)
 
     End Function
-    'Public Function VisitFarmer(farmerCode As String) As ActionResult
 
-    '    Dim repo As New FarmerRepository
-    '    Dim farmer = repo.GetFarmer(False, farmerCode)
 
-    '    If farmer Is Nothing Then
-    '        TempData("ErrorMessage") = "ไม่พบรหัส : " & farmerCode
-    '        Return RedirectToAction("AlertMessage")
-    '    Else
-    '        Dim model As New VisitFarmerViewModel
-    '        model.Farmer = farmer
 
-    '        Return View(model)
-    '    End If
+
+    'Public Function VisitItemDelete(fiano As String) As ActionResult
+
+    '    Dim model As New VisitFarmerEditModeViewModel()
+
+    '    Dim atv As ActivityItem = repo.GetActivityItem(fiano)
+    '    model.ActivityItem = atv
+
+    '    Dim _repoFarmer As New FarmerRepository
+    '    model.Farmer = _repoFarmer.GetFarmer(atv.IsNewCont, If(atv.IsNewCont, atv.ActivityNumber, atv.ContactCode))
+
+    '    Return View(model)
 
     'End Function
-
-    Public Function VisitFarmer(fiano As String) As ActionResult
-
-        Dim model As New VisitFarmerEditModeViewModel()
-
-        Dim atv As ActivityItem = repo.GetActivityItem(fiano)
-        model.ActivityItem = atv
-
-        Dim _repoFarmer As New FarmerRepository
-        model.Farmer = _repoFarmer.GetFarmer(atv.IsNewCont, If(atv.IsNewCont, atv.ActivityNumber, atv.ContactCode))
-
-        Return View(model)
-
-    End Function
-
-    Function VisitFarmerPhoto(activityNo As String, ischeckout As Boolean) As ActionResult
-
-        Dim model As New ActivityPhotoViewModel
-
-        model.ActivityNo = activityNo
-        model.IsCheckOut = ischeckout
-
-        model.Photos = GetPhotoList(activityNo)
-
-        Return View(model)
-
-    End Function
-
-    Public Function VisitItemDelete(fiano As String) As ActionResult
-
-        Dim model As New VisitFarmerEditModeViewModel()
-
-        Dim atv As ActivityItem = repo.GetActivityItem(fiano)
-        model.ActivityItem = atv
-
-        Dim _repoFarmer As New FarmerRepository
-        model.Farmer = _repoFarmer.GetFarmer(atv.IsNewCont, If(atv.IsNewCont, atv.ActivityNumber, atv.ContactCode))
-
-        Return View(model)
-
-    End Function
 
     <HttpPost>
     Public Function DeleteVisitItem(activityNo As String) As ActionResult
@@ -471,6 +487,20 @@ Public Class DailyWorkController
         Dim list = New AddressRepository().GetSubDistrictList(provinceCode, districtCode)
         Return Json(list, JsonRequestBehavior.AllowGet)
     End Function
+
+
+    'Function VisitFarmerPhoto(activityNo As String, ischeckout As Boolean) As ActionResult
+
+    '    Dim model As New ActivityPhotoViewModel
+
+    '    model.ActivityNo = activityNo
+    '    model.IsCheckOut = ischeckout
+
+    '    model.Photos = GetPhotoList(activityNo)
+
+    '    Return View(model)
+
+    'End Function
 
 
 #End Region

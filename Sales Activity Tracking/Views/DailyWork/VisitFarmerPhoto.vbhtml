@@ -30,6 +30,7 @@ End Code
     <div class="row g-0 text-center">
         <span class="small">Activity : @Model.ActivityNo</span>
     </div>
+
     <div class="row g-0" style="margin-left: 18px; margin-right: 18px">
 
         @If Not Model.IsCheckOut Then
